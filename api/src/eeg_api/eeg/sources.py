@@ -50,6 +50,11 @@ CHUNK_QUEUE_SIZE = 512
 #: Reports that must be seen before the byte-1 oracle is allowed to judge the key.
 KEY_CHECK_MIN_REPORTS = 64
 
+#: How long a single HID read waits for a report before giving up. At ~159 reports/s a
+#: report is ~6 ms away, so this is an upper bound that is only ever reached when the
+#: headset is off — which is precisely when the loop should be cheap, not busy.
+READ_TIMEOUT_MS = 250
+
 
 class SignalSource(Protocol):
     """Anything that can produce samples."""
@@ -210,10 +215,15 @@ class LiveSource(ThreadedSource):
         device = hid.device()
         device.open_path(self.interface.path)
         try:
+            # Blocking reads with a timeout, exactly as scripts/read_live.py does. The
+            # timeout is only an upper bound — a read returns as soon as a report arrives
+            # — so a generous one costs nothing when data flows and keeps the loop from
+            # spinning when the headset is off.
+            device.set_nonblocking(0)
             while not self.stopped:
                 burst: list[np.ndarray] = []
                 for _ in range(64):  # drain a burst, as live_view.py does
-                    data = device.read(self._report_len, 30)
+                    data = device.read(self._report_len, READ_TIMEOUT_MS)
                     if not data:
                         break
                     raw = bytes(data[: self._report_len])
