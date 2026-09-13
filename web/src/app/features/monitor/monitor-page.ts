@@ -87,13 +87,58 @@ import { Waveform } from '../shared/waveform';
 
     @if (!stream.streaming()) {
       <section class="panel mb-4 px-4 py-3 text-sm text-slate-300">
-        <p class="font-medium text-slate-100">Nothing is streaming.</p>
-        <p class="mt-1 text-slate-400">
-          Plug the dongle in and press <span class="text-emerald-300">Dongle</span> in the header, or
-          press <span class="text-sky-300">Demo</span> to exercise the whole app with a synthetic
-          signal — no headset required. A recording can be replayed from
-          <a class="link" routerLink="/datasets">Datasets</a>.
-        </p>
+        <p class="font-medium text-slate-100">{{ emptyTitle() }}</p>
+
+        @if (silentDongle()) {
+          <!--
+            The dongle enumerating and opening perfectly while returning zero reports is
+            the most misleading failure this hardware has, and it is almost never a
+            software problem. The checklist is the same one scripts/read_live.py prints,
+            for the same reason: without it the conclusion a person reaches is "the app
+            is broken", when the actual cause is a headset that is switched off.
+          -->
+          <p class="mt-1 text-slate-400">
+            The dongle is plugged in and its interface opened — and it is returning
+            <span class="text-amber-300">zero reports</span>. That is an RF or pairing problem, not
+            a software one. Check, in this order:
+          </p>
+          <ol class="mt-2 list-decimal space-y-1 pl-5 text-xs text-slate-300">
+            <li>
+              Is the <strong class="text-slate-100">headset switched on</strong>? The power slider
+              is on the left arm; its LED should be lit.
+            </li>
+            <li>
+              Is the headset <strong class="text-slate-100">charged</strong>? A flat battery after
+              years in a drawer is the common case.
+            </li>
+            <li>
+              Look at the dongle's LEDs.
+              <strong class="text-slate-100">Left on + right fast-flashing</strong> means it is
+              receiving. Left on + right slow-flashing means it is paired but the headset is not
+              connected. A right LED that never changes means the headset is not reaching the dongle
+              at all.
+            </li>
+            <li>
+              Has this dongle ever been <strong class="text-slate-100">paired</strong> with this
+              headset? Pairing is remembered dongle-side, and an unpaired dongle will never stream.
+            </li>
+          </ol>
+          @if (deviceSummary(); as summary) {
+            <p class="mono mt-2 text-[11px] text-slate-500">{{ summary }}</p>
+          }
+          <p class="mt-2 text-xs text-slate-400">
+            Meanwhile, <button type="button" class="link" (click)="useDemo()">press Demo</button> to
+            exercise the whole app against a synthetic signal — no headset required. A recording can
+            be replayed from <a class="link" routerLink="/datasets">Datasets</a>.
+          </p>
+        } @else {
+          <p class="mt-1 text-slate-400">
+            Press <span class="text-emerald-300">Dongle</span> in the header to read the headset, or
+            <span class="text-sky-300">Demo</span> to exercise the whole app with a synthetic signal
+            — no headset required. A recording can be replayed from
+            <a class="link" routerLink="/datasets">Datasets</a>.
+          </p>
+        }
       </section>
     }
 
@@ -129,7 +174,11 @@ import { Waveform } from '../shared/waveform';
           </div>
         </div>
         <div class="min-h-[360px] flex-1 overflow-hidden rounded-lg">
-          <eeg-waveform [channels]="show()" [seconds]="windowSeconds()" [fullScaleUv]="fullScale()" />
+          <eeg-waveform
+            [channels]="show()"
+            [seconds]="windowSeconds()"
+            [fullScaleUv]="fullScale()"
+          />
         </div>
       </section>
 
@@ -296,7 +345,9 @@ import { Waveform } from '../shared/waveform';
           [closable]="false"
           (pick)="select($event)"
         />
-        <a class="link mt-3 inline-block text-xs" routerLink="/channels">Open the full channel reference →</a>
+        <a class="link mt-3 inline-block text-xs" routerLink="/channels"
+          >Open the full channel reference →</a
+        >
       </section>
     </div>
   `,
@@ -329,6 +380,35 @@ export class MonitorPage {
   protected readonly metrics = computed(() => this.stream.metrics());
   protected readonly contact = computed(() => this.stream.contact());
 
+  /**
+   * The dongle is attached, selected, and silent.
+   *
+   * Worth its own state: "nothing is streaming" sends you to check the cable, and the
+   * cable is fine — the headset is off. This is the single most likely thing to go wrong
+   * with this hardware, so the screen names it rather than leaving it to be rediscovered.
+   */
+  protected readonly silentDongle = computed(() => {
+    const stats = this.stats();
+    if (!stats || stats.mode !== 'live' || stats.samples > 0) return false;
+    return this.stream.hello()?.device.present ?? false;
+  });
+
+  protected readonly emptyTitle = computed(() => {
+    const stats = this.stats();
+    if (!stats || stats.mode === 'idle') return 'Nothing is streaming.';
+    if (this.silentDongle()) return 'The dongle is connected, but no data is arriving.';
+    return 'Waiting for the first samples…';
+  });
+
+  protected readonly deviceSummary = computed(() => {
+    const device = this.stream.hello()?.device;
+    if (!device) return null;
+    const found = device.interfaces
+      .map((entry) => `${entry.product || '(no name)'} · interface ${entry.interface}`)
+      .join('  |  ');
+    return `serial ${device.serial ?? 'unknown'} — ${found}`;
+  });
+
   protected readonly metricsMap = computed(() => {
     const map = new Map<string, ChannelMetrics>();
     for (const metric of this.metrics()) map.set(metric.name, metric);
@@ -360,6 +440,23 @@ export class MonitorPage {
 
   protected modeLabel(mode: string | undefined | null): string {
     return sourceLabel(mode);
+  }
+
+  /** Fall back to the demo signal — the button in the empty state does the same thing
+   *  as the header's, but reaching for the header is not obvious from inside the panel. */
+  protected async useDemo(): Promise<void> {
+    if (this.busy()) return;
+    this.busy.set(true);
+    this.message.set(null);
+    try {
+      const status = await this.api.setSource({ mode: 'demo' });
+      if (status.source === 'idle')
+        this.message.set(status.error ?? 'The demo source did not start.');
+    } catch (error) {
+      this.message.set(errorMessage(error));
+    } finally {
+      this.busy.set(false);
+    }
   }
 
   protected time(seconds: number | null | undefined): string {
