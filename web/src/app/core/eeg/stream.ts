@@ -5,12 +5,12 @@ import type {
   ChannelMetrics,
   ContactSummary,
   HelloFrame,
-  RecordingSummary,
   SessionEvent,
   StreamFrame,
   TickFrame,
 } from './messages';
-import type { RecordingState, SessionState, SourceStats } from '../api/models';
+import type { RecordingState, RecordingSummary, SessionState, SourceStats } from '../api/models';
+import { SampleRing } from './ring';
 
 /** Seconds of samples kept on the client, which bounds what a chart can show. */
 export const HISTORY_SECONDS = 15;
@@ -20,60 +20,6 @@ const DEFAULT_FS = 128;
 
 /** Reconnect backoff, in milliseconds. */
 const RETRY_MS = [500, 1000, 2000, 4000, 8000];
-
-/**
- * A ring of samples held as one flat `Float32Array`.
- *
- * Flat and pre-allocated rather than an array of rows because the draw loop asks for
- * the newest few seconds several times a second, and allocating ~9,000 numbers each
- * time would produce a steady stream of garbage for the collector to chase.
- */
-class SampleRing {
-  private readonly data: Float32Array;
-  private total = 0;
-
-  constructor(
-    private readonly capacity: number,
-    readonly width: number,
-  ) {
-    this.data = new Float32Array(capacity * width);
-  }
-
-  /** Rows currently available, which is `total` until the ring has wrapped. */
-  get rows(): number {
-    return Math.min(this.total, this.capacity);
-  }
-
-  push(rows: number[][]): void {
-    for (const row of rows) {
-      const base = (this.total % this.capacity) * this.width;
-      for (let i = 0; i < this.width; i += 1) {
-        this.data[base + i] = row[i] ?? 0;
-      }
-      this.total += 1;
-    }
-  }
-
-  /**
-   * Copy the newest `count` samples into `out`, oldest first, and return how many rows
-   * were written. `out` must hold at least `capacity * width` values.
-   */
-  copyLatest(count: number, out: Float32Array): number {
-    const n = Math.min(count, this.rows);
-    if (n <= 0) return 0;
-    const stride = this.width;
-    const end = this.total % this.capacity || this.capacity;
-    const start = end - n;
-    if (start >= 0) {
-      out.set(this.data.subarray(start * stride, end * stride), 0);
-    } else {
-      const head = -start;
-      out.set(this.data.subarray((this.capacity - head) * stride), 0);
-      out.set(this.data.subarray(0, end * stride), head * stride);
-    }
-    return n;
-  }
-}
 
 /** The newest few seconds of samples, as handed to a chart. */
 export interface SampleWindow {
@@ -119,13 +65,6 @@ export class EegStream {
   readonly streaming = computed(() => {
     const stats = this.sourceStats();
     return stats !== null && stats.mode !== 'idle' && stats.samples > 0;
-  });
-
-  /** The status of one channel, or `null` before the first metrics frame. */
-  readonly statusOf = computed(() => {
-    const map = new Map<string, ChannelMetrics>();
-    for (const metric of this.metrics()) map.set(metric.name, metric);
-    return map;
   });
 
   private currentCapacity = Math.round(HISTORY_SECONDS * DEFAULT_FS);
