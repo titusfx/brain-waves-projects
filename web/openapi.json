@@ -1,0 +1,2635 @@
+{
+  "components": {
+    "schemas": {
+      "BandDocModel": {
+        "additionalProperties": true,
+        "properties": {
+          "key": {
+            "title": "Key",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "note": {
+            "title": "Note",
+            "type": "string"
+          },
+          "range": {
+            "title": "Range",
+            "type": "string"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          }
+        },
+        "required": [
+          "key",
+          "name",
+          "range",
+          "summary",
+          "note"
+        ],
+        "title": "BandDocModel",
+        "type": "object"
+      },
+      "CatalogModel": {
+        "additionalProperties": true,
+        "properties": {
+          "bands": {
+            "items": {
+              "$ref": "#/components/schemas/BandDocModel"
+            },
+            "title": "Bands",
+            "type": "array"
+          },
+          "channels": {
+            "items": {
+              "$ref": "#/components/schemas/ChannelDocModel"
+            },
+            "title": "Channels",
+            "type": "array"
+          },
+          "disclaimer": {
+            "title": "Disclaimer",
+            "type": "string"
+          },
+          "montage": {
+            "$ref": "#/components/schemas/MontageModel"
+          }
+        },
+        "required": [
+          "montage",
+          "bands",
+          "channels",
+          "disclaimer"
+        ],
+        "title": "CatalogModel",
+        "type": "object"
+      },
+      "ChannelDocModel": {
+        "additionalProperties": true,
+        "properties": {
+          "artefacts": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Artefacts",
+            "type": "array"
+          },
+          "expected": {
+            "title": "Expected",
+            "type": "string"
+          },
+          "functions": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Functions",
+            "type": "array"
+          },
+          "head": {
+            "$ref": "#/components/schemas/HeadPointModel"
+          },
+          "hemisphere": {
+            "title": "Hemisphere",
+            "type": "string"
+          },
+          "index": {
+            "title": "Index",
+            "type": "integer"
+          },
+          "lobe": {
+            "title": "Lobe",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "offset": {
+            "title": "Offset",
+            "type": "integer"
+          },
+          "placement": {
+            "title": "Placement",
+            "type": "string"
+          },
+          "region": {
+            "title": "Region",
+            "type": "string"
+          },
+          "related": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Related",
+            "type": "array"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "tasks": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Tasks",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "index",
+          "offset",
+          "lobe",
+          "hemisphere",
+          "region",
+          "placement",
+          "summary",
+          "functions",
+          "tasks",
+          "artefacts",
+          "expected",
+          "related",
+          "head"
+        ],
+        "title": "ChannelDocModel",
+        "type": "object"
+      },
+      "DeviceInterfaceModel": {
+        "additionalProperties": true,
+        "properties": {
+          "interface": {
+            "title": "Interface",
+            "type": "integer"
+          },
+          "product": {
+            "title": "Product",
+            "type": "string"
+          },
+          "serial": {
+            "title": "Serial",
+            "type": "string"
+          },
+          "streams": {
+            "title": "Streams",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "product",
+          "serial",
+          "interface",
+          "streams"
+        ],
+        "title": "DeviceInterfaceModel",
+        "type": "object"
+      },
+      "DeviceModel": {
+        "additionalProperties": true,
+        "properties": {
+          "hid_available": {
+            "title": "Hid Available",
+            "type": "boolean"
+          },
+          "interfaces": {
+            "items": {
+              "$ref": "#/components/schemas/DeviceInterfaceModel"
+            },
+            "title": "Interfaces",
+            "type": "array"
+          },
+          "present": {
+            "title": "Present",
+            "type": "boolean"
+          },
+          "serial": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Serial"
+          },
+          "streaming_interface": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DeviceInterfaceModel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "hid_available",
+          "present"
+        ],
+        "title": "DeviceModel",
+        "type": "object"
+      },
+      "EnginePhaseModel": {
+        "additionalProperties": true,
+        "properties": {
+          "cycle": {
+            "title": "Cycle",
+            "type": "integer"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration"
+          },
+          "end": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "open_ended": {
+            "default": false,
+            "title": "Open Ended",
+            "type": "boolean"
+          },
+          "progress": {
+            "default": 0.0,
+            "title": "Progress",
+            "type": "number"
+          },
+          "recordable": {
+            "default": false,
+            "title": "Recordable",
+            "type": "boolean"
+          },
+          "remaining": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remaining"
+          },
+          "speak": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speak"
+          },
+          "start": {
+            "title": "Start",
+            "type": "number"
+          },
+          "step_index": {
+            "title": "Step Index",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "label",
+          "cycle",
+          "step_index",
+          "start"
+        ],
+        "title": "EnginePhaseModel",
+        "type": "object"
+      },
+      "EngineStateModel": {
+        "additionalProperties": true,
+        "description": "Where a running protocol is, right now.",
+        "properties": {
+          "cycle": {
+            "title": "Cycle",
+            "type": "integer"
+          },
+          "cycles": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cycles"
+          },
+          "elapsed": {
+            "title": "Elapsed",
+            "type": "number"
+          },
+          "finished": {
+            "title": "Finished",
+            "type": "boolean"
+          },
+          "phase": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnginePhaseModel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stopped": {
+            "title": "Stopped",
+            "type": "boolean"
+          },
+          "total_seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Seconds"
+          },
+          "upcoming": {
+            "items": {
+              "$ref": "#/components/schemas/PlanPhaseModel"
+            },
+            "title": "Upcoming",
+            "type": "array"
+          }
+        },
+        "required": [
+          "finished",
+          "stopped",
+          "elapsed",
+          "cycle"
+        ],
+        "title": "EngineStateModel",
+        "type": "object"
+      },
+      "FlowInput": {
+        "additionalProperties": true,
+        "description": "A protocol, as authored in the builder.",
+        "properties": {
+          "countdown_seconds": {
+            "default": 3.0,
+            "maximum": 60.0,
+            "minimum": 0.0,
+            "title": "Countdown Seconds",
+            "type": "number"
+          },
+          "description": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Description",
+            "type": "string"
+          },
+          "discard_tail": {
+            "anyOf": [
+              {
+                "maximum": 20.0,
+                "minimum": 0.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Discard Tail"
+          },
+          "mode": {
+            "default": "linear",
+            "enum": [
+              "linear",
+              "loop"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "repeat": {
+            "anyOf": [
+              {
+                "maximum": 1000.0,
+                "minimum": 1.0,
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repeat"
+          },
+          "rest_seconds": {
+            "default": 0.0,
+            "maximum": 600.0,
+            "minimum": 0.0,
+            "title": "Rest Seconds",
+            "type": "number"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/FlowStepInput"
+            },
+            "maxItems": 64,
+            "minItems": 1,
+            "title": "Steps",
+            "type": "array"
+          }
+        },
+        "required": [
+          "name",
+          "steps"
+        ],
+        "title": "FlowInput",
+        "type": "object"
+      },
+      "FlowSpecModel": {
+        "additionalProperties": true,
+        "properties": {
+          "countdown_seconds": {
+            "default": 3.0,
+            "title": "Countdown Seconds",
+            "type": "number"
+          },
+          "cycles": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cycles"
+          },
+          "description": {
+            "default": "",
+            "title": "Description",
+            "type": "string"
+          },
+          "discard_tail": {
+            "default": 0,
+            "title": "Discard Tail",
+            "type": "integer"
+          },
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "mode": {
+            "default": "linear",
+            "enum": [
+              "linear",
+              "loop"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "repeat": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Repeat"
+          },
+          "rest_seconds": {
+            "default": 0.0,
+            "title": "Rest Seconds",
+            "type": "number"
+          },
+          "steps": {
+            "items": {
+              "$ref": "#/components/schemas/FlowStepModel"
+            },
+            "title": "Steps",
+            "type": "array"
+          },
+          "total_seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Seconds"
+          }
+        },
+        "required": [
+          "name",
+          "steps"
+        ],
+        "title": "FlowSpecModel",
+        "type": "object"
+      },
+      "FlowStepInput": {
+        "additionalProperties": true,
+        "description": "One state, as authored in the builder.",
+        "properties": {
+          "label": {
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "seconds": {
+            "anyOf": [
+              {
+                "maximum": 3600.0,
+                "minimum": 0.1,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seconds"
+          },
+          "speak": {
+            "anyOf": [
+              {
+                "maxLength": 200,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speak"
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "title": "FlowStepInput",
+        "type": "object"
+      },
+      "FlowStepModel": {
+        "additionalProperties": true,
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "open_ended": {
+            "default": false,
+            "title": "Open Ended",
+            "type": "boolean"
+          },
+          "seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Seconds"
+          },
+          "speak": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Speak"
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "title": "FlowStepModel",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HeadPointModel": {
+        "additionalProperties": true,
+        "properties": {
+          "x": {
+            "title": "X",
+            "type": "number"
+          },
+          "y": {
+            "title": "Y",
+            "type": "number"
+          }
+        },
+        "required": [
+          "x",
+          "y"
+        ],
+        "title": "HeadPointModel",
+        "type": "object"
+      },
+      "LabelSummaryModel": {
+        "additionalProperties": true,
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "samples": {
+            "title": "Samples",
+            "type": "integer"
+          },
+          "seconds": {
+            "title": "Seconds",
+            "type": "number"
+          },
+          "segments": {
+            "title": "Segments",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "label",
+          "segments",
+          "seconds",
+          "samples"
+        ],
+        "title": "LabelSummaryModel",
+        "type": "object"
+      },
+      "LibraryEntryModel": {
+        "additionalProperties": true,
+        "properties": {
+          "channels": {
+            "title": "Channels",
+            "type": "integer"
+          },
+          "created": {
+            "title": "Created",
+            "type": "string"
+          },
+          "dropped_chunks": {
+            "default": 0,
+            "title": "Dropped Chunks",
+            "type": "integer"
+          },
+          "duration_s": {
+            "title": "Duration S",
+            "type": "number"
+          },
+          "flow_name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flow Name"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "labels": {
+            "items": {
+              "$ref": "#/components/schemas/LabelSummaryModel"
+            },
+            "title": "Labels",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "samples": {
+            "title": "Samples",
+            "type": "integer"
+          },
+          "segments": {
+            "default": 0,
+            "title": "Segments",
+            "type": "integer"
+          },
+          "size_bytes": {
+            "title": "Size Bytes",
+            "type": "integer"
+          },
+          "source": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Source"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "path",
+          "created",
+          "samples",
+          "duration_s",
+          "size_bytes",
+          "channels"
+        ],
+        "title": "LibraryEntryModel",
+        "type": "object"
+      },
+      "LibraryModel": {
+        "additionalProperties": true,
+        "properties": {
+          "directory": {
+            "title": "Directory",
+            "type": "string"
+          },
+          "recordings": {
+            "items": {
+              "$ref": "#/components/schemas/LibraryEntryModel"
+            },
+            "title": "Recordings",
+            "type": "array"
+          },
+          "total": {
+            "title": "Total",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "recordings",
+          "directory",
+          "total"
+        ],
+        "title": "LibraryModel",
+        "type": "object"
+      },
+      "MontageModel": {
+        "additionalProperties": true,
+        "properties": {
+          "midline_note": {
+            "title": "Midline Note",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "reference": {
+            "$ref": "#/components/schemas/ReferenceModel"
+          },
+          "sampling_hz": {
+            "title": "Sampling Hz",
+            "type": "number"
+          },
+          "scale": {
+            "title": "Scale",
+            "type": "string"
+          },
+          "summary": {
+            "title": "Summary",
+            "type": "string"
+          },
+          "system": {
+            "title": "System",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "system",
+          "sampling_hz",
+          "scale",
+          "summary",
+          "reference",
+          "midline_note"
+        ],
+        "title": "MontageModel",
+        "type": "object"
+      },
+      "PlanPhaseModel": {
+        "additionalProperties": true,
+        "properties": {
+          "cycle": {
+            "title": "Cycle",
+            "type": "integer"
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "label",
+          "cycle"
+        ],
+        "title": "PlanPhaseModel",
+        "type": "object"
+      },
+      "PlanPreviewModel": {
+        "additionalProperties": true,
+        "properties": {
+          "cycles": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Cycles"
+          },
+          "discard_tail": {
+            "default": 0,
+            "title": "Discard Tail",
+            "type": "integer"
+          },
+          "phases": {
+            "items": {
+              "$ref": "#/components/schemas/PlanPhaseModel"
+            },
+            "title": "Phases",
+            "type": "array"
+          },
+          "total_seconds": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Total Seconds"
+          },
+          "truncated": {
+            "default": false,
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "phases"
+        ],
+        "title": "PlanPreviewModel",
+        "type": "object"
+      },
+      "PreviewModel": {
+        "additionalProperties": true,
+        "properties": {
+          "data": {
+            "items": {
+              "items": {
+                "type": "number"
+              },
+              "type": "array"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "decimation": {
+            "default": 1,
+            "title": "Decimation",
+            "type": "integer"
+          },
+          "t": {
+            "items": {
+              "type": "number"
+            },
+            "title": "T",
+            "type": "array"
+          },
+          "total_samples": {
+            "title": "Total Samples",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "t",
+          "data",
+          "total_samples"
+        ],
+        "title": "PreviewModel",
+        "type": "object"
+      },
+      "QuickRecordRequest": {
+        "additionalProperties": true,
+        "description": "The one-button case: name it, press record, it counts 3-2-1 and records.",
+        "properties": {
+          "countdown_seconds": {
+            "default": 3.0,
+            "maximum": 60.0,
+            "minimum": 0.0,
+            "title": "Countdown Seconds",
+            "type": "number"
+          },
+          "dataset_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Name"
+          },
+          "label": {
+            "description": "What this data is, e.g. 'eyes closed'.",
+            "maxLength": 120,
+            "minLength": 1,
+            "title": "Label",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "voice": {
+            "default": true,
+            "title": "Voice",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "label"
+        ],
+        "title": "QuickRecordRequest",
+        "type": "object"
+      },
+      "RecordingStateModel": {
+        "additionalProperties": true,
+        "properties": {
+          "current_label": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Current Label"
+          },
+          "dropped_chunks": {
+            "default": 0,
+            "title": "Dropped Chunks",
+            "type": "integer"
+          },
+          "duration": {
+            "title": "Duration",
+            "type": "number"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "recording": {
+            "default": true,
+            "title": "Recording",
+            "type": "boolean"
+          },
+          "samples": {
+            "title": "Samples",
+            "type": "integer"
+          },
+          "segments": {
+            "title": "Segments",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "path",
+          "samples",
+          "duration",
+          "segments"
+        ],
+        "title": "RecordingStateModel",
+        "type": "object"
+      },
+      "RecordingSummaryModel": {
+        "additionalProperties": true,
+        "description": "What a finished dataset contains, and what was deliberately thrown away.",
+        "properties": {
+          "discarded_segments": {
+            "items": {
+              "$ref": "#/components/schemas/SegmentModel"
+            },
+            "title": "Discarded Segments",
+            "type": "array"
+          },
+          "dropped_chunks": {
+            "default": 0,
+            "title": "Dropped Chunks",
+            "type": "integer"
+          },
+          "duration": {
+            "title": "Duration",
+            "type": "number"
+          },
+          "fs": {
+            "title": "Fs",
+            "type": "number"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kept_segments": {
+            "items": {
+              "$ref": "#/components/schemas/SegmentModel"
+            },
+            "title": "Kept Segments",
+            "type": "array"
+          },
+          "labels": {
+            "items": {
+              "$ref": "#/components/schemas/LabelSummaryModel"
+            },
+            "title": "Labels",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "removed": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Removed"
+          },
+          "samples": {
+            "title": "Samples",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "path",
+          "fs",
+          "samples",
+          "duration"
+        ],
+        "title": "RecordingSummaryModel",
+        "type": "object"
+      },
+      "ReferenceModel": {
+        "additionalProperties": true,
+        "properties": {
+          "explanation": {
+            "title": "Explanation",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "explanation"
+        ],
+        "title": "ReferenceModel",
+        "type": "object"
+      },
+      "SegmentModel": {
+        "additionalProperties": true,
+        "properties": {
+          "cycle": {
+            "title": "Cycle",
+            "type": "integer"
+          },
+          "discarded": {
+            "default": false,
+            "title": "Discarded",
+            "type": "boolean"
+          },
+          "duration": {
+            "title": "Duration",
+            "type": "number"
+          },
+          "end_sample": {
+            "title": "End Sample",
+            "type": "integer"
+          },
+          "end_time": {
+            "title": "End Time",
+            "type": "number"
+          },
+          "index": {
+            "title": "Index",
+            "type": "integer"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "samples": {
+            "title": "Samples",
+            "type": "integer"
+          },
+          "start_sample": {
+            "title": "Start Sample",
+            "type": "integer"
+          },
+          "start_time": {
+            "title": "Start Time",
+            "type": "number"
+          },
+          "step_index": {
+            "title": "Step Index",
+            "type": "integer"
+          },
+          "truncated": {
+            "default": false,
+            "title": "Truncated",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "index",
+          "label",
+          "cycle",
+          "step_index",
+          "start_time",
+          "end_time",
+          "duration",
+          "start_sample",
+          "end_sample",
+          "samples"
+        ],
+        "title": "SegmentModel",
+        "type": "object"
+      },
+      "SessionStateModel": {
+        "additionalProperties": true,
+        "properties": {
+          "active": {
+            "title": "Active",
+            "type": "boolean"
+          },
+          "dataset_name": {
+            "title": "Dataset Name",
+            "type": "string"
+          },
+          "engine": {
+            "$ref": "#/components/schemas/EngineStateModel"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "flow": {
+            "$ref": "#/components/schemas/FlowSpecModel"
+          },
+          "id": {
+            "default": "",
+            "title": "Id",
+            "type": "string"
+          },
+          "notes": {
+            "default": "",
+            "title": "Notes",
+            "type": "string"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Outcome"
+          },
+          "recording": {
+            "default": false,
+            "title": "Recording",
+            "type": "boolean"
+          },
+          "recording_state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordingStateModel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "started": {
+            "title": "Started",
+            "type": "string"
+          },
+          "summary": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordingSummaryModel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "voice": {
+            "default": true,
+            "title": "Voice",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "active",
+          "flow",
+          "dataset_name",
+          "started",
+          "engine"
+        ],
+        "title": "SessionStateModel",
+        "type": "object"
+      },
+      "SourceRequest": {
+        "additionalProperties": true,
+        "description": "Switch the stream: the dongle, a recording, the synthetic signal, or nothing.",
+        "properties": {
+          "loop": {
+            "default": true,
+            "title": "Loop",
+            "type": "boolean"
+          },
+          "mode": {
+            "enum": [
+              "idle",
+              "live",
+              "demo",
+              "replay"
+            ],
+            "title": "Mode",
+            "type": "string"
+          },
+          "replay_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Library id of the recording to replay (mode='replay').",
+            "title": "Replay Id"
+          },
+          "replay_speed": {
+            "default": 1.0,
+            "exclusiveMinimum": 0.0,
+            "maximum": 64.0,
+            "title": "Replay Speed",
+            "type": "number"
+          }
+        },
+        "required": [
+          "mode"
+        ],
+        "title": "SourceRequest",
+        "type": "object"
+      },
+      "SourceStatsModel": {
+        "additionalProperties": true,
+        "properties": {
+          "distinct_byte1": {
+            "default": 0,
+            "title": "Distinct Byte1",
+            "type": "integer"
+          },
+          "dropped_chunks": {
+            "default": 0,
+            "title": "Dropped Chunks",
+            "type": "integer"
+          },
+          "elapsed_s": {
+            "default": 0.0,
+            "title": "Elapsed S",
+            "type": "number"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "key_ok": {
+            "anyOf": [
+              {
+                "type": "boolean"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Key Ok"
+          },
+          "label": {
+            "default": "",
+            "title": "Label",
+            "type": "string"
+          },
+          "mode": {
+            "default": "idle",
+            "title": "Mode",
+            "type": "string"
+          },
+          "reports_per_second": {
+            "default": 0.0,
+            "title": "Reports Per Second",
+            "type": "number"
+          },
+          "reports_seen": {
+            "default": 0,
+            "title": "Reports Seen",
+            "type": "integer"
+          },
+          "samples": {
+            "default": 0,
+            "title": "Samples",
+            "type": "integer"
+          }
+        },
+        "title": "SourceStatsModel",
+        "type": "object"
+      },
+      "SpectrumModel": {
+        "additionalProperties": true,
+        "properties": {
+          "channel": {
+            "title": "Channel",
+            "type": "string"
+          },
+          "freqs": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Freqs",
+            "type": "array"
+          },
+          "power": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Power",
+            "type": "array"
+          }
+        },
+        "required": [
+          "freqs",
+          "power",
+          "channel"
+        ],
+        "title": "SpectrumModel",
+        "type": "object"
+      },
+      "StartSessionRequest": {
+        "additionalProperties": true,
+        "description": "Run a saved flow, or an inline one.",
+        "properties": {
+          "countdown_seconds": {
+            "anyOf": [
+              {
+                "maximum": 60.0,
+                "minimum": 0.0,
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Override the flow's countdown for this run only.",
+            "title": "Countdown Seconds"
+          },
+          "dataset_name": {
+            "anyOf": [
+              {
+                "maxLength": 120,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Name"
+          },
+          "flow": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/FlowInput"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "flow_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Flow Id"
+          },
+          "notes": {
+            "default": "",
+            "maxLength": 2000,
+            "title": "Notes",
+            "type": "string"
+          },
+          "voice": {
+            "default": true,
+            "title": "Voice",
+            "type": "boolean"
+          }
+        },
+        "title": "StartSessionRequest",
+        "type": "object"
+      },
+      "StatusModel": {
+        "additionalProperties": true,
+        "properties": {
+          "buffer_seconds": {
+            "title": "Buffer Seconds",
+            "type": "number"
+          },
+          "device": {
+            "$ref": "#/components/schemas/DeviceModel"
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error"
+          },
+          "fs": {
+            "title": "Fs",
+            "type": "number"
+          },
+          "recording": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecordingStateModel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "recordings_dir": {
+            "title": "Recordings Dir",
+            "type": "string"
+          },
+          "session": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SessionStateModel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source": {
+            "title": "Source",
+            "type": "string"
+          },
+          "source_label": {
+            "title": "Source Label",
+            "type": "string"
+          },
+          "stats": {
+            "$ref": "#/components/schemas/SourceStatsModel"
+          },
+          "subscribers": {
+            "title": "Subscribers",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "source",
+          "source_label",
+          "stats",
+          "buffer_seconds",
+          "subscribers",
+          "device",
+          "recordings_dir",
+          "fs"
+        ],
+        "title": "StatusModel",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "ValidationModel": {
+        "additionalProperties": true,
+        "properties": {
+          "errors": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Errors",
+            "type": "array"
+          },
+          "valid": {
+            "title": "Valid",
+            "type": "boolean"
+          },
+          "warnings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Warnings",
+            "type": "array"
+          }
+        },
+        "required": [
+          "valid",
+          "errors",
+          "warnings"
+        ],
+        "title": "ValidationModel",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "Live EEG from an Emotiv EPOC+ dongle, decoded locally. Streams over WebSocket, documents every channel, and records labelled datasets from guided protocols.",
+    "title": "EPOC+ EEG Workbench API",
+    "version": "0.1.0"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/channels": {
+      "get": {
+        "description": "Montage, frequency bands, and a documented entry for each of the 14 channels.\n\nThe prose is authored in ``domain/catalog/channels.yaml``; the loader refuses to\nstart if a documented channel is not a real channel of this montage.",
+        "operationId": "catalog_api_channels_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "The whole montage, with documentation",
+        "tags": [
+          "channels"
+        ]
+      }
+    },
+    "/api/channels/{name}": {
+      "get": {
+        "description": "Case-insensitive: ``/api/channels/o1`` and ``/api/channels/O1`` are the same.",
+        "operationId": "channel_api_channels__name__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "title": "Name",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ChannelDocModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One channel",
+        "tags": [
+          "channels"
+        ]
+      }
+    },
+    "/api/flows": {
+      "get": {
+        "operationId": "list_flows_api_flows_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/FlowSpecModel"
+                  },
+                  "title": "Response List Flows Api Flows Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Saved flows",
+        "tags": [
+          "flows"
+        ]
+      },
+      "post": {
+        "operationId": "create_flow_api_flows_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlowInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlowSpecModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Save a new flow",
+        "tags": [
+          "flows"
+        ]
+      }
+    },
+    "/api/flows/preview": {
+      "post": {
+        "description": "The running order, expanded \u00e2\u20ac\u201d the builder's timeline strip.",
+        "operationId": "preview_flow_api_flows_preview_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlowInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlanPreviewModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "What this flow will do",
+        "tags": [
+          "flows"
+        ]
+      }
+    },
+    "/api/flows/validate": {
+      "post": {
+        "description": "Errors make a flow unrunnable; warnings are things worth knowing.\n\nThe rules are the engine's own, so the builder cannot accept something the runner\nwill refuse \u00e2\u20ac\u201d and the messages say what to change, not which field is wrong.",
+        "operationId": "check_flow_api_flows_validate_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlowInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Check a flow without saving it",
+        "tags": [
+          "flows"
+        ]
+      }
+    },
+    "/api/flows/{flow_id}": {
+      "delete": {
+        "operationId": "delete_flow_api_flows__flow_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "flow_id",
+            "required": true,
+            "schema": {
+              "title": "Flow Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete a flow",
+        "tags": [
+          "flows"
+        ]
+      },
+      "get": {
+        "operationId": "get_flow_api_flows__flow_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "flow_id",
+            "required": true,
+            "schema": {
+              "title": "Flow Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlowSpecModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One saved flow",
+        "tags": [
+          "flows"
+        ]
+      },
+      "put": {
+        "operationId": "update_flow_api_flows__flow_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "flow_id",
+            "required": true,
+            "schema": {
+              "title": "Flow Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FlowInput"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FlowSpecModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Update a saved flow",
+        "tags": [
+          "flows"
+        ]
+      }
+    },
+    "/api/recordings": {
+      "get": {
+        "description": "Newest first.\n\nThree kinds are listed together because they are the same thing to a user:\n``dataset`` (written by a guided flow, so it has labels), ``session`` (a\n``live_view.py`` folder) and ``recording`` (a flat CSV from ``record.py``).",
+        "operationId": "list_recordings_api_recordings_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Everything in recordings/",
+        "tags": [
+          "recordings"
+        ]
+      }
+    },
+    "/api/recordings/{entry_id}": {
+      "get": {
+        "operationId": "get_recording_api_recordings__entry_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LibraryEntryModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "One recording",
+        "tags": [
+          "recordings"
+        ]
+      }
+    },
+    "/api/recordings/{entry_id}/bands": {
+      "get": {
+        "description": "A quick summary of a dataset: which bands dominate on which channel.\n\nThis is the endpoint that answers \"did the eyes-closed protocol actually produce\nmore occipital alpha than the eyes-open one?\" without opening a notebook.",
+        "operationId": "get_bands_api_recordings__entry_id__bands_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": true,
+                  "title": "Response Get Bands Api Recordings  Entry Id  Bands Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Per-channel band power, whole recording",
+        "tags": [
+          "recordings"
+        ]
+      }
+    },
+    "/api/recordings/{entry_id}/preview": {
+      "get": {
+        "description": "For the chart. Decimated, not averaged, so transients survive.",
+        "operationId": "get_preview_api_recordings__entry_id__preview_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "title": "Entry Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "points",
+            "required": false,
+            "schema": {
+              "default": 900,
+              "maximum": 8000,
+              "minimum": 16,
+              "title": "Points",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreviewModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Decimated samples",
+        "tags": [
+          "recordings"
+        ]
+      }
+    },
+    "/api/recordings/{entry_id}/segments": {
+      "get": {
+        "description": "The state table of a dataset. Empty for a recording that has no labels.",
+        "operationId": "get_segments_api_recordings__entry_id__segments_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/SegmentModel"
+                  },
+                  "title": "Response Get Segments Api Recordings  Entry Id  Segments Get",
+                  "type": "array"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Its labels",
+        "tags": [
+          "recordings"
+        ]
+      }
+    },
+    "/api/recordings/{entry_id}/spectrum": {
+      "get": {
+        "description": "One channel's spectrum, for checking that a dataset contains what it claims.",
+        "operationId": "get_spectrum_api_recordings__entry_id__spectrum_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "title": "Entry Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "channel",
+            "required": false,
+            "schema": {
+              "default": "O1",
+              "title": "Channel",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "seconds",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "maximum": 3600,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Seconds"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SpectrumModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Log power spectrum",
+        "tags": [
+          "recordings"
+        ]
+      }
+    },
+    "/api/sessions": {
+      "post": {
+        "description": "Start a protocol.\n\nThe countdown runs first and is **not recorded**; the dataset is created the\nmoment it ends. If the operator stops during the countdown there is no dataset at\nall, because there was never any data.",
+        "operationId": "start_session_api_sessions_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StartSessionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionStateModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run a flow",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/sessions/current": {
+      "get": {
+        "description": "``null`` when nothing is running \u00e2\u20ac\u201d which is the normal state.",
+        "operationId": "current_api_sessions_current_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/SessionStateModel"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Current Api Sessions Current Get"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "The running session",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/sessions/current/abort": {
+      "post": {
+        "description": "Stop and delete the dataset. For a run that went wrong.",
+        "operationId": "abort_session_api_sessions_current_abort_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionStateModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Stop and discard",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/sessions/current/stop": {
+      "post": {
+        "description": "Stop the run.\n\nA looping protocol drops its tail states here \u00e2\u20ac\u201d the one you interrupted plus the\ncompleted one before it \u00e2\u20ac\u201d because reaching for the button is itself a change in\nwhat the subject is doing. See ``FlowSpec.effective_discard_tail``.",
+        "operationId": "stop_session_api_sessions_current_stop_post",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionStateModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Stop and keep the data",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/sessions/quick": {
+      "post": {
+        "description": "Name it, press the button, hear 3-2-1, and record until you stop.\n\nThis is deliberately the same machinery as a flow \u00e2\u20ac\u201d a one-state, open-ended,\nlinear protocol \u00e2\u20ac\u201d rather than a second code path that could drift from it.",
+        "operationId": "quick_record_api_sessions_quick_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuickRecordRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SessionStateModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Record one label",
+        "tags": [
+          "sessions"
+        ]
+      }
+    },
+    "/api/system/devices": {
+      "get": {
+        "description": "What is plugged in. ``streaming_interface`` is the one that actually carries EEG.",
+        "operationId": "devices_api_system_devices_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "HID interfaces on the dongle",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/system/source": {
+      "post": {
+        "description": "Choose the dongle, a recording, the synthetic signal, or nothing.\n\nRefused with 409 while a dataset is being recorded: changing the signal under a\nrunning protocol would silently mix two different things into one class.",
+        "operationId": "set_source_api_system_source_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SourceRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Switch the stream",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/system/status": {
+      "get": {
+        "description": "The current source, its health, the device, and any running session.",
+        "operationId": "status_api_system_status_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/StatusModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Everything the header needs",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "additionalProperties": {
+                    "type": "string"
+                  },
+                  "title": "Response Health Health Get",
+                  "type": "object"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Liveness probe",
+        "tags": [
+          "system"
+        ]
+      }
+    }
+  }
+}
