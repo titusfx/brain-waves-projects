@@ -9,6 +9,7 @@ relative band power are *contact and quality* indicators.
 from __future__ import annotations
 
 import numpy as np
+from numpy.typing import NDArray
 
 from eeg_api.domain.models import (
     BANDS,
@@ -170,3 +171,49 @@ def spectrum_freqs() -> list[float]:
     freqs = np.fft.rfftfreq(FFT_N, 1.0 / FS)
     mask = (freqs >= 1.0) & (freqs <= 45.0)
     return [round(float(v), 3) for v in freqs[mask]]
+
+
+def band_mask(freqs: FloatArray) -> NDArray[np.bool_]:
+    """The 1-45 Hz analysis band, matching :func:`spectrum_freqs`."""
+    return (freqs >= 1.0) & (freqs <= 45.0)
+
+
+def welch_log_power(x: FloatArray, fs: float = FS, n: int = FFT_N) -> tuple[FloatArray, FloatArray]:
+    """Averaged periodogram of ``x``, as ``(freqs, log10 mean power)`` over 1-45 Hz.
+
+    This is what the discovery analysis compares classes with, and the averaging is the
+    point. A single 2-second periodogram has a standard error of roughly 100 % per bin,
+    so comparing two single windows compares mostly noise; averaging the periodograms of
+    every overlapping window in a 20-second state cuts that by the square root of the
+    number of windows. Power is averaged *before* the logarithm because periodograms are
+    chi-square distributed and their mean is the well-behaved estimate, not their
+    logarithm.
+
+    Returns empty arrays when there is less than one window of data, so callers can skip
+    a state that is too short to say anything about.
+    """
+    values = np.asarray(x, dtype=np.float64)
+    if values.size < n:
+        return np.zeros(0), np.zeros(0)
+    step = max(1, n // 2)
+    window = np.hanning(n)
+    accumulated: FloatArray | None = None
+    windows = 0
+    for start in range(0, values.size - n + 1, step):
+        segment = values[start : start + n]
+        segment = segment - segment.mean()
+        power = np.abs(np.fft.rfft(segment * window)) ** 2
+        accumulated = power if accumulated is None else accumulated + power
+        windows += 1
+    if accumulated is None or windows == 0:  # pragma: no cover - guarded by the size check
+        return np.zeros(0), np.zeros(0)
+    freqs = np.fft.rfftfreq(n, 1.0 / fs)
+    mask = band_mask(freqs)
+    mean_power = accumulated / windows
+    return freqs[mask], np.log10(mean_power[mask] + 1e-12)
+
+
+def log_power_freqs(fs: float = FS, n: int = FFT_N) -> list[float]:
+    """The frequency axis matching :func:`welch_log_power`."""
+    freqs = np.fft.rfftfreq(n, 1.0 / fs)
+    return [round(float(v), 3) for v in freqs[band_mask(freqs)]]

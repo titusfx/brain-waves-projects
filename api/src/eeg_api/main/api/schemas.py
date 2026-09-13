@@ -200,6 +200,19 @@ class LibraryModel(_Model):
     total: int
 
 
+class DeletedRecordingModel(_Model):
+    """What a deletion actually removed, so the operator is told rather than reassured."""
+
+    id: str
+    name: str
+    kind: str
+    path: str
+    samples: int
+    segments: int
+    labels: list[str]
+    bytes_freed: int
+
+
 class PreviewModel(_Model):
     t: list[float]
     data: list[list[float]]
@@ -211,6 +224,155 @@ class SpectrumModel(_Model):
     freqs: list[float]
     power: list[float]
     channel: str
+
+
+# --------------------------------------------------------------------------- #
+# Discovery
+# --------------------------------------------------------------------------- #
+class DiscoveryInstanceModel(_Model):
+    """One instance of a state: what its spectrum looks like, and its opening seconds."""
+
+    index: int
+    label: str
+    cycle: int
+    step_index: int
+    start_time: float
+    end_time: float
+    duration: float
+    samples: int
+    #: log10 mean power per frequency bin (1-45 Hz) - the space everything is compared in.
+    log_power: list[float]
+    bands: dict[str, float]
+    #: Microvolts from the start of the state, decimated for the overlay.
+    trace: list[float]
+    trace_step: int
+
+
+class ClassSummaryModel(_Model):
+    label: str
+    n: int
+    #: "single" | "thin" | "ok" - how much the instances can support a conclusion.
+    reliability: str
+    mean: list[float]
+    sd: list[float]
+    #: Per bin, 0-1: how repeatable this state is. 1 means the instances are identical.
+    stability: list[float]
+    mean_stability: float | None
+    median_sd: float | None
+
+
+class DiscoveryClassModel(_Model):
+    label: str
+    summary: ClassSummaryModel
+    instances: list[DiscoveryInstanceModel]
+
+
+class EffectBinModel(_Model):
+    frequency: float
+    effect: float
+    mean_a: float
+    mean_b: float
+    shared: bool
+
+
+class BandEffectModel(_Model):
+    band: str
+    effect: float
+    max_effect: float
+    shared: bool
+
+
+class SeparabilityModel(_Model):
+    """Leave-one-out nearest-centroid accuracy, with the counts it was computed from."""
+
+    available: bool
+    n_test: int
+    chance: float
+    bins_used: list[float]
+    accuracy_top_bins: float | None
+    accuracy_all_bins: float | None
+
+
+class ComparisonModel(_Model):
+    label_a: str
+    label_b: str
+    n_a: int
+    n_b: int
+    #: False when either state has one instance: with no within-state spread there is
+    #: nothing to measure a difference against.
+    reliable: bool
+    effect: list[float]
+    shared: list[bool]
+    #: How many bins are the same in both states. ``shared_bins`` lists the most-equal
+    #: few; this is the total, which is the number worth reading.
+    shared_count: int
+    shared_fraction: float
+    observed_max_effect: float
+    null_p95_effect: float
+    p_value: float | None
+    permutations: int
+    #: The smallest p this pairing could ever produce: with three instances per state
+    #: there are 20 ways to split them, so nothing can come out below ~0.048 however
+    #: clean the separation looks.
+    min_attainable_p: float | None
+    top_bins: list[EffectBinModel]
+    shared_bins: list[EffectBinModel]
+    shared_band_names: list[str]
+    bands: list[BandEffectModel]
+    separability: SeparabilityModel
+    freqs: list[float]
+
+
+class ChannelRankModel(_Model):
+    channel: str
+    max_effect: float
+    best_frequency: float | None
+    reliable: bool
+    n_a: int
+    n_b: int
+
+
+class ExcludedStateModel(_Model):
+    index: int
+    label: str
+    duration: float
+    reason: str
+
+
+class DiscoveryModel(_Model):
+    id: str
+    channel: str
+    channels: list[str]
+    labels: list[str]
+    analysed_labels: list[str]
+    #: Sample rate, so a trace can be drawn against time rather than sample index.
+    fs: float
+    window_seconds: float
+    min_seconds: float
+    freqs: list[float]
+    classes: list[DiscoveryClassModel]
+    comparison: ComparisonModel | None
+    channel_ranking: list[ChannelRankModel]
+    #: What was left out and why, so an analysis cannot quietly drop a state.
+    excluded: list[ExcludedStateModel]
+
+
+class DiscoveryRequest(_Model):
+    """Which states to compare, at which electrode, and how hard to test them."""
+
+    channel: str = "O1"
+    labels: list[str] | None = Field(
+        default=None,
+        description="Two labels to compare, A then B. Defaults to every labelled state.",
+    )
+    instances: dict[str, list[int]] | None = Field(
+        default=None,
+        description="Segment indices to use per label, e.g. {'eyes open': [0, 2, 4]}.",
+    )
+    window_seconds: float = Field(default=6.0, gt=0, le=60)
+    points: int = Field(default=600, ge=32, le=4000)
+    min_seconds: float = Field(default=2.0, gt=0, le=120)
+    permutations: int = Field(default=200, ge=0, le=2000)
 
 
 # --------------------------------------------------------------------------- #

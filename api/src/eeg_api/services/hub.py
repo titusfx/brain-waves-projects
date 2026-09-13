@@ -423,6 +423,21 @@ class AcquisitionHub:
     def runner(self) -> FlowRunner | None:
         return self._runner
 
+    def in_use_paths(self) -> list[Path]:
+        """Files and folders the acquisition side is reading or writing right now.
+
+        The deleting endpoint asks for these so it can refuse to pull a file out from
+        under a live replay, or a folder out from under a session that is writing it.
+        """
+        paths: list[Path] = []
+        source = self._source
+        replay_path = getattr(source, "path", None)
+        if isinstance(replay_path, Path):
+            paths.append(replay_path)
+        if self._recorder is not None and not self._recorder.finalised:
+            paths.append(self._recorder.dir)
+        return paths
+
     def attach_runner(self, runner: FlowRunner) -> None:
         self._runner = runner
 
