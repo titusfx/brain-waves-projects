@@ -1,0 +1,63 @@
+# NOTICE
+
+This repository contains original work plus a vendored third-party project.
+Attribution and licensing differ between them.
+
+## Original work
+
+Everything authored for this project — the notes in `eeg-vault/`, the scripts
+in `scripts/`, and this documentation — is:
+
+    Copyright (c) 2026 Mauricio Jorge Cordeiro Garrido (titusfx)
+    Licensed under the MIT License. See LICENSE.
+
+## Vendored: emokit (`vendor/emokit/`)
+
+The USB HID protocol used here was reverse-engineered by the **emokit**
+project. This repository would not exist without it.
+
+    emokit — https://github.com/openyou/emokit
+    Copyright (c) 2010-2016, Cody Brocious, The OpenYou Organization
+    All rights reserved.
+
+    In countries where it is respected, everything is released into the
+    public domain; otherwise it is released under a BSD-style licence.
+    See vendor/emokit/LICENSE for the full text.
+
+Additional contributors to emokit, as credited in its README:
+
+  * Cody Brocious (daeken) — original reverse engineering
+  * Kyle Machulis (qdot)
+  * Severin Lemaignan — C library and mcrypt functionality
+  * Sharif Olorin (fractalcat) — hidapi support
+  * Bill Schumacher (bschumacher) — Python library fixes
+
+### Vendored: AES implementation
+
+    Aes.py — Copyright 2001 Bram Cohen, released into the public domain.
+
+## No Emotiv materials
+
+This repository contains **no** Emotiv source code, binaries, SDK, firmware, or
+API credentials. The protocol documentation in
+`vendor/emokit/doc/emotiv_protocol.asciidoc` is emokit's own public-domain
+reverse-engineering write-up.
+
+"Emotiv", "EPOC", "EPOC+", "Cortex" and related marks are trademarks of Emotiv
+Inc. or Emotiv Systems Inc. They are used here descriptively, to identify the
+hardware this software interoperates with. No affiliation, sponsorship, or
+endorsement is claimed or implied.
+
+## Protocol discovery (original to this repository)
+
+The following findings were derived in this project and are not from emokit:
+
+  * the dongle serial encodes its manufacture date (`UD` + `YYYYMMDD` + counter)
+  * `UD2017`+ serials fall through emokit's literal `startswith("UD2016")` test
+  * the 2016+ payload is **16-bit little-endian** fields at byte offsets
+    2,4,…,30 — emokit used big-endian
+  * the payload is **32 bytes**, not the 64 the "new format" code assumes
+  * fields must be read as **unsigned** counts; a signed view manufactures
+    65535-count artefacts when the high byte crosses 0x7F/0x80
+
+See `eeg-vault/02-software/ud2016-crypto-crack.md`.
