@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Api } from '../../core/api/api';
@@ -62,7 +70,11 @@ function toDraft(spec: FlowSpec): FlowInput {
       <aside class="panel h-fit p-3">
         <div class="mb-2 flex items-center justify-between">
           <h1 class="label mb-0">Saved protocols</h1>
-          <button type="button" class="btn btn-ghost !px-2 !py-0.5 !text-[11px]" (click)="newFlow()">
+          <button
+            type="button"
+            class="btn btn-ghost !px-2 !py-0.5 !text-[11px]"
+            (click)="newFlow()"
+          >
             + New
           </button>
         </div>
@@ -80,7 +92,10 @@ function toDraft(spec: FlowSpec): FlowInput {
               >
                 <div class="flex items-center gap-2">
                   <span class="text-sm font-medium text-slate-100">{{ flow.name }}</span>
-                  <span class="badge ml-auto" [class]="flow.mode === 'loop' ? 'badge-warn' : 'badge-idle'">
+                  <span
+                    class="badge ml-auto"
+                    [class]="flow.mode === 'loop' ? 'badge-warn' : 'badge-idle'"
+                  >
                     {{ flow.mode === 'loop' ? 'loop' : 'linear' }}
                   </span>
                 </div>
@@ -177,7 +192,9 @@ function toDraft(spec: FlowSpec): FlowInput {
             </div>
 
             <div>
-              <label class="label" for="flow-countdown">Start with (countdown before recording)</label>
+              <label class="label" for="flow-countdown"
+                >Start with (countdown before recording)</label
+              >
               <div class="flex items-center gap-2">
                 <input
                   id="flow-countdown"
@@ -195,7 +212,11 @@ function toDraft(spec: FlowSpec): FlowInput {
 
             <div>
               <label class="label" for="flow-repeat">
-                {{ draft().mode === 'loop' ? 'Repeat (blank = until stopped)' : 'Repeat the whole list' }}
+                {{
+                  draft().mode === 'loop'
+                    ? 'Repeat (blank = until stopped)'
+                    : 'Repeat the whole list'
+                }}
               </label>
               <input
                 id="flow-repeat"
@@ -210,7 +231,9 @@ function toDraft(spec: FlowSpec): FlowInput {
             </div>
 
             <div>
-              <label class="label" for="flow-rest">Rest between repetitions (seconds, unlabelled)</label>
+              <label class="label" for="flow-rest"
+                >Rest between repetitions (seconds, unlabelled)</label
+              >
               <input
                 id="flow-rest"
                 type="number"
@@ -231,7 +254,9 @@ function toDraft(spec: FlowSpec): FlowInput {
                 max="20"
                 step="1"
                 class="field"
-                placeholder="{{ draft().mode === 'loop' ? '2 (the interrupted state + the one before it)' : '0' }}"
+                placeholder="{{
+                  draft().mode === 'loop' ? '2 (the interrupted state + the one before it)' : '0'
+                }}"
                 [value]="draft().discard_tail ?? ''"
                 (input)="patchDiscard($event)"
               />
@@ -256,7 +281,8 @@ function toDraft(spec: FlowSpec): FlowInput {
           <div class="flex items-center gap-3">
             <h2 class="text-sm font-semibold text-slate-100">States</h2>
             <p class="text-xs text-slate-400">
-              In order. Leave the duration blank for "until I stop" — allowed only as the last state.
+              In order. Leave the duration blank for "until I stop" — allowed only as the last
+              state.
             </p>
             <button
               type="button"
@@ -273,7 +299,9 @@ function toDraft(spec: FlowSpec): FlowInput {
               <li class="panel-tight flex flex-wrap items-end gap-2 px-3 py-2">
                 <span class="mono mb-1.5 w-6 text-xs text-slate-500">{{ $index + 1 }}</span>
                 <div class="min-w-[180px] flex-1">
-                  <label class="label" [attr.for]="'step-label-' + $index">Name (also spoken)</label>
+                  <label class="label" [attr.for]="'step-label-' + $index"
+                    >Name (also spoken)</label
+                  >
                   <input
                     [id]="'step-label-' + $index"
                     class="field"
@@ -417,16 +445,18 @@ export class FlowsPage {
   private readonly api = inject(Api);
   private readonly router = inject(Router);
 
-  /** Route data: `/flows/new` starts on a blank draft. */
-  readonly fresh = input<boolean>(false);
+  /** Route data: `/flows/new` starts on a blank draft. `undefined` on `/flows`. */
+  readonly fresh = input<boolean | undefined>(undefined);
 
   protected readonly flows = signal<FlowSpec[]>([]);
   protected readonly editingId = signal<string | null>(null);
   protected readonly draft = signal<FlowInput>(emptyDraft());
   protected readonly preview = signal<PlanPreview | null>(null);
-  protected readonly validation = signal<{ valid: boolean; errors: string[]; warnings: string[] } | null>(
-    null,
-  );
+  protected readonly validation = signal<{
+    valid: boolean;
+    errors: string[];
+    warnings: string[];
+  } | null>(null);
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
 

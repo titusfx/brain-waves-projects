@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { Router } from '@angular/router';
 
 import { Api } from '../../core/api/api';
@@ -182,7 +190,10 @@ function labelColour(label: string): string {
               <div class="mt-2 flex flex-wrap gap-2">
                 @for (label of entry.labels; track label.label) {
                   <span class="badge">
-                    <span class="h-1.5 w-1.5 rounded-full" [style.background]="colour(label.label)"></span>
+                    <span
+                      class="h-1.5 w-1.5 rounded-full"
+                      [style.background]="colour(label.label)"
+                    ></span>
                     {{ label.label }} · {{ label.segments }}× ·
                     {{ duration(label.seconds) }}
                   </span>
@@ -197,7 +208,11 @@ function labelColour(label: string): string {
               <h3 class="label mb-0">Samples (decimated)</h3>
               <div class="ml-auto flex flex-wrap gap-1">
                 @for (preset of presets; track preset.label) {
-                  <button type="button" class="btn btn-ghost !px-2 !py-0.5 !text-[11px]" (click)="channels.set(preset.channels)">
+                  <button
+                    type="button"
+                    class="btn btn-ghost !px-2 !py-0.5 !text-[11px]"
+                    (click)="channels.set(preset.channels)"
+                  >
                     {{ preset.label }}
                   </button>
                 }
@@ -223,7 +238,11 @@ function labelColour(label: string): string {
           <div class="panel p-4">
             <div class="flex flex-wrap items-center gap-2">
               <h3 class="label mb-0">Spectrum</h3>
-              <select class="field !w-auto !py-0.5 !text-xs" [value]="spectrumChannel()" (change)="loadSpectrum(value($event))">
+              <select
+                class="field !w-auto !py-0.5 !text-xs"
+                [value]="spectrumChannel()"
+                (change)="loadSpectrum(value($event))"
+              >
                 @for (name of allChannels(); track name) {
                   <option [value]="name">{{ name }}</option>
                 }
@@ -303,8 +322,13 @@ export class DatasetsPage {
   private readonly router = inject(Router);
   protected readonly stream = inject(EegStream);
 
-  /** Bound from the `/datasets/:id` route parameter. */
-  readonly id = input<string>('');
+  /**
+   * Bound from the `/datasets/:id` route parameter.
+   *
+   * `| undefined` because the router binding writes `undefined` when the parameter is
+   * absent — including on `/datasets`, where the page then selects the newest recording.
+   */
+  readonly id = input<string | undefined>(undefined);
 
   protected readonly entries = signal<LibraryEntry[]>([]);
   protected readonly segments = signal<Segment[]>([]);
@@ -333,9 +357,13 @@ export class DatasetsPage {
 
   constructor() {
     void this.reload();
-    // The route parameter changes without the component being recreated, so the detail
-    // is loaded from a computed comparison rather than from ngOnInit.
-    void Promise.resolve().then(() => this.loadDetail(this.id()));
+    // The route parameter changes without this component being recreated — browser
+    // back/forward, or a link from the run screen — so the detail follows the parameter
+    // rather than being loaded once. `loadDetail` ignores a repeat of the same id.
+    effect(() => {
+      const id = this.id();
+      if (id) void this.loadDetail(id);
+    });
   }
 
   protected async reload(): Promise<void> {
@@ -356,8 +384,9 @@ export class DatasetsPage {
   }
 
   protected async open(id: string): Promise<void> {
+    // Navigation is all this has to do: the effect above loads whatever the parameter
+    // becomes, so there is one code path for "the id changed" rather than two.
     await this.router.navigate(['/datasets', id]);
-    await this.loadDetail(id);
   }
 
   private async loadDetail(id: string): Promise<void> {

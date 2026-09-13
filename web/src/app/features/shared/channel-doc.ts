@@ -26,13 +26,17 @@ import { bandColor, statusTone } from '../../core/format';
               <h2 class="text-xl font-semibold text-slate-100">{{ channel.name }}</h2>
               <span class="badge">{{ channel.lobe }} · {{ channel.hemisphere }}</span>
               @if (metrics(); as live) {
-                <span class="badge" [class]="'badge-' + toneOf(live.status)">{{ live.status }}</span>
+                <span class="badge" [class]="'badge-' + toneOf(live.status)">{{
+                  live.status
+                }}</span>
               }
             </div>
             <p class="mt-1 text-sm text-slate-400">{{ channel.region }}</p>
           </div>
           @if (closable()) {
-            <button type="button" class="btn btn-ghost" (click)="close.emit()" aria-label="Close">✕</button>
+            <button type="button" class="btn btn-ghost" (click)="dismiss.emit()" aria-label="Close">
+              ✕
+            </button>
           }
         </header>
 
@@ -136,7 +140,8 @@ export class ChannelDocPanel {
   readonly doc = input<ChannelDoc | null>(null);
   readonly metrics = input<ChannelMetrics | null>(null);
   readonly closable = input(false);
-  readonly close = output<void>();
+  /** Named `dismiss`, not `close`: `close` is a native DOM event name. */
+  readonly dismiss = output<void>();
   readonly pick = output<string>();
 
   protected toneOf(status: string): string {

@@ -90,7 +90,9 @@ import { HeadMap } from '../shared/head-map';
               >
                 <div class="flex items-center gap-2">
                   <span class="mono text-sm font-semibold text-slate-100">{{ doc.name }}</span>
-                  <span class="text-[11px] text-slate-500">{{ doc.lobe }} · {{ doc.hemisphere }}</span>
+                  <span class="text-[11px] text-slate-500"
+                    >{{ doc.lobe }} · {{ doc.hemisphere }}</span
+                  >
                   @if (metricsMap().get(doc.name); as live) {
                     <span class="badge ml-auto" [class]="'badge-' + tone(live.status)">{{
                       live.status
@@ -104,7 +106,11 @@ import { HeadMap } from '../shared/head-map';
         </section>
 
         <aside class="panel h-fit p-4 xl:sticky xl:top-4">
-          <eeg-channel-doc [doc]="selectedDoc()" [metrics]="selectedMetrics()" (pick)="select($event)" />
+          <eeg-channel-doc
+            [doc]="selectedDoc()"
+            [metrics]="selectedMetrics()"
+            (pick)="select($event)"
+          />
         </aside>
       </div>
     } @else if (error(); as text) {
@@ -119,13 +125,19 @@ export class ChannelsPage {
   private readonly router = inject(Router);
   protected readonly stream = inject(EegStream);
 
-  /** Bound from `?channel=O1` by the router's component input binding. */
-  readonly channel = input<string>('O1');
+  /**
+   * Bound from `?channel=O1` by the router's component input binding.
+   *
+   * Declared `| undefined` on purpose: when the query parameter is absent the router
+   * *writes `undefined` into the input*, overriding any default — so a default value
+   * here would be a lie that only fails at runtime.
+   */
+  readonly channel = input<string | undefined>(undefined);
 
   protected readonly catalog = signal<ChannelCatalog | null>(null);
   protected readonly error = signal<string | null>(null);
 
-  protected readonly selected = computed(() => this.channel().toUpperCase());
+  protected readonly selected = computed(() => (this.channel() ?? 'O1').toUpperCase());
 
   protected readonly metricsMap = computed(() => {
     const map = new Map<string, ChannelMetrics>();

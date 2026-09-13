@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  input,
+  signal,
+} from '@angular/core';
 import { RouterLink } from '@angular/router';
 
 import { Api } from '../../core/api/api';
@@ -32,7 +40,9 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
   imports: [Waveform, RouterLink],
   template: `
     <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
-      <section class="panel relative flex min-h-[520px] flex-col items-center justify-center overflow-hidden p-6">
+      <section
+        class="panel relative flex min-h-[520px] flex-col items-center justify-center overflow-hidden p-6"
+      >
         <!-- ------------------------------------------------------ countdown -->
         @if (countdown() !== null) {
           <div class="flex flex-col items-center">
@@ -55,7 +65,14 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
           <div class="flex flex-col items-center">
             <div class="relative grid place-items-center">
               <svg viewBox="0 0 120 120" class="h-56 w-56 -rotate-90">
-                <circle cx="60" cy="60" [attr.r]="ringRadius" fill="none" stroke="#1e293b" stroke-width="8" />
+                <circle
+                  cx="60"
+                  cy="60"
+                  [attr.r]="ringRadius"
+                  fill="none"
+                  stroke="#1e293b"
+                  stroke-width="8"
+                />
                 <circle
                   cx="60"
                   cy="60"
@@ -74,7 +91,9 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
               </div>
             </div>
 
-            <p class="mt-6 text-2xl font-semibold text-slate-100">{{ run.engine.phase?.label ?? '…' }}</p>
+            <p class="mt-6 text-2xl font-semibold text-slate-100">
+              {{ run.engine.phase?.label ?? '…' }}
+            </p>
             <p class="mt-1 text-sm text-slate-400">
               @if (run.engine.cycles === null) {
                 cycle {{ run.engine.cycle + 1 }} · until you stop
@@ -109,10 +128,20 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
             </div>
 
             <div class="mt-6 flex flex-wrap justify-center gap-2">
-              <button type="button" class="btn btn-primary !px-5 !py-2" [disabled]="busy()" (click)="stop()">
+              <button
+                type="button"
+                class="btn btn-primary !px-5 !py-2"
+                [disabled]="busy()"
+                (click)="stop()"
+              >
                 ■ Stop and keep
               </button>
-              <button type="button" class="btn btn-danger !px-5 !py-2" [disabled]="busy()" (click)="discard()">
+              <button
+                type="button"
+                class="btn btn-danger !px-5 !py-2"
+                [disabled]="busy()"
+                (click)="discard()"
+              >
                 Discard
               </button>
             </div>
@@ -129,12 +158,14 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
           <div class="w-full max-w-xl">
             <h1 class="text-lg font-semibold text-slate-100">Run a protocol</h1>
             <p class="mt-1 text-sm text-slate-400">
-              The subject hears the states and the countdown; the dataset is written here and nowhere
-              else.
+              The subject hears the states and the countdown; the dataset is written here and
+              nowhere else.
             </p>
 
             @if (!stream.streaming()) {
-              <p class="mt-4 rounded-lg border border-amber-700/50 bg-amber-950/30 px-3 py-2 text-xs text-amber-200">
+              <p
+                class="mt-4 rounded-lg border border-amber-700/50 bg-amber-950/30 px-3 py-2 text-xs text-amber-200"
+              >
                 Nothing is streaming. Start the dongle or the demo signal from the header before
                 running a protocol — recording silence produces a dataset that looks fine and means
                 nothing.
@@ -157,7 +188,9 @@ const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
                 @if (selectedFlow(); as flow) {
                   <p class="mt-1 text-[11px] text-slate-500">
                     {{ flow.steps.length }} state(s) ·
-                    {{ flow.total_seconds === null ? 'until stopped' : duration(flow.total_seconds) }}
+                    {{
+                      flow.total_seconds === null ? 'until stopped' : duration(flow.total_seconds)
+                    }}
                     · countdown {{ flow.countdown_seconds }} s
                     @if (flow.mode === 'loop') {
                       · loops
@@ -292,8 +325,8 @@ export class RunPage {
   protected readonly stream = inject(EegStream);
   protected readonly speech = inject(Speech);
 
-  /** Bound from `?flow=<id>`. */
-  readonly flow = input<string>('');
+  /** Bound from `?flow=<id>`; `undefined` when the query parameter is absent. */
+  readonly flow = input<string | undefined>(undefined);
 
   protected readonly flows = signal<FlowSpec[]>([]);
   protected readonly selectedId = signal<string | null>(null);
