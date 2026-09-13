@@ -762,6 +762,101 @@ try {
     return { whole: whole.body.total_samples, window: window_.body.total_samples };
   });
 
+  // -------------------------------------------------------- zoom and hover
+  await check('the charts zoom, and hovering reads out every signal', async () => {
+    const listing = await api('/api/recordings');
+    const entry = listing.body.recordings.find((item) => item.name === 'verify discovery');
+    assert(entry, 'the discovery dataset is missing');
+
+    /** Dispatch a real pointer/wheel event at a fraction across a chart's surface. */
+    const interact = (host, kind, fraction, deltaY = 0) =>
+      cdp.evaluate(`(() => {
+        const host = document.querySelector(${JSON.stringify(host)});
+        if (!host) throw new Error(${JSON.stringify(`${host} is not on the page`)});
+        const surface = host.querySelector('div');
+        const rect = surface.getBoundingClientRect();
+        const options = {
+          clientX: rect.left + rect.width * ${fraction},
+          clientY: rect.top + rect.height / 2,
+          bubbles: true,
+          cancelable: true,
+          pointerId: 1,
+        };
+        ${
+          kind === 'wheel'
+            ? `surface.dispatchEvent(new WheelEvent('wheel', { ...options, deltaY: ${deltaY} }));`
+            : `surface.dispatchEvent(new PointerEvent('pointermove', options));`
+        }
+        return true;
+      })()`);
+
+    const readout = (host) =>
+      cdp.evaluate(`(() => {
+        const box = document.querySelector(${JSON.stringify(host)})?.querySelector('.pointer-events-none');
+        return box ? box.innerText : '';
+      })()`);
+
+    await cdp.goto(`${BASE}/datasets/${entry.id}/discovery`);
+    await cdp.waitFor(`document.querySelector('eeg-spectrum-overlay') !== null`, {
+      label: 'the spectra overlay',
+      timeout: 20000,
+    });
+    await sleep(1500);
+
+    // Hover: one line per state, at the frequency under the pointer.
+    await interact('eeg-spectrum-overlay', 'pointermove', 0.35);
+    await sleep(300);
+    const spectrumTip = await readout('eeg-spectrum-overlay');
+    assert(/hz/i.test(spectrumTip), `the frequency readout is missing (got "${spectrumTip}")`);
+    assert(
+      /eyes closed/i.test(spectrumTip) && /eyes open/i.test(spectrumTip),
+      `the readout does not give a value for both states: "${spectrumTip}"`,
+    );
+    assert(/\d/.test(spectrumTip), 'the readout has no numbers in it');
+
+    // Zoom: the wheel narrows the window, and a control appears to undo it.
+    await interact('eeg-spectrum-overlay', 'wheel', 0.35, -300);
+    await cdp.waitFor(
+      `[...document.querySelectorAll('button')].some((b) => b.innerText.trim() === 'reset zoom')`,
+      { label: 'the reset-zoom control' },
+    );
+    const zoomedTip = await readout('eeg-spectrum-overlay');
+    await cdp.shot('12-zoom-hover');
+    await cdp.dump('12-zoom-hover');
+
+    await cdp.evaluate(`(() => {
+      const button = [...document.querySelectorAll('button')].find((b) => b.innerText.trim() === 'reset zoom');
+      button.click();
+      return true;
+    })()`);
+    await sleep(400);
+    const stillZoomed = await cdp.evaluate(
+      `[...document.querySelectorAll('button')].some((b) => b.innerText.trim() === 'reset zoom')`,
+    );
+    assert(!stillZoomed, 'reset zoom did not restore the whole range');
+
+    // And the same on a dataset overview: a value per channel, at a time.
+    await cdp.goto(`${BASE}/datasets/${entry.id}`);
+    await cdp.waitFor(`document.querySelector('eeg-sample-chart') !== null`, {
+      label: 'the sample chart',
+    });
+    await sleep(1200);
+    await interact('eeg-sample-chart', 'pointermove', 0.5);
+    await sleep(300);
+    const sampleTip = await readout('eeg-sample-chart');
+    assert(/t = /i.test(sampleTip), `the time readout is missing (got "${sampleTip}")`);
+    // Matched loosely on purpose: the unit glyph is a micro sign, and a check that spells
+    // it out fails for reasons that have nothing to do with the chart.
+    assert(/O1|O2|F3|F4/.test(sampleTip), `no channel is named: "${sampleTip}"`);
+    assert(/-?\d+\.\d/.test(sampleTip), `no numeric value is given: "${sampleTip}"`);
+
+    return {
+      spectrumReadout: spectrumTip.split('\n').slice(0, 3).join(' | '),
+      zoomedReadout: zoomedTip.split('\n')[0],
+      sampleReadout: sampleTip.split('\n').slice(0, 3).join(' | '),
+    };
+  });
+
   // -------------------------------------------------------------- deleting
   await check('deleting asks first, and cancelling keeps the recording', async () => {
     await ensureDemo();
