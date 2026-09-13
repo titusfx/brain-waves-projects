@@ -1,0 +1,27 @@
+{
+  "name": "brain-waves-workbench",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Emotiv EPOC+ driver, live EEG workbench (FastAPI + Angular) and dataset tooling.",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "api": "uv --directory api run uvicorn eeg_api.main.run:app --reload --port 8020",
+    "api:prod": "uv --directory api run uvicorn eeg_api.main.run:app --host 127.0.0.1 --port 8020",
+    "web": "npm --prefix web start -- --port 4301 --host 127.0.0.1",
+    "build:web": "npm --prefix web run build",
+    "api:types": "uv --directory api run python scripts/dump_openapi.py && npm --prefix web run api:types",
+    "lint": "npm run lint:api && npm run lint:web",
+    "lint:api": "uv --directory api run ruff check . && uv --directory api run ruff format --check .",
+    "lint:web": "npm --prefix web run lint && npm --prefix web run format:check",
+    "test": "npm run test:api && npm run test:web",
+    "test:api": "uv --directory api run pytest -q",
+    "test:web": "npm --prefix web run test:ci",
+    "typecheck:api": "uv --directory api run mypy src",
+    "arch": "uv --directory api run lint-imports",
+    "verify:web": "node tools/verify-web.mjs",
+    "verify": "npm run lint && npm run typecheck:api && npm run arch && npm run test && npm run build:web"
+  }
+}

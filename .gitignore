@@ -17,6 +17,23 @@ env/
 # ---- Node / npm caches (same reason as .uv-cache: keep caches out of the repo) ----
 .npm-cache/
 
+# ---- Angular / web (web/) ----
+# node_modules and the build output are reproducible from web/package.json and
+# web/package-lock.json; `dist/` above already covers web/dist/.
+web/node_modules/
+web/.angular/
+web/coverage/
+web/.vscode/
+
+# ---- Saved flow definitions ----
+# The operator's own protocols. The store re-creates the three example flows on first
+# run (see FlowStore.ensure_seeds), so nothing is lost by ignoring them here — and
+# anything an operator adds stays on their machine.
+api/var/
+
+# ---- Verification output (screenshots and text dumps from tools/verify-web.mjs) ----
+tools/out-verify/
+
 # ---- Vendored third-party source: published as plain files ----
 # NOTE: vendor/emokit/.git was deliberately deleted. While it existed, git
 # treated vendor/emokit as an embedded repository and published it as a broken
