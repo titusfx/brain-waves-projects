@@ -14,7 +14,11 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 from fastapi.testclient import TestClient
+
+from eeg_api.domain.models import CHANNELS
+from eeg_api.services.recorder import DatasetRecorder
 
 
 #: Generous, because CI machines are slow; the point is to fail loudly, not quickly.
@@ -453,3 +457,81 @@ def _one_state_flow(countdown: float = 0.2) -> dict[str, Any]:
         "discard_tail": 0,
         "steps": [{"label": "moving", "seconds": None}],
     }
+
+
+# --------------------------------------------------------------------------- #
+# Deleting
+# --------------------------------------------------------------------------- #
+def _write_dataset(settings: Any, name: str = "to delete") -> str:
+    """A dataset on disk, so deletion has something real to remove."""
+    recorder = DatasetRecorder(settings.recordings_dir, name, fs=settings.fs)
+    recorder.begin(0.0)
+    recorder.request_open(0.0, "eyes closed", step_index=0)
+    recorder.request_close(2.0)
+    recorder.append(np.zeros((256, len(CHANNELS))), t0=0.0)
+    recorder.finalize(discard_tail=0, outcome="completed")
+    return recorder.dir.name
+
+
+def test_deleting_a_recording_removes_it_from_disk_and_the_listing(
+    client: TestClient, settings: Any
+) -> None:
+    entry_id = _write_dataset(settings)
+    assert entry_id in [item["id"] for item in client.get("/api/recordings").json()["recordings"]]
+
+    response = client.delete(f"/api/recordings/{entry_id}")
+    assert response.status_code == 200, response.text
+    body = response.json()
+    assert body["id"] == entry_id
+    assert body["name"] == "to delete"
+    assert body["kind"] == "dataset"
+    assert body["bytes_freed"] > 0
+    assert body["labels"] == ["eyes closed"]
+
+    assert not (settings.recordings_dir / entry_id).exists()
+    assert client.get("/api/recordings").json()["recordings"] == []
+    assert client.delete(f"/api/recordings/{entry_id}").status_code == 404
+
+
+def test_deleting_an_unknown_recording_is_a_404(client: TestClient) -> None:
+    assert client.delete("/api/recordings/no-such-thing").status_code == 404
+
+
+def test_deleting_something_out_of_bounds_is_refused(client: TestClient, settings: Any) -> None:
+    """Nothing outside ``recordings/`` may be reachable, however the id is spelled.
+
+    Asserting the *property* rather than a status code: an HTTP client resolves `..` in
+    the URL before it is ever sent, so several of these never reach the server's own
+    guard at all, and the answer that matters is "the sentinel is still there and this
+    was not reported as a success".
+    """
+    outside = settings.recordings_dir.parent
+    sentinel = outside / "sentinel.txt"
+    sentinel.write_text("do not delete me", encoding="utf-8")
+
+    for bad in ("..", ".", "..%2F..", "%2e%2e", "....", "..%5C.."):
+        response = client.delete(f"/api/recordings/{bad}")
+        assert response.status_code >= 400, f"{bad} returned {response.status_code}"
+        assert sentinel.exists(), f"{bad} removed a file outside recordings/"
+    assert outside.exists()
+
+
+def test_a_recording_cannot_be_deleted_while_it_is_being_recorded(
+    client: TestClient, settings: Any
+) -> None:
+    """The session's own folder must survive the session that is writing it."""
+    start_demo(client)
+    wait_for_samples(client)
+    client.post("/api/sessions", json={"flow": _one_state_flow(), "dataset_name": "in progress"})
+
+    def recording_started() -> bool:
+        current = client.get("/api/sessions/current").json()
+        return bool(current and current["recording"] and current["recording_state"]["samples"] > 16)
+
+    wait_for(recording_started, what="the recording to start")
+    folder = client.get("/api/sessions/current").json()["recording_state"]["id"]
+    response = client.delete(f"/api/recordings/{folder}")
+    assert response.status_code == 409, response.text
+    assert (settings.recordings_dir / folder).exists()
+
+    client.post("/api/sessions/current/abort")
