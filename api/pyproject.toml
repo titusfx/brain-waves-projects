@@ -1,0 +1,174 @@
+[project]
+name = "eeg-api"
+version = "0.1.0"
+description = "Backend for the EPOC+ live EEG workbench — acquisition, streaming, guided flows and datasets."
+readme = "README.md"
+requires-python = ">=3.12"
+license = "MIT"
+dependencies = [
+  "fastapi>=0.141.1",
+  "uvicorn[standard]>=0.38",
+  "pydantic>=2.13",
+  "pydantic-settings>=2.10",
+  # Signal maths. The whole display pipeline (band power, alpha peak, contact
+  # status) is computed here rather than in the browser, so that the web UI and
+  # scripts/live_view.py cannot disagree about what a number means.
+  "numpy>=2.1",
+  # The dongle's AES-128-ECB. Same library the offline crack used.
+  "pycryptodome>=3.23",
+  # USB HID access to the dongle. The import name is `hid`, not `hidapi`.
+  "hidapi>=0.14",
+  # Channel documentation is authored as data, not as code — see
+  # src/eeg_api/domain/catalog/channels.yaml.
+  "pyyaml>=6.0",
+]
+
+[dependency-groups]
+dev = [
+  "ruff>=0.16",
+  "mypy>=1.14",
+  "import-linter>=2.15",
+  "pytest>=8.4",
+  "pytest-asyncio>=1.0",
+  "httpx>=0.28",
+  "types-pyyaml>=6.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.12.13,<0.13"]
+build-backend = "uv_build"
+
+[tool.uv]
+package = true
+
+# ---------------------------------------------------------------------------
+# Lint + format — ruff replaces black, isort and flake8.
+# ---------------------------------------------------------------------------
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+extend-exclude = [".venv"]
+
+[tool.ruff.lint]
+select = [
+  "E", "W", "F",    # pycodestyle, pyflakes
+  "I",              # isort
+  "B", "C4", "UP",  # bugbear, comprehensions, pyupgrade
+  "SIM", "PTH", "RET", "PERF", "FURB",
+  "N",              # pep8-naming
+  "S",              # bandit
+  "ASYNC",          # flake8-async — important for FastAPI
+  "T20",            # no print()
+  "TID",            # tidy-imports (needed for banned-api)
+  "FA",             # future annotations
+  "LOG", "G",       # logging
+  "ARG",            # unused arguments
+  "RUF",
+]
+ignore = [
+  "E501",  # the formatter owns line length
+  "B008",  # FastAPI's Depends() in defaults is idiomatic
+  "S101",  # assert is fine in tests
+]
+
+[tool.ruff.lint.per-file-ignores]
+# Tests pin literal values and implement whole port signatures; that is their job.
+"tests/**" = ["S101", "ARG001", "ARG002", "TID251", "S105", "S106"]
+# Operator CLI scripts print to stdout by design.
+"scripts/**" = ["T201", "TID251"]
+# The composition root and the drivers exist precisely to touch frameworks,
+# the HID device and the filesystem.
+"src/eeg_api/main/**" = ["TID251"]
+"src/eeg_api/eeg/**" = ["TID251"]
+"src/eeg_api/services/**" = ["TID251"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["eeg_api"]
+combine-as-imports = true
+lines-after-imports = 2
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "parents"
+
+# The architecture guard. The domain layer is the model of the signal and the
+# protocol; it must not learn about HTTP, and it must not learn that this
+# backend is a *web* backend at all.
+[tool.ruff.lint.flake8-tidy-imports.banned-api]
+"fastapi".msg = "The domain and application layers must stay framework-free. Put HTTP concerns in main/api/."
+"starlette".msg = "The domain and application layers must stay framework-free."
+
+[tool.ruff.lint.pyupgrade]
+keep-runtime-typing = true
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+
+# ---------------------------------------------------------------------------
+# Types
+# ---------------------------------------------------------------------------
+[tool.mypy]
+python_version = "3.12"
+strict = true
+warn_unreachable = true
+warn_unused_ignores = true
+disallow_any_generics = true
+no_implicit_reexport = true
+pretty = true
+show_error_codes = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_defs = false
+warn_return_any = false
+
+# The HID binding and pycryptodome ship no type information at all. Both are wrapped
+# behind this project's own modules, so there is nothing useful to check here anyway.
+[[tool.mypy.overrides]]
+module = ["hid", "hid.*", "Crypto", "Crypto.*"]
+ignore_missing_imports = true
+
+# ---------------------------------------------------------------------------
+# Tests
+# ---------------------------------------------------------------------------
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-ra --strict-markers --strict-config"
+filterwarnings = ["error::DeprecationWarning:eeg_api.*"]
+
+# ---------------------------------------------------------------------------
+# Architecture enforcement — layers point inward only.
+# ---------------------------------------------------------------------------
+[tool.importlinter]
+root_package = "eeg_api"
+exclude_type_checking_imports = true
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Layer direction: outer may depend on inner, never the reverse"
+type = "layers"
+containers = ["eeg_api"]
+layers = [
+  "main",        # composition root + HTTP/WebSocket adapters (outermost)
+  "services",    # use cases: acquisition hub, recorder, flow runner
+  "eeg",         # driven adapters: the dongle driver, replay and demo sources
+  "domain",      # the signal, the montage, the flow state machine (innermost)
+]
+
+[[tool.importlinter.contracts]]
+name = "domain is framework-free and knows nothing outward"
+type = "forbidden"
+source_modules = ["eeg_api.domain"]
+forbidden_modules = [
+  "fastapi",
+  "starlette",
+  "yaml",
+  "eeg_api.eeg",
+  "eeg_api.services",
+  "eeg_api.main",
+]
