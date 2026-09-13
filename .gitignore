@@ -1,0 +1,69 @@
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.uv-cache/
+
+# ---- Node / npm caches (same reason as .uv-cache: keep caches out of the repo) ----
+.npm-cache/
+
+# ---- Vendored third-party source: published as plain files ----
+# NOTE: vendor/emokit/.git was deliberately deleted. While it existed, git
+# treated vendor/emokit as an embedded repository and published it as a broken
+# submodule link instead of real content. The commit is pinned in vendor/README.md.
+
+# ---- Jupyter ----
+.ipynb_checkpoints/
+
+# ---- EEG data (never commit recordings; they are large and personal) ----
+data/
+*.edf
+*.bdf
+*.fif
+*.set
+*.vhdr
+*.xdf
+recordings/
+*.csv
+!eeg-vault/**/*.csv
+
+# EXCEPTION: emokit's public-domain captured ciphertext. These are NOT the
+# owner's data (they came from emokit's author and are already public), and
+# scripts/test_ud2016_crypto.py, find_layout.py, verify_layout.py and
+# decode_to_csv.py all depend on them for reproducibility.
+!vendor/emokit/**/*.csv
+
+# ---- Analysis output derived from EEG = still biometric data ----
+# These contain per-channel amplitudes and spectra from a real person's brain.
+alpha_report.txt
+*_report.txt
+*battery_hunt*
+lv_test.txt
+
+# ---- Secrets: Emotiv client id/secret, cortex tokens ----
+.env
+.env.*
+secrets.json
+cortex_token*
+
+# ---- OS / editors ----
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# ---- Obsidian: keep the vault config, ignore the machine-local cruft ----
+eeg-vault/.obsidian/workspace.json
+eeg-vault/.obsidian/workspace-mobile.json
+eeg-vault/.obsidian/cache
+eeg-vault/.trash/
