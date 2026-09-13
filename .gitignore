@@ -11,6 +11,7 @@ env/
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+.import_linter_cache/
 .uv-cache/
 
 # ---- Node / npm caches (same reason as .uv-cache: keep caches out of the repo) ----
@@ -52,6 +53,9 @@ lv_test.txt
 # ---- Secrets: Emotiv client id/secret, cortex tokens ----
 .env
 .env.*
+# ...but the example config IS documentation and belongs in the repo: api/.env.example
+# is referenced by api/README.md and is how you learn the EEG_* knobs exist.
+!.env.example
 secrets.json
 cortex_token*
 
