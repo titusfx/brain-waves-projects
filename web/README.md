@@ -7,7 +7,7 @@ stream.
 ```powershell
 # from the repository root
 npm run api          # FastAPI on http://127.0.0.1:8020
-npm run web          # dev server on http://localhost:4200, proxying /api and /ws
+npm run web          # dev server on http://localhost:4301, proxying /api and /ws
 ```
 
 Or build it and let the API serve it — one process, one origin:

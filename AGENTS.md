@@ -254,16 +254,18 @@ Added 2026-09-13. Full write-up: `eeg-vault/03-project/web-workbench.md`.
 
 ```powershell
 npm run api        # FastAPI on http://127.0.0.1:8020   (uv --directory api run uvicorn …)
-npm run web        # Angular dev server on :4200, proxying /api and /ws
+npm run web        # Angular dev server on :4301, proxying /api and /ws
 npm run build:web; npm run api:prod   # one process, one origin — no proxy needed
 npm test           # api pytest + web vitest
 npm run verify     # lint + mypy + arch + tests + web build
 npm run verify:web # headless-Chrome end-to-end (needs the API running)
 ```
 
-**Port 8020, not 8000.** Another project on this machine already binds 8000, and `GET
-/health` there answers plausibly — so an accidental clash looks like a working deployment.
-It is the proxy target in `web/proxy.conf.json`.
+**The ports are 8020 and 4301, not the conventional 8000 and 4200.** Both conventional
+ports are already bound on this machine by the author's other projects, and one of them
+answers `GET /health` plausibly — so an accidental clash looks like a working deployment
+rather than a conflict. 4300 is taken too. 8020 is the API's port and the proxy target in
+`web/proxy.conf.json`; 4301 is the dev server's own port, set in the root `package.json`.
 
 ### Layout
 

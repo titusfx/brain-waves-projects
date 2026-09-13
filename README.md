@@ -169,7 +169,7 @@ It is the same decoder the scripts above use, with an interface on top.
 
 ```powershell
 npm run api                 # FastAPI on http://127.0.0.1:8020
-npm run web                 # Angular dev server on http://localhost:4200 (proxies /api and /ws)
+npm run web                 # Angular dev server on http://localhost:4301 (proxies /api and /ws)
 ```
 
 Or build it once and let the API serve the whole thing from one origin:

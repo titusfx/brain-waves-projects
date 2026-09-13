@@ -21,7 +21,7 @@ Built **2026-09-13**. Two processes, one repository:
 
 ```powershell
 npm run api        # http://127.0.0.1:8020
-npm run web        # http://localhost:4200  (proxies /api and /ws)
+npm run web        # http://localhost:4301  (proxies /api and /ws)
 npm run build:web; npm run api:prod   # one process, one origin, no proxy
 ```
 
