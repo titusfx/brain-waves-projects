@@ -47,6 +47,7 @@ Everything about the **Emotiv EPOC+ 14-channel mobile EEG** and the open-source 
 | Note | Purpose |
 | --- | --- |
 | [[roadmap]] | Phased build plan |
+| [[web-workbench]] | ⭐ **The app: live monitor, channel reference, protocol builder, datasets** |
 | [[decisions-log]] | ADR-style record of choices made and why |
 | [[glossary]] | EEG/BCI terms as used in this project |
 

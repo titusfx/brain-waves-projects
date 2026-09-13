@@ -15,8 +15,9 @@ vendor gates it behind a paid licence.
 | **The sharp edge** | `emokit` picks its crypto with `serial.startswith("UD2016")` — a *literal string*, though serials encode the build date (`UD2016`+`0103`+counter). This unit is `UD20180927003B78` (**2018-09-27**), which fails that test too, so stock emokit silently uses the **wrong key**. The decoder here picks the crypto path from the *parsed date* instead. |
 | **The plan** | Determine empirically which acquisition route works on *this* unit, prove it with the alpha test, hide it behind a `Source` interface, and build everything downstream to be device-agnostic. |
 | **Where we are** | The protocol is solved and **verified on this unit**: 32-byte AES-128-ECB reports, 16-bit little-endian fields, `1 LSB = 0.51 µV`, **159 reports/s** sustained over 180 s, 14/14 channels in the 10–85 µV physiological range. The one substantive task left is proving the signal is a real brain — the **alpha test**. |
+| **The app** | `api/` (FastAPI) + `web/` (Angular 22): a live monitor with the montage's contact map, clickable documentation for all 14 electrodes, a protocol builder for guided datasets — *"start with 5, lie down 10, stand up 20"*, or a loop that repeats until you stop — and a dataset browser. It runs with **no headset attached**: a labelled synthetic source generates a real eyes-closed alpha burst so the whole thing can be used and tested before the pads are wet. → [*The workbench*](#the-workbench-web-app) |
 | **The consolation prize** | The **free** Cortex tier still gives band power, mental commands, facial expressions, motion and contact quality — enough to ship a real app for $0. |
-| **The first step** | `.venv\Scripts\python.exe scripts\live_view.py` — plug the dongle in and watch. Every run is recorded, and `--replay` re-watches it later. |
+| **The first step** | `.venv\Scripts\python.exe scripts\live_view.py` — plug the dongle in and watch. Every run is recorded, and `--replay` re-watches it later. Or `npm run api` + `npm run web` and use the app. |
 
 ## Layout
 
@@ -58,11 +59,26 @@ brain-waves-projects/
 │   ├── decode_capture.py          # layout + autocorrelation scoring
 │   └── final_validation.py        # cross-channel correlation test
 ├── recordings/                    # git-ignored — every recording lands here, datestamped
+├── api/                           # ⭐ FastAPI backend (uv, hexagonal)
+│   ├── src/eeg_api/
+│   │   ├── domain/                # signal model, channel docs, analysis, the flow engine
+│   │   ├── eeg/                   # the only code that opens the dongle or reads a CSV
+│   │   ├── services/              # acquisition hub, dataset recorder, flow runner, library
+│   │   └── main/                  # settings, app factory, routers, WebSocket
+│   ├── tests/                     # 99 tests
+│   └── scripts/dump_openapi.py    # → web/openapi.json
+├── web/                           # ⭐ Angular 22 client (Tailwind 4, Vitest)
+│   └── src/app/
+│       ├── core/                  # api client, the socket as signals, speech, formatting
+│       └── features/              # monitor · channels · flows · run · datasets
+├── tools/
+│   └── verify-web.mjs             # drives the built app in headless Chrome and asserts
 ├── vendor/
 │   ├── README.md                  # provenance + licence of the vendored clone
 │   └── emokit/                    # pristine clone (public domain) — DO NOT EDIT
 ├── AGENTS.md                      # project state — read this first
 ├── PUBLISHING.md                  # the legal posture
+├── package.json                   # the app's scripts: api · web · test · verify
 └── README.md
 ```
 
@@ -145,6 +161,64 @@ see the privacy note at the end.
 Every CSV uses the same layout — 14 columns, `F3_uV … F4_uV`, decoded microvolts after a
 0.5 Hz highpass — so any of these tools can read any of the others' output. Bear in mind that
 `eeg.csv` is ~130 bytes per sample row: about **55 MB per hour** of viewing.
+
+## The workbench (web app)
+
+A FastAPI backend that owns the dongle and an Angular client that shows what it finds.
+It is the same decoder the scripts above use, with an interface on top.
+
+```powershell
+npm run api                 # FastAPI on http://127.0.0.1:8020
+npm run web                 # Angular dev server on http://localhost:4200 (proxies /api and /ws)
+```
+
+Or build it once and let the API serve the whole thing from one origin:
+
+```powershell
+npm run build:web
+npm run api:prod            # http://127.0.0.1:8020
+```
+
+> **No headset? Press `Demo`.** The synthetic source generates a plausible scalp signal —
+> 1/f noise, a real eyes-closed alpha burst over O1/O2, one weak electrode and one dry one —
+> so the monitor, the protocols and the datasets are all usable before anyone puts a headset
+> on. It is labelled `demo` everywhere, including in the datasets it writes, because a demo
+> that could be mistaken for a head would be a hazard rather than a feature.
+
+| screen | what it is for |
+| --- | --- |
+| **Monitor** | Live traces, a 10-20 map coloured by contact verdict, per-channel amplitude and mains, and the **O1/O2 alpha meter** — the same evidence the alpha test uses, live. Click any electrode to read what it does. |
+| **Channels** | The reference: what each of the 14 sites is over, what engages it, what ruins it, and what a good recording looks like. Each entry is linkable (`/channels?channel=O1`). |
+| **Protocols** | The builder. **Linear** — `start with 5, lie down 10, stand up 20`. **Looping** — `start with 3, close your eyes 20, open your eyes 15`, repeating until you stop. **Open-ended** — one label, until you stop. The countdown, the number of repetitions and how many trailing states a manual stop discards are all fields; the expanded running order is previewed before you save. |
+| **Run** | Start a protocol. The countdown is spoken (3, 2, 1 — mutable), the current state fills the screen with a progress ring and what is next, and the dataset is written as it goes. |
+| **Datasets** | Everything in `recordings/`, with a label timeline, a decimated preview, a spectrum, and one button to replay it through the whole app. |
+
+### What a guided run does, precisely
+
+Two rules decide what actually ends up in a dataset, and both are visible in the UI:
+
+- **The countdown is not data.** It is narrated and the file is created at the instant it
+  *ends*. Stopping during the countdown leaves no dataset at all, because there was no data.
+- **A stopped loop drops its tail.** Reaching for the stop button is itself a change in what
+  the subject is doing, so a stopped loop discards the interrupted state **and** the completed
+  one before it (configurable, default 2). Those rows are removed from `eeg.csv`, and
+  `meta.json` records what went rather than silently keeping it.
+
+A dataset is four files. `eeg.csv` is a **superset** of what `record.py` writes — a leading
+`t` column plus the same 14 `F3_uV … F4_uV` columns — so `live_view.py --replay` and
+`alpha_test.py --file` read a dataset made in the browser with no conversion. `labels.csv` is
+a segment table (which sample range carries which label), `meta.json` holds the protocol and
+the counts, and `events.jsonl` is every boundary as it happened.
+
+```powershell
+npm test          # 99 backend tests + 20 frontend tests
+npm run verify    # lint, types, architecture, tests, web build
+npm run verify:web   # 13 end-to-end checks in real Chrome against the built app
+```
+
+`npm run verify:web` is the one that answers "does the operator actually see a signal": it
+loads the built app in headless Chrome, asserts on the rendered DOM and on the pixels the
+canvases drew, records every console error, and writes screenshots to `tools/out-verify/`.
 
 ## 🎯 Result: the protocol is cracked — offline first, then on hardware
 

@@ -18,6 +18,11 @@ the USB dongle instead, with no Emotiv software, no account, and no licence.
 The vendor's dongle encrypts its output specifically to enforce that licence. This project
 reverse-engineered the encryption and the packet layout. → `PUBLISHING.md` for the legal posture.
 
+On top of the driver there is now an application: a **FastAPI service (`api/`)** that owns the
+dongle and records labelled datasets, and an **Angular client (`web/`)** that shows the signal
+live, documents every electrode, and builds guided protocols. → §11, and
+`eeg-vault/03-project/web-workbench.md`.
+
 ---
 
 ## 2. Current state
@@ -29,6 +34,7 @@ reverse-engineered the encryption and the packet layout. → `PUBLISHING.md` for
 | Live acquisition | ✅ **working** — 159 reports/s sustained for 180 s |
 | Decode to µV | ✅ **working** — amplitudes in physiological range |
 | Electrode contact | ✅ **good** — 14/14 channels `ok`, 10–85 µV |
+| Web workbench (`api/` + `web/`) | ✅ **working** — live monitor, channel reference, protocol builder, labelled datasets. Verified end to end by `tools/verify-web.mjs` (14/14), and the dongle path exercised against the real, silent device. |
 | **Alpha rhythm confirmed** | ⬜ **NOT YET — this is the only substantive task left** |
 | Battery level | ⬜ unidentified |
 | Gyro / motion | ⬜ unidentified (`emokit`'s is a stub returning `42`) |
@@ -48,9 +54,18 @@ data interface  HID interface 1, product string "EEG Signals"
                 (interface 0, "Brain Computer Interface USB Receiver/Dongle", is SILENT)
 report size     32 bytes
 cipher          AES-128-ECB, two independent 16-byte blocks
-key             new_crypto_key(serial) -> b'4778887141771174'
+key             new_crypto_key(serial), i.e. the UD2016+ branch — for this serial
+                that is b'877BBB7383773378'
 sample rate     128 Hz  (159 reports/s total = ~128 EEG + ~31 status)
 ```
+
+> **Correction (2026-02-14 facts, checked 2026-09-13).** This block used to read
+> `key -> b'4778887141771174'` under *this* serial. That byte string is the key for
+> **`UD20160103001874`** — the serial of emokit's own captured ciphertext — and it is
+> quoted in the crypto write-up for that reason. Two different serials, two different
+> keys; the derivation is the same. `tools/verify-*` does not depend on the value, but a
+> human reading the old line would have derived the wrong key by hand. Both values are
+> pinned by `api/tests/test_decoder.py`.
 
 ### Packet format
 
@@ -139,6 +154,11 @@ setting `UV_CACHE_DIR` inside the workspace avoids the problem entirely.
 | `decode_to_csv.py` | reference decoder (imported by others). |
 | `final_validation.py` | cross-channel correlation test. |
 
+These are the **terminal** tools. The web application is separate — `api/` and `web/`, run
+with `npm run api` and `npm run web` from the root. Both decode with the same rules; if you
+change the packet handling, change it in `scripts/decode_to_csv.py` **and**
+`api/src/eeg_api/eeg/decoder.py`.
+
 ---
 
 ## 7. ⭐ The next task: the alpha test
@@ -200,11 +220,12 @@ channels would be wrong together — a per-channel difference means physics, not
 | `02-software/cortex-api.md` | the official paid alternative, with real prices |
 | `02-software/status-packets-and-battery.md` | open question on battery |
 | `03-project/roadmap.md` | phase plan and risk register |
+| `03-project/web-workbench.md` | **the app**: architecture, the protocol model, the dataset format, what was verified |
 | `03-project/decisions-log.md` | ADRs — read before changing architecture |
 | `04-sessions/2026-02-14-first-live-session.md` | the first real session, including the failed one |
 | `99-sources/references.md` | **every source + a verified/unverified ledger** |
 
-That is the key subset — the vault holds **18 notes** in total. The others are
+That is the key subset — the vault holds **19 notes** in total. The others are
 `01-device/connection-and-dongle.md`, `02-software/opensource-landscape.md`,
 `02-software/ecosystems-without-support.md`, `02-software/lsl-and-interop.md`, and
 `03-project/glossary.md`. Start from `Home.md` for the full map.
@@ -224,3 +245,60 @@ what is **inferred**. Do not promote an inference to a fact without checking it.
 - **Never commit** recordings, derived EEG data, or Emotiv credentials.
 - **Verify before claiming.** Use the byte-1 test and the alpha test. Numbers that look
   plausible are not evidence.
+
+---
+
+## 11. The web workbench (`api/` + `web/`)
+
+Added 2026-09-13. Full write-up: `eeg-vault/03-project/web-workbench.md`.
+
+```powershell
+npm run api        # FastAPI on http://127.0.0.1:8020   (uv --directory api run uvicorn …)
+npm run web        # Angular dev server on :4200, proxying /api and /ws
+npm run build:web; npm run api:prod   # one process, one origin — no proxy needed
+npm test           # api pytest + web vitest
+npm run verify     # lint + mypy + arch + tests + web build
+npm run verify:web # headless-Chrome end-to-end (needs the API running)
+```
+
+**Port 8020, not 8000.** Another project on this machine already binds 8000, and `GET
+/health` there answers plausibly — so an accidental clash looks like a working deployment.
+It is the proxy target in `web/proxy.conf.json`.
+
+### Layout
+
+```
+api/src/eeg_api/
+├── domain/    signal model, the channel-doc catalog, the analysis, the FLOW STATE MACHINE
+│              (pure: no FastAPI, no I/O, no clock — enforced by import-linter + ruff)
+├── eeg/       the only code that opens the dongle or reads a recording
+├── services/  acquisition hub, dataset recorder, flow runner, library
+└── main/      settings, app factory, HTTP routers, the WebSocket
+web/src/app/   core/ (api, eeg, speech, format) + features/ (one folder per screen)
+tools/verify-web.mjs   drives the BUILT app in headless Chrome over CDP
+```
+
+### Things that will bite you
+
+1. **There are now two decoders.** `scripts/decode_to_csv.py` and
+   `api/src/eeg_api/eeg/decoder.py` implement the same rules. Change both or neither.
+2. **Response models declare no defaults, on purpose.** A default makes a field optional in
+   the generated TypeScript, so every consumer has to be defensive about a field that is
+   always sent. Requests keep their defaults; responses do not. `npm run api:types`
+   regenerates `web/src/app/core/api/schema.d.ts` from `web/openapi.json`.
+3. **Router input binding writes `undefined` over an input's default** when a route or query
+   parameter is absent. Inputs bound from the router are therefore typed `| undefined` and
+   handled; a default value there is a lie that only fails at runtime.
+4. **An `output()` must not be named after a DOM event.** `close` is one; `dismiss` is not.
+5. **Vitest runs with `pool: 'threads'`** (`web/vitest-base.config.ts`) because the default
+   `forks` pool cannot start a worker here.
+6. **The countdown is never recorded, and a stopped loop drops its tail.** Both are
+   asserted in `api/tests/` and in `tools/verify-web.mjs` — do not "simplify" either away
+   without reading §"Two decisions" of the vault note.
+7. **The demo source must always be labelled `demo`.** It is a synthetic head, not a
+   headset, and a UI that blurs the two is a hazard.
+8. **Not yet exercised against a streaming headset.** Every web check runs on the synthetic
+   source. The *dongle* path was exercised on 2026-09-13: with the headset off, interface 1
+   opens and returns zero reports, and the monitor shows the power/charge/LED/pairing
+   checklist rather than blaming the cable. That is as far as it has been, and the harness
+   asserts it (`a connected-but-silent dongle is explained as an RF problem`).
