@@ -25,8 +25,43 @@
             "type": "string"
           }
         },
-        "required": ["key", "name", "range", "summary", "note"],
+        "required": [
+          "key",
+          "name",
+          "range",
+          "summary",
+          "note"
+        ],
         "title": "BandDocModel",
+        "type": "object"
+      },
+      "BandEffectModel": {
+        "additionalProperties": true,
+        "properties": {
+          "band": {
+            "title": "Band",
+            "type": "string"
+          },
+          "effect": {
+            "title": "Effect",
+            "type": "number"
+          },
+          "max_effect": {
+            "title": "Max Effect",
+            "type": "number"
+          },
+          "shared": {
+            "title": "Shared",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "band",
+          "effect",
+          "max_effect",
+          "shared"
+        ],
+        "title": "BandEffectModel",
         "type": "object"
       },
       "CatalogModel": {
@@ -54,7 +89,12 @@
             "$ref": "#/components/schemas/MontageModel"
           }
         },
-        "required": ["montage", "bands", "channels", "disclaimer"],
+        "required": [
+          "montage",
+          "bands",
+          "channels",
+          "disclaimer"
+        ],
         "title": "CatalogModel",
         "type": "object"
       },
@@ -148,6 +188,320 @@
         "title": "ChannelDocModel",
         "type": "object"
       },
+      "ChannelRankModel": {
+        "additionalProperties": true,
+        "properties": {
+          "best_frequency": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Best Frequency"
+          },
+          "channel": {
+            "title": "Channel",
+            "type": "string"
+          },
+          "max_effect": {
+            "title": "Max Effect",
+            "type": "number"
+          },
+          "n_a": {
+            "title": "N A",
+            "type": "integer"
+          },
+          "n_b": {
+            "title": "N B",
+            "type": "integer"
+          },
+          "reliable": {
+            "title": "Reliable",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "channel",
+          "max_effect",
+          "best_frequency",
+          "reliable",
+          "n_a",
+          "n_b"
+        ],
+        "title": "ChannelRankModel",
+        "type": "object"
+      },
+      "ClassSummaryModel": {
+        "additionalProperties": true,
+        "properties": {
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "mean": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Mean",
+            "type": "array"
+          },
+          "mean_stability": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mean Stability"
+          },
+          "median_sd": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median Sd"
+          },
+          "n": {
+            "title": "N",
+            "type": "integer"
+          },
+          "reliability": {
+            "title": "Reliability",
+            "type": "string"
+          },
+          "sd": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Sd",
+            "type": "array"
+          },
+          "stability": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Stability",
+            "type": "array"
+          }
+        },
+        "required": [
+          "label",
+          "n",
+          "reliability",
+          "mean",
+          "sd",
+          "stability",
+          "mean_stability",
+          "median_sd"
+        ],
+        "title": "ClassSummaryModel",
+        "type": "object"
+      },
+      "ComparisonModel": {
+        "additionalProperties": true,
+        "properties": {
+          "bands": {
+            "items": {
+              "$ref": "#/components/schemas/BandEffectModel"
+            },
+            "title": "Bands",
+            "type": "array"
+          },
+          "effect": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Effect",
+            "type": "array"
+          },
+          "freqs": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Freqs",
+            "type": "array"
+          },
+          "label_a": {
+            "title": "Label A",
+            "type": "string"
+          },
+          "label_b": {
+            "title": "Label B",
+            "type": "string"
+          },
+          "min_attainable_p": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Attainable P"
+          },
+          "n_a": {
+            "title": "N A",
+            "type": "integer"
+          },
+          "n_b": {
+            "title": "N B",
+            "type": "integer"
+          },
+          "null_p95_effect": {
+            "title": "Null P95 Effect",
+            "type": "number"
+          },
+          "observed_max_effect": {
+            "title": "Observed Max Effect",
+            "type": "number"
+          },
+          "p_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P Value"
+          },
+          "permutations": {
+            "title": "Permutations",
+            "type": "integer"
+          },
+          "reliable": {
+            "title": "Reliable",
+            "type": "boolean"
+          },
+          "separability": {
+            "$ref": "#/components/schemas/SeparabilityModel"
+          },
+          "shared": {
+            "items": {
+              "type": "boolean"
+            },
+            "title": "Shared",
+            "type": "array"
+          },
+          "shared_band_names": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Shared Band Names",
+            "type": "array"
+          },
+          "shared_bins": {
+            "items": {
+              "$ref": "#/components/schemas/EffectBinModel"
+            },
+            "title": "Shared Bins",
+            "type": "array"
+          },
+          "shared_count": {
+            "title": "Shared Count",
+            "type": "integer"
+          },
+          "shared_fraction": {
+            "title": "Shared Fraction",
+            "type": "number"
+          },
+          "top_bins": {
+            "items": {
+              "$ref": "#/components/schemas/EffectBinModel"
+            },
+            "title": "Top Bins",
+            "type": "array"
+          }
+        },
+        "required": [
+          "label_a",
+          "label_b",
+          "n_a",
+          "n_b",
+          "reliable",
+          "effect",
+          "shared",
+          "shared_count",
+          "shared_fraction",
+          "observed_max_effect",
+          "null_p95_effect",
+          "p_value",
+          "permutations",
+          "min_attainable_p",
+          "top_bins",
+          "shared_bins",
+          "shared_band_names",
+          "bands",
+          "separability",
+          "freqs"
+        ],
+        "title": "ComparisonModel",
+        "type": "object"
+      },
+      "DeletedRecordingModel": {
+        "additionalProperties": true,
+        "description": "What a deletion actually removed, so the operator is told rather than reassured.",
+        "properties": {
+          "bytes_freed": {
+            "title": "Bytes Freed",
+            "type": "integer"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "title": "Kind",
+            "type": "string"
+          },
+          "labels": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "array"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "path": {
+            "title": "Path",
+            "type": "string"
+          },
+          "samples": {
+            "title": "Samples",
+            "type": "integer"
+          },
+          "segments": {
+            "title": "Segments",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "kind",
+          "path",
+          "samples",
+          "segments",
+          "labels",
+          "bytes_freed"
+        ],
+        "title": "DeletedRecordingModel",
+        "type": "object"
+      },
       "DeviceInterfaceModel": {
         "additionalProperties": true,
         "properties": {
@@ -168,7 +522,12 @@
             "type": "boolean"
           }
         },
-        "required": ["product", "serial", "interface", "streams"],
+        "required": [
+          "product",
+          "serial",
+          "interface",
+          "streams"
+        ],
         "title": "DeviceInterfaceModel",
         "type": "object"
       },
@@ -212,8 +571,328 @@
             ]
           }
         },
-        "required": ["hid_available", "present", "serial", "streaming_interface", "interfaces"],
+        "required": [
+          "hid_available",
+          "present",
+          "serial",
+          "streaming_interface",
+          "interfaces"
+        ],
         "title": "DeviceModel",
+        "type": "object"
+      },
+      "DiscoveryClassModel": {
+        "additionalProperties": true,
+        "properties": {
+          "instances": {
+            "items": {
+              "$ref": "#/components/schemas/DiscoveryInstanceModel"
+            },
+            "title": "Instances",
+            "type": "array"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ClassSummaryModel"
+          }
+        },
+        "required": [
+          "label",
+          "summary",
+          "instances"
+        ],
+        "title": "DiscoveryClassModel",
+        "type": "object"
+      },
+      "DiscoveryInstanceModel": {
+        "additionalProperties": true,
+        "description": "One instance of a state: what its spectrum looks like, and its opening seconds.",
+        "properties": {
+          "bands": {
+            "additionalProperties": {
+              "type": "number"
+            },
+            "title": "Bands",
+            "type": "object"
+          },
+          "cycle": {
+            "title": "Cycle",
+            "type": "integer"
+          },
+          "duration": {
+            "title": "Duration",
+            "type": "number"
+          },
+          "end_time": {
+            "title": "End Time",
+            "type": "number"
+          },
+          "index": {
+            "title": "Index",
+            "type": "integer"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "log_power": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Log Power",
+            "type": "array"
+          },
+          "samples": {
+            "title": "Samples",
+            "type": "integer"
+          },
+          "start_time": {
+            "title": "Start Time",
+            "type": "number"
+          },
+          "step_index": {
+            "title": "Step Index",
+            "type": "integer"
+          },
+          "trace": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Trace",
+            "type": "array"
+          },
+          "trace_step": {
+            "title": "Trace Step",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "index",
+          "label",
+          "cycle",
+          "step_index",
+          "start_time",
+          "end_time",
+          "duration",
+          "samples",
+          "log_power",
+          "bands",
+          "trace",
+          "trace_step"
+        ],
+        "title": "DiscoveryInstanceModel",
+        "type": "object"
+      },
+      "DiscoveryModel": {
+        "additionalProperties": true,
+        "properties": {
+          "analysed_labels": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Analysed Labels",
+            "type": "array"
+          },
+          "channel": {
+            "title": "Channel",
+            "type": "string"
+          },
+          "channel_ranking": {
+            "items": {
+              "$ref": "#/components/schemas/ChannelRankModel"
+            },
+            "title": "Channel Ranking",
+            "type": "array"
+          },
+          "channels": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Channels",
+            "type": "array"
+          },
+          "classes": {
+            "items": {
+              "$ref": "#/components/schemas/DiscoveryClassModel"
+            },
+            "title": "Classes",
+            "type": "array"
+          },
+          "comparison": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ComparisonModel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "excluded": {
+            "items": {
+              "$ref": "#/components/schemas/ExcludedStateModel"
+            },
+            "title": "Excluded",
+            "type": "array"
+          },
+          "freqs": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Freqs",
+            "type": "array"
+          },
+          "fs": {
+            "title": "Fs",
+            "type": "number"
+          },
+          "id": {
+            "title": "Id",
+            "type": "string"
+          },
+          "labels": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Labels",
+            "type": "array"
+          },
+          "min_seconds": {
+            "title": "Min Seconds",
+            "type": "number"
+          },
+          "window_seconds": {
+            "title": "Window Seconds",
+            "type": "number"
+          }
+        },
+        "required": [
+          "id",
+          "channel",
+          "channels",
+          "labels",
+          "analysed_labels",
+          "fs",
+          "window_seconds",
+          "min_seconds",
+          "freqs",
+          "classes",
+          "comparison",
+          "channel_ranking",
+          "excluded"
+        ],
+        "title": "DiscoveryModel",
+        "type": "object"
+      },
+      "DiscoveryRequest": {
+        "additionalProperties": true,
+        "description": "Which states to compare, at which electrode, and how hard to test them.",
+        "properties": {
+          "channel": {
+            "default": "O1",
+            "title": "Channel",
+            "type": "string"
+          },
+          "instances": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "items": {
+                    "type": "integer"
+                  },
+                  "type": "array"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Segment indices to use per label, e.g. {'eyes open': [0, 2, 4]}.",
+            "title": "Instances"
+          },
+          "labels": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Two labels to compare, A then B. Defaults to every labelled state.",
+            "title": "Labels"
+          },
+          "min_seconds": {
+            "default": 2.0,
+            "exclusiveMinimum": 0.0,
+            "maximum": 120.0,
+            "title": "Min Seconds",
+            "type": "number"
+          },
+          "permutations": {
+            "default": 200,
+            "maximum": 2000.0,
+            "minimum": 0.0,
+            "title": "Permutations",
+            "type": "integer"
+          },
+          "points": {
+            "default": 600,
+            "maximum": 4000.0,
+            "minimum": 32.0,
+            "title": "Points",
+            "type": "integer"
+          },
+          "window_seconds": {
+            "default": 6.0,
+            "exclusiveMinimum": 0.0,
+            "maximum": 60.0,
+            "title": "Window Seconds",
+            "type": "number"
+          }
+        },
+        "title": "DiscoveryRequest",
+        "type": "object"
+      },
+      "EffectBinModel": {
+        "additionalProperties": true,
+        "properties": {
+          "effect": {
+            "title": "Effect",
+            "type": "number"
+          },
+          "frequency": {
+            "title": "Frequency",
+            "type": "number"
+          },
+          "mean_a": {
+            "title": "Mean A",
+            "type": "number"
+          },
+          "mean_b": {
+            "title": "Mean B",
+            "type": "number"
+          },
+          "shared": {
+            "title": "Shared",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "frequency",
+          "effect",
+          "mean_a",
+          "mean_b",
+          "shared"
+        ],
+        "title": "EffectBinModel",
         "type": "object"
       },
       "EnginePhaseModel": {
@@ -386,6 +1065,35 @@
         "title": "EngineStateModel",
         "type": "object"
       },
+      "ExcludedStateModel": {
+        "additionalProperties": true,
+        "properties": {
+          "duration": {
+            "title": "Duration",
+            "type": "number"
+          },
+          "index": {
+            "title": "Index",
+            "type": "integer"
+          },
+          "label": {
+            "title": "Label",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "index",
+          "label",
+          "duration",
+          "reason"
+        ],
+        "title": "ExcludedStateModel",
+        "type": "object"
+      },
       "FlowInput": {
         "additionalProperties": true,
         "description": "A protocol, as authored in the builder.",
@@ -418,7 +1126,10 @@
           },
           "mode": {
             "default": "linear",
-            "enum": ["linear", "loop"],
+            "enum": [
+              "linear",
+              "loop"
+            ],
             "title": "Mode",
             "type": "string"
           },
@@ -458,7 +1169,10 @@
             "type": "array"
           }
         },
-        "required": ["name", "steps"],
+        "required": [
+          "name",
+          "steps"
+        ],
         "title": "FlowInput",
         "type": "object"
       },
@@ -493,7 +1207,10 @@
             "type": "string"
           },
           "mode": {
-            "enum": ["linear", "loop"],
+            "enum": [
+              "linear",
+              "loop"
+            ],
             "title": "Mode",
             "type": "string"
           },
@@ -587,7 +1304,9 @@
             "title": "Speak"
           }
         },
-        "required": ["label"],
+        "required": [
+          "label"
+        ],
         "title": "FlowStepInput",
         "type": "object"
       },
@@ -625,7 +1344,12 @@
             "title": "Speak"
           }
         },
-        "required": ["label", "seconds", "speak", "open_ended"],
+        "required": [
+          "label",
+          "seconds",
+          "speak",
+          "open_ended"
+        ],
         "title": "FlowStepModel",
         "type": "object"
       },
@@ -654,7 +1378,10 @@
             "type": "number"
           }
         },
-        "required": ["x", "y"],
+        "required": [
+          "x",
+          "y"
+        ],
         "title": "HeadPointModel",
         "type": "object"
       },
@@ -678,7 +1405,12 @@
             "type": "integer"
           }
         },
-        "required": ["label", "segments", "seconds", "samples"],
+        "required": [
+          "label",
+          "segments",
+          "seconds",
+          "samples"
+        ],
         "title": "LabelSummaryModel",
         "type": "object"
       },
@@ -809,7 +1541,11 @@
             "type": "integer"
           }
         },
-        "required": ["recordings", "directory", "total"],
+        "required": [
+          "recordings",
+          "directory",
+          "total"
+        ],
         "title": "LibraryModel",
         "type": "object"
       },
@@ -883,7 +1619,12 @@
             "type": "string"
           }
         },
-        "required": ["kind", "label", "cycle", "duration"],
+        "required": [
+          "kind",
+          "label",
+          "cycle",
+          "duration"
+        ],
         "title": "PlanPhaseModel",
         "type": "object"
       },
@@ -928,7 +1669,13 @@
             "type": "boolean"
           }
         },
-        "required": ["phases", "total_seconds", "cycles", "discard_tail", "truncated"],
+        "required": [
+          "phases",
+          "total_seconds",
+          "cycles",
+          "discard_tail",
+          "truncated"
+        ],
         "title": "PlanPreviewModel",
         "type": "object"
       },
@@ -961,7 +1708,12 @@
             "type": "integer"
           }
         },
-        "required": ["t", "data", "total_samples", "decimation"],
+        "required": [
+          "t",
+          "data",
+          "total_samples",
+          "decimation"
+        ],
         "title": "PreviewModel",
         "type": "object"
       },
@@ -1007,7 +1759,9 @@
             "type": "boolean"
           }
         },
-        "required": ["label"],
+        "required": [
+          "label"
+        ],
         "title": "QuickRecordRequest",
         "type": "object"
       },
@@ -1164,7 +1918,10 @@
             "type": "string"
           }
         },
-        "required": ["name", "explanation"],
+        "required": [
+          "name",
+          "explanation"
+        ],
         "title": "ReferenceModel",
         "type": "object"
       },
@@ -1235,6 +1992,63 @@
           "discarded"
         ],
         "title": "SegmentModel",
+        "type": "object"
+      },
+      "SeparabilityModel": {
+        "additionalProperties": true,
+        "description": "Leave-one-out nearest-centroid accuracy, with the counts it was computed from.",
+        "properties": {
+          "accuracy_all_bins": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accuracy All Bins"
+          },
+          "accuracy_top_bins": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Accuracy Top Bins"
+          },
+          "available": {
+            "title": "Available",
+            "type": "boolean"
+          },
+          "bins_used": {
+            "items": {
+              "type": "number"
+            },
+            "title": "Bins Used",
+            "type": "array"
+          },
+          "chance": {
+            "title": "Chance",
+            "type": "number"
+          },
+          "n_test": {
+            "title": "N Test",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "available",
+          "n_test",
+          "chance",
+          "bins_used",
+          "accuracy_top_bins",
+          "accuracy_all_bins"
+        ],
+        "title": "SeparabilityModel",
         "type": "object"
       },
       "SessionStateModel": {
@@ -1345,7 +2159,12 @@
             "type": "boolean"
           },
           "mode": {
-            "enum": ["idle", "live", "demo", "replay"],
+            "enum": [
+              "idle",
+              "live",
+              "demo",
+              "replay"
+            ],
             "title": "Mode",
             "type": "string"
           },
@@ -1369,7 +2188,9 @@
             "type": "number"
           }
         },
-        "required": ["mode"],
+        "required": [
+          "mode"
+        ],
         "title": "SourceRequest",
         "type": "object"
       },
@@ -1468,7 +2289,11 @@
             "type": "array"
           }
         },
-        "required": ["freqs", "power", "channel"],
+        "required": [
+          "freqs",
+          "power",
+          "channel"
+        ],
         "title": "SpectrumModel",
         "type": "object"
       },
@@ -1651,7 +2476,11 @@
             "type": "string"
           }
         },
-        "required": ["loc", "msg", "type"],
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
         "title": "ValidationError",
         "type": "object"
       },
@@ -1677,7 +2506,11 @@
             "type": "array"
           }
         },
-        "required": ["valid", "errors", "warnings"],
+        "required": [
+          "valid",
+          "errors",
+          "warnings"
+        ],
         "title": "ValidationModel",
         "type": "object"
       }
@@ -1707,7 +2540,9 @@
           }
         },
         "summary": "The whole montage, with documentation",
-        "tags": ["channels"]
+        "tags": [
+          "channels"
+        ]
       }
     },
     "/api/channels/{name}": {
@@ -1748,7 +2583,9 @@
           }
         },
         "summary": "One channel",
-        "tags": ["channels"]
+        "tags": [
+          "channels"
+        ]
       }
     },
     "/api/flows": {
@@ -1771,7 +2608,9 @@
           }
         },
         "summary": "Saved flows",
-        "tags": ["flows"]
+        "tags": [
+          "flows"
+        ]
       },
       "post": {
         "operationId": "create_flow_api_flows_post",
@@ -1808,7 +2647,9 @@
           }
         },
         "summary": "Save a new flow",
-        "tags": ["flows"]
+        "tags": [
+          "flows"
+        ]
       }
     },
     "/api/flows/preview": {
@@ -1848,7 +2689,9 @@
           }
         },
         "summary": "What this flow will do",
-        "tags": ["flows"]
+        "tags": [
+          "flows"
+        ]
       }
     },
     "/api/flows/validate": {
@@ -1888,7 +2731,9 @@
           }
         },
         "summary": "Check a flow without saving it",
-        "tags": ["flows"]
+        "tags": [
+          "flows"
+        ]
       }
     },
     "/api/flows/{flow_id}": {
@@ -1921,7 +2766,9 @@
           }
         },
         "summary": "Delete a flow",
-        "tags": ["flows"]
+        "tags": [
+          "flows"
+        ]
       },
       "get": {
         "operationId": "get_flow_api_flows__flow_id__get",
@@ -1959,7 +2806,9 @@
           }
         },
         "summary": "One saved flow",
-        "tags": ["flows"]
+        "tags": [
+          "flows"
+        ]
       },
       "put": {
         "operationId": "update_flow_api_flows__flow_id__put",
@@ -2007,7 +2856,9 @@
           }
         },
         "summary": "Update a saved flow",
-        "tags": ["flows"]
+        "tags": [
+          "flows"
+        ]
       }
     },
     "/api/recordings": {
@@ -2027,10 +2878,53 @@
           }
         },
         "summary": "Everything in recordings/",
-        "tags": ["recordings"]
+        "tags": [
+          "recordings"
+        ]
       }
     },
     "/api/recordings/{entry_id}": {
+      "delete": {
+        "description": "Remove a recording or dataset from ``recordings/``.\n\nIrreversible, and it removes a whole dataset folder when the id names one \u2014 samples,\nlabels, metadata and all. The screen puts a confirmation in front of it that names\nwhat will go and how much disk it holds; this endpoint's job is to be safe about\n*what*, not to ask twice. It refuses anything the current source or recording is\nusing, so a live replay cannot be deleted out from under itself.",
+        "operationId": "delete_recording_api_recordings__entry_id__delete",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeletedRecordingModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Delete a recording, for good",
+        "tags": [
+          "recordings"
+        ]
+      },
       "get": {
         "operationId": "get_recording_api_recordings__entry_id__get",
         "parameters": [
@@ -2067,7 +2961,9 @@
           }
         },
         "summary": "One recording",
-        "tags": ["recordings"]
+        "tags": [
+          "recordings"
+        ]
       }
     },
     "/api/recordings/{entry_id}/bands": {
@@ -2110,12 +3006,67 @@
           }
         },
         "summary": "Per-channel band power, whole recording",
-        "tags": ["recordings"]
+        "tags": [
+          "recordings"
+        ]
+      }
+    },
+    "/api/recordings/{entry_id}/discovery": {
+      "post": {
+        "description": "The Discovery screen's analysis, for one dataset and one channel.\n\nFor each selected state: its instances' spectra, how much the instances agree\n(repeatability), and \u2014 for two states \u2014 which frequency bins actually differ, which\nare the *same in both* and therefore cannot explain the difference, and whether the\nbiggest difference survives a label-shuffling test. The channel ranking answers\n\"which electrode separates these states?\" by measuring all fourteen.",
+        "operationId": "discover_api_recordings__entry_id__discovery_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "entry_id",
+            "required": true,
+            "schema": {
+              "title": "Entry Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DiscoveryRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DiscoveryModel"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "What repeats within a state, and what separates two states",
+        "tags": [
+          "recordings"
+        ]
       }
     },
     "/api/recordings/{entry_id}/preview": {
       "get": {
-        "description": "For the chart. Decimated, not averaged, so transients survive.",
+        "description": "For the chart. Decimated, not averaged, so transients survive.\n\n``start``/``end`` narrow it to one state's window \u2014 the times in ``labels.csv`` \u2014 so\nthe screen can show a single instance of a state instead of the whole session.",
         "operationId": "get_preview_api_recordings__entry_id__preview_get",
         "parameters": [
           {
@@ -2137,6 +3088,44 @@
               "minimum": 16,
               "title": "Points",
               "type": "integer"
+            }
+          },
+          {
+            "description": "Window start, seconds.",
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Window start, seconds.",
+              "title": "Start"
+            }
+          },
+          {
+            "description": "Window end, seconds.",
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Window end, seconds.",
+              "title": "End"
             }
           }
         ],
@@ -2163,7 +3152,9 @@
           }
         },
         "summary": "Decimated samples",
-        "tags": ["recordings"]
+        "tags": [
+          "recordings"
+        ]
       }
     },
     "/api/recordings/{entry_id}/segments": {
@@ -2208,7 +3199,9 @@
           }
         },
         "summary": "Its labels",
-        "tags": ["recordings"]
+        "tags": [
+          "recordings"
+        ]
       }
     },
     "/api/recordings/{entry_id}/spectrum": {
@@ -2252,6 +3245,44 @@
               ],
               "title": "Seconds"
             }
+          },
+          {
+            "description": "Window start, seconds.",
+            "in": "query",
+            "name": "start",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "minimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Window start, seconds.",
+              "title": "Start"
+            }
+          },
+          {
+            "description": "Window end, seconds.",
+            "in": "query",
+            "name": "end",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "exclusiveMinimum": 0,
+                  "type": "number"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Window end, seconds.",
+              "title": "End"
+            }
           }
         ],
         "responses": {
@@ -2277,7 +3308,9 @@
           }
         },
         "summary": "Log power spectrum",
-        "tags": ["recordings"]
+        "tags": [
+          "recordings"
+        ]
       }
     },
     "/api/sessions": {
@@ -2317,7 +3350,9 @@
           }
         },
         "summary": "Run a flow",
-        "tags": ["sessions"]
+        "tags": [
+          "sessions"
+        ]
       }
     },
     "/api/sessions/current": {
@@ -2345,7 +3380,9 @@
           }
         },
         "summary": "The running session",
-        "tags": ["sessions"]
+        "tags": [
+          "sessions"
+        ]
       }
     },
     "/api/sessions/current/abort": {
@@ -2365,7 +3402,9 @@
           }
         },
         "summary": "Stop and discard",
-        "tags": ["sessions"]
+        "tags": [
+          "sessions"
+        ]
       }
     },
     "/api/sessions/current/stop": {
@@ -2385,7 +3424,9 @@
           }
         },
         "summary": "Stop and keep the data",
-        "tags": ["sessions"]
+        "tags": [
+          "sessions"
+        ]
       }
     },
     "/api/sessions/quick": {
@@ -2425,7 +3466,9 @@
           }
         },
         "summary": "Record one label",
-        "tags": ["sessions"]
+        "tags": [
+          "sessions"
+        ]
       }
     },
     "/api/system/devices": {
@@ -2445,7 +3488,9 @@
           }
         },
         "summary": "HID interfaces on the dongle",
-        "tags": ["system"]
+        "tags": [
+          "system"
+        ]
       }
     },
     "/api/system/source": {
@@ -2485,7 +3530,9 @@
           }
         },
         "summary": "Switch the stream",
-        "tags": ["system"]
+        "tags": [
+          "system"
+        ]
       }
     },
     "/api/system/status": {
@@ -2505,7 +3552,9 @@
           }
         },
         "summary": "Everything the header needs",
-        "tags": ["system"]
+        "tags": [
+          "system"
+        ]
       }
     },
     "/health": {
@@ -2528,7 +3577,9 @@
           }
         },
         "summary": "Liveness probe",
-        "tags": ["system"]
+        "tags": [
+          "system"
+        ]
       }
     }
   }
