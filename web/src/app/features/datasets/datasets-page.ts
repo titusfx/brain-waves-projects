@@ -294,6 +294,7 @@ function labelColour(label: string): string {
             <div class="mt-2 h-64 overflow-hidden rounded-lg">
               <eeg-sample-chart
                 [rows]="previewRows()"
+                [times]="previewTimes()"
                 [allChannels]="allChannels()"
                 [channels]="channels()"
                 [fullScaleUv]="100"
@@ -472,6 +473,8 @@ export class DatasetsPage {
     () => this.entries().find((entry) => entry.id === this.id()) ?? null,
   );
   protected readonly previewRows = computed(() => this.preview()?.data ?? []);
+  /** Real seconds for the x axis, so the hover readout can say *when*, not *which row*. */
+  protected readonly previewTimes = computed(() => this.preview()?.t ?? []);
   protected readonly allChannels = computed(() => this.stream.channels());
 
   private loaded = '';

@@ -256,6 +256,8 @@ const COLOUR_B = '#38bdf8';
               [shared]="cmp.shared"
               [sharedThreshold]="1"
               [nullP95]="cmp.null_p95_effect"
+              [labelA]="cmp.label_a"
+              [labelB]="cmp.label_b"
             />
           </div>
 
