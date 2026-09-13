@@ -41,6 +41,27 @@ in `web/proxy.conf.json`.
 | `/datasets` | **Library** — label timeline, decimated preview, spectrum, and "replay this through the whole app". Clicking a state narrows the charts to that state's window; deleting asks first |
 | `/datasets/:id/discovery` | **Discovery** — compare instances of a state, and find what separates two states. → below |
 
+### Reading the charts
+
+Every chart here plots against a continuous axis — hertz or seconds — and the question it
+gets asked is almost always about a narrow part of it: *is the difference at 10 Hz or at
+10.5?*, *where exactly do these two traces diverge?* So all five charts (sample strips,
+spectrum, trace overlay, spectrum overlay, effect chart) share one interaction:
+
+* **Scroll to zoom**, anchored at the pointer, so the bin you are looking at stays under the
+  cursor. Two hundred times is the limit; a **reset zoom** control appears while zoomed, and
+  a double-click also resets.
+* **Drag to pan**, clamped to the data — it is impossible to get lost off the end of a chart
+  and conclude the data is empty.
+* **Hover for a vertical readout**: a crosshair plus the value of *every* series at that x —
+  each state's mean and spread on the spectra, every overlaid instance on the traces, every
+  channel on the sample strips, the per-bin difference on the effect chart. Spectral charts
+  snap to the nearest bin, because a value between two bins is not a measurement.
+
+The y axis follows the visible window, which is the point: zooming into a flat stretch shows
+its shape instead of a straight line pinned to the bottom of the frame.
+
+
 ## Discovery: is there anything here that tells two states apart?
 
 The question you ask after labelling a dataset. It is answered in the order it is actually
@@ -177,7 +198,7 @@ is the rule, and `api/tests/test_channels.py` asserts it bites.
 | `api`: pytest | ✅ 131 passed |
 | `api`: ruff, ruff format, mypy `strict`, `lint-imports` | ✅ clean (2 architecture contracts kept) |
 | `web`: `ng build`, `eslint`, `prettier --check`, Vitest | ✅ 20 tests |
-| End to end in headless Chrome (`tools/verify-web.mjs`) | ✅ 17/17, console clean |
+| End to end in headless Chrome (`tools/verify-web.mjs`) | ✅ 18/18, console clean |
 
 Not verified: **any of it against a streaming headset.** Every check above runs on the
 synthetic source.

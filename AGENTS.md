@@ -34,7 +34,7 @@ live, documents every electrode, and builds guided protocols. → §11, and
 | Live acquisition | ✅ **working** — 159 reports/s sustained for 180 s |
 | Decode to µV | ✅ **working** — amplitudes in physiological range |
 | Electrode contact | ✅ **good** — 14/14 channels `ok`, 10–85 µV |
-| Web workbench (`api/` + `web/`) | ✅ **working** — live monitor, channel reference, protocol builder, labelled datasets, a **discovery** screen (below) and deleting with confirmation. Verified end to end by `tools/verify-web.mjs` (17/17), and the dongle path exercised against the real, silent device. |
+| Web workbench (`api/` + `web/`) | ✅ **working** — live monitor, channel reference, protocol builder, labelled datasets, a **discovery** screen and deleting with confirmation. Every chart zooms (scroll, anchored at the pointer) and reads out every series on hover. Verified end to end by `tools/verify-web.mjs` (18/18), and the dongle path exercised against the real, silent device. |
 | **Alpha rhythm confirmed** | ⬜ **NOT YET — this is the only substantive task left** |
 | Battery level | ⬜ unidentified |
 | Gyro / motion | ⬜ unidentified (`emokit`'s is a stub returning `42`) |
