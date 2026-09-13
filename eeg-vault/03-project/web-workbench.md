@@ -38,7 +38,65 @@ in `web/proxy.conf.json`.
 | `/channels` | **Channel reference** — what each of the 14 sites is over, what engages it, what ruins it. `?channel=O1` is linkable |
 | `/flows` | **Protocol builder** — linear or looping, countdown, states, repeat count, live preview of the expanded run order |
 | `/run` | **Runner** — spoken countdown, current state + progress ring + up-next, writes the dataset |
-| `/datasets` | **Library** — label timeline, decimated preview, spectrum, and "replay this through the whole app" |
+| `/datasets` | **Library** — label timeline, decimated preview, spectrum, and "replay this through the whole app". Clicking a state narrows the charts to that state's window; deleting asks first |
+| `/datasets/:id/discovery` | **Discovery** — compare instances of a state, and find what separates two states. → below |
+
+## Discovery: is there anything here that tells two states apart?
+
+The question you ask after labelling a dataset. It is answered in the order it is actually
+asked, and the last part is the one that keeps it honest.
+
+**Do the instances even look like each other?** The overlay draws every selected instance of
+a state from its own start, so where the traces sit on top of each other is the part of the
+recording that state controls. `scripts`-style eyeballing, made honest by drawing all of them
+rather than the mean.
+
+**Do the two states differ by more than that scatter?** Each state gets a spectrum averaged
+over its window (Welch, so a 20-second state is not judged on one 2-second slice), and the
+difference is measured per frequency bin *in units of the pooled within-state spread*. Below
+1.0 the states differ by less than their own noise — that bin is reported as **shared**, and
+it cannot explain the difference however much the two curves appear to wiggle in it. Those
+bins, and wholly shared bands, are listed explicitly. Also measured: which electrode
+separates the two states best, out of all fourteen.
+
+**And is the biggest difference more than luck?** Scanning ~110 bins for the largest gap
+will find one by chance, so the largest observed effect is compared against a null built by
+shuffling the state labels. Then the hard limit is stated rather than hidden: with three
+instances per state there are only C(6,3) = 20 ways to split them, so **no result can come
+out below p ≈ 0.048**, whatever the picture looks like. The screen says that, because the
+alternative is an operator concluding their effect is not real when the real problem is that
+they recorded three states.
+
+A final readout — leave-one-out nearest-centroid over the few most different bins, against
+the same rule over all 110 — separates "these bins carry the difference" from "this is a
+validated classifier". It is the former.
+
+Measured on a synthetic dataset whose two states genuinely differ by a 10 Hz tone in O1:
+
+| | |
+| --- | --- |
+| largest difference | 11.0 at **10 Hz** — where the difference was put |
+| bins shared by both states | 61 of 89 (69%), wholly shared bands: theta, gamma |
+| nearest-centroid | 100% of 6 states with the 5 best bins, 83% with all 89 |
+| best electrode | **O1**, then AF4, O2 |
+| p-value | 0.16, and the attainable floor is 0.048 — with three states a side, "not yet significant" is the truthful answer |
+
+## Deleting
+
+`DELETE /api/recordings/{id}` removes a recording or a whole dataset folder. It is the only
+irreversible thing the app does, so:
+
+* the UI gates it behind a modal that **names what will go** — kind, duration, samples,
+  states, labels, size, path — rather than asking "are you sure?" about a string;
+* **Cancel is focused** when the modal opens, and Escape and a click outside both cancel, so
+  the only way to delete is to press the button that says so;
+* the server refuses anything the current source or recording is using (409), so a live
+  replay cannot be deleted out from under itself, and it refuses any id that resolves outside
+  `recordings/` — including `.`, `..`, and the folder itself.
+
+Verified end to end, including that **cancelling keeps the recording** and confirming
+removes it from disk and the listing.
+
 
 ## The protocol model
 
@@ -116,10 +174,10 @@ is the rule, and `api/tests/test_channels.py` asserts it bites.
 
 | check | result |
 | --- | --- |
-| `api`: pytest | ✅ 99 passed |
+| `api`: pytest | ✅ 131 passed |
 | `api`: ruff, ruff format, mypy `strict`, `lint-imports` | ✅ clean (2 architecture contracts kept) |
 | `web`: `ng build`, `eslint`, `prettier --check`, Vitest | ✅ 20 tests |
-| End to end in headless Chrome (`tools/verify-web.mjs`) | ✅ 14/14, console clean |
+| End to end in headless Chrome (`tools/verify-web.mjs`) | ✅ 17/17, console clean |
 
 Not verified: **any of it against a streaming headset.** Every check above runs on the
 synthetic source.

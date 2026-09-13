@@ -34,7 +34,7 @@ live, documents every electrode, and builds guided protocols. → §11, and
 | Live acquisition | ✅ **working** — 159 reports/s sustained for 180 s |
 | Decode to µV | ✅ **working** — amplitudes in physiological range |
 | Electrode contact | ✅ **good** — 14/14 channels `ok`, 10–85 µV |
-| Web workbench (`api/` + `web/`) | ✅ **working** — live monitor, channel reference, protocol builder, labelled datasets. Verified end to end by `tools/verify-web.mjs` (14/14), and the dongle path exercised against the real, silent device. |
+| Web workbench (`api/` + `web/`) | ✅ **working** — live monitor, channel reference, protocol builder, labelled datasets, a **discovery** screen (below) and deleting with confirmation. Verified end to end by `tools/verify-web.mjs` (17/17), and the dongle path exercised against the real, silent device. |
 | **Alpha rhythm confirmed** | ⬜ **NOT YET — this is the only substantive task left** |
 | Battery level | ⬜ unidentified |
 | Gyro / motion | ⬜ unidentified (`emokit`'s is a stub returning `42`) |
@@ -304,3 +304,15 @@ tools/verify-web.mjs   drives the BUILT app in headless Chrome over CDP
    opens and returns zero reports, and the monitor shows the power/charge/LED/pairing
    checklist rather than blaming the cable. That is as far as it has been, and the harness
    asserts it (`a connected-but-silent dongle is explained as an RF problem`).
+9. **The Discovery screen measures; it does not classify.** Its numbers are per-frequency
+   effect sizes and a leave-one-out nearest-centroid, and every readout carries the count it
+   was computed from. Do not present any of it as a validated model.
+10. **Discovery's p-value has a ceiling, and the API reports it.** The labels can only be
+    split C(n_a+n_b, n_a) ways, so with three instances a side *nothing* can come out below
+    0.048 — `min_attainable_p`. That is usually the real answer to "why is my obvious
+    difference not significant?", and the screen says so rather than leaving a hopeful number
+    standing.
+11. **Deleting is the only irreversible operation.** A modal that names what will go gates it
+    (Cancel focused; Escape and outside-click cancel), and the server refuses any id resolving
+    outside `recordings/` as well as anything the current source or recording is using.
+    `api/tests/test_delete.py` is mostly about those refusals — keep it that way.
