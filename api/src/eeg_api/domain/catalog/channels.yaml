@@ -1,0 +1,459 @@
+# Channel documentation.
+#
+# This file is the source of truth for the "click a channel to find out what it
+# does" panel in the UI. It is authored as data on purpose: it is prose about
+# neurophysiology, not code, and it should be correctable by whoever knows the
+# subject without a rebuild.
+#
+# WHAT THIS IS NOT
+#   A scalp electrode does not measure "working memory". It measures the voltage
+#   difference between one pad and the reference, at a point on the scalp, which
+#   is a blurry average of a very large number of neurons — dominated by the
+#   synchronous ones aligned with the electrode. Everything below describes what a
+#   *region* is typically associated with in the literature, plus what that
+#   electrode is good for in practice: which tasks engage it, and which artefacts
+#   will ruin it. It is not a decoder and not medical advice.
+#
+# head.x / head.y are a top-down, nose-up projection of the 10-20 position, in a
+# unit circle: x negative is the subject's left, y positive is anterior (towards
+# the nose). They drive the head map in the UI.
+version: 1
+
+disclaimer: >-
+  Educational reference for the Emotiv EPOC+ montage: what each 10-20 site is near,
+  what it is usually associated with, which tasks engage it, and — most usefully in
+  practice — which artefacts ruin it. Scalp EEG blurs across centimetres and cannot
+  read a thought. This is not a clinical tool and not medical advice.
+
+montage:
+  name: Emotiv EPOC+ 14-channel
+  system: 10-20 (international 10-20 subset)
+  sampling_hz: 128
+  scale: 1 raw count = 0.51 uV
+  summary: >-
+    The EPOC+ is a fixed headset: the 14 EEG pads and the 2 reference pads sit where
+    the frame puts them, close to — but not exactly on — their 10-20 namesakes. The
+    montage is bilateral and symmetric: seven pads per hemisphere, distributed over
+    frontal, temporal, parietal and occipital sites, with nothing over the midline.
+  reference:
+    name: CMS / DRL
+    explanation: >-
+      The two pads behind the ears are not channels: they are the Common Mode Sense
+      (CMS, an active electrode) and Driven Right Leg (DRL, a driven reference). Every
+      channel is measured against them, and the amplifier actively drives DRL to
+      cancel whatever voltage the body has picked up from the mains. If those two pads
+      are dry, common-mode rejection fails and *every* channel shows the same large
+      artefact. This is the single most common cause of an unreadable EPOC+ recording,
+      and the diagnostic is that all 14 channels are wrong together — a per-channel
+      difference is physics, not software.
+  midline_note: >-
+    There is no midline electrode (no Fz, Cz or Pz). Anything you would normally read
+    from the midline — the error-related negativity, the P300's classic maximum, the
+    mu rhythm of the sensorimotor strip — is only available here in its lateralised
+    form, from the F3/F4, FC5/FC6 and AF3/AF4 pairs.
+
+bands:
+  - key: delta
+    name: Delta
+    range: 1-4 Hz
+    summary: Slow, high-amplitude.
+    note: >-
+      In a still, awake adult, delta is mostly artefact: sweat, electrode drift, eye
+      movements. Genuine frontal delta appears in sleep and in some pathology. Treat
+      awake delta power as a contact problem first and a finding second.
+  - key: theta
+    name: Theta
+    range: 4-8 Hz
+    summary: Frontally maximal; working memory and drowsiness.
+    note: >-
+      Frontal theta rises with memory load and with mental effort, and also with
+      drowsiness. It is one of the more usable signals in this montage because F3/F4
+      and AF3/AF4 sit right over it.
+  - key: alpha
+    name: Alpha
+    range: 8-12 Hz
+    summary: Occipital, eyes closed. The health check for a real brain.
+    note: >-
+      Alpha is the idling rhythm of the visual cortex: strong over O1/O2 with the eyes
+      closed, sharply attenuated when the eyes open. Its presence and its eyes-closed
+      contrast are this project's proof that the decoded signal is a real brain rather
+      than a wrong-key artefact. See scripts/alpha_test.py.
+  - key: beta
+    name: Beta
+    range: 13-30 Hz
+    summary: Alert, engaged, motor.
+    note: >-
+      Beta rises with active thinking and with muscle tension. Over FC5/FC6 it carries
+      the sensorimotor rhythm used for motor-imagery BCI. Beware: sustained beta over
+      the temples is jaw clench, not cognition.
+  - key: gamma
+    name: Gamma
+    range: 30-45 Hz
+    summary: Fast and easy to fake.
+    note: >-
+      With 14 dry-ish pads on a moving head, most 30-45 Hz power above the temples and
+      forehead is electromyography. On this hardware, treat gamma as a muscle detector
+      until proven otherwise.
+
+channels:
+  - name: F3
+    lobe: frontal
+    hemisphere: left
+    region: Left dorsolateral prefrontal cortex (middle frontal gyrus)
+    placement: >-
+      On the frontal row: a quarter of the way from the forehead to the back of the
+      head, and a quarter of the way out from the midline towards the left ear. On the
+      headset it is the left pad of the front row, just inboard of the temple pad.
+    head: { x: -0.38, y: 0.38 }
+    summary: Holding things in mind, planning, and approach-related engagement.
+    functions:
+      - Working memory — keeping a number or a plan active
+      - Response selection and motor planning
+      - Sustained attention and task engagement
+      - Approach motivation; left frontal activity tracks positive engagement
+    tasks:
+      - n-back and digit-span memory tasks
+      - Mental arithmetic and verbal fluency
+      - Approach/withdrawal or emotional-valence paradigms
+    artefacts:
+      - Eye blinks (smaller here than at AF3, but present)
+      - Frontalis (forehead) EMG from frowning or raising the eyebrows
+      - Jaw clench, which spreads broadly across the front
+    expected: >-
+      20-60 uV. A theta/beta mix that shifts towards theta under memory load.
+    related: [AF3, FC5, F7]
+
+  - name: F4
+    lobe: frontal
+    hemisphere: right
+    region: Right dorsolateral prefrontal cortex
+    placement: Mirror of F3 on the right frontal row.
+    head: { x: 0.38, y: 0.38 }
+    summary: The right-hemisphere counterpart of F3 — spatial working memory and vigilance.
+    functions:
+      - Spatial working memory
+      - Vigilance and sustained attention
+      - Emotional regulation; right frontal activity relates to withdrawal
+      - Error monitoring, together with the medial frontal wall
+    tasks:
+      - Spatial n-back and visuospatial reasoning
+      - Vigilance and oddball tasks
+      - Affective picture viewing
+    artefacts:
+      - Eye blinks and lateral eye movements
+      - Corrugator (eyebrow) EMG — large on this pad during frowning
+      - Jaw clench
+    expected: >-
+      20-60 uV, broadly similar to F3. Comparing F3 with F4 is common, so a big
+      asymmetry is more often a pad problem than a finding.
+    related: [AF4, FC6, F8]
+
+  - name: AF3
+    lobe: frontal
+    hemisphere: left
+    region: Anterior-frontal, between Fp1 and F3
+    placement: >-
+      On the frontal row but closer to the forehead: between the frontopolar position
+      (Fp1) and F3, roughly two thirds of the way forward. Emotiv markets the AF3/AF4
+      pair as its cognitive channels.
+    head: { x: -0.40, y: 0.72 }
+    summary: Executive control and attention, with the cleanest access to frontal theta.
+    functions:
+      - Executive control and cognitive flexibility
+      - Working memory, especially the attention-gating part
+      - Approach motivation (left anterior asymmetry)
+      - Frontal theta, the classic effort/load marker
+    tasks:
+      - n-back, Stroop, task-switching
+      - Mental effort and sustained attention
+      - Approach/withdrawal emotion paradigms
+    artefacts:
+      - Eye blinks are the dominant artefact at this site — the pad is close to the eyes
+      - Frontalis EMG from frowning, squinting or raising the brows
+      - Slow electrode drift as the pad dries out
+    expected: >-
+      15-50 uV. Expect visible blink transients; there is no way to place a pad this
+      far forward and not see them.
+    related: [F3, F4, AF4]
+
+  - name: AF4
+    lobe: frontal
+    hemisphere: right
+    region: Anterior-frontal, between Fp2 and F4
+    placement: Mirror of AF3 on the right frontal row.
+    head: { x: 0.40, y: 0.72 }
+    summary: Executive control and vigilance on the right, and half of the frontal asymmetry pair.
+    functions:
+      - Vigilance and attentional shifting
+      - Inhibitory control
+      - Error-related activity, lateralised
+      - Right-sided emotional processing
+    tasks:
+      - Go/no-go and response-inhibition tasks
+      - Vigilance decrement over long sessions
+      - Affective paradigms
+    artefacts:
+      - Eye blinks
+      - Corrugator and frontalis EMG
+      - Lateral eye movements, which affect AF4 and AF3 in opposite directions
+    expected: >-
+      15-50 uV. AF3 and AF4 should look broadly alike; if one is flat, that pad is dry.
+    related: [AF3, F4, F8]
+
+  - name: F7
+    lobe: frontal
+    hemisphere: left
+    region: Left inferior frontal / anterior temporal (near Broca's area)
+    placement: >-
+      The left temple pad of the front row, at the edge of the head just above and in
+      front of the left ear — the 10-20 F7 site.
+    head: { x: -0.72, y: 0.42 }
+    summary: Language production — and, in practice, the montage's best eye-movement detector.
+    functions:
+      - Speech production and verbal fluency (Broca's area lies beneath)
+      - Semantic and syntactic processing
+      - Verbal working memory rehearsal
+    tasks:
+      - Verbal fluency, reading aloud, picture naming
+      - Semantic decision
+    artefacts:
+      - Horizontal eye movements, which produce large opposite-polarity deflections at F7 and F8 — this pair is effectively a two-channel EOG
+      - Temporalis EMG from jaw clench, the usual cause of a huge, sustained amplitude here
+      - Electrode drift when the pad sits on hair
+    expected: >-
+      20-60 uV. F7 and F8 moving together in opposite directions is an eye movement;
+      moving together in the same direction is muscle.
+    related: [F3, FC5, T7]
+
+  - name: F8
+    lobe: frontal
+    hemisphere: right
+    region: Right inferior frontal / anterior temporal
+    placement: Mirror of F7 on the right temple.
+    head: { x: 0.72, y: 0.42 }
+    summary: Affective prosody and right-lateralised frontal function; F7's mirror in every artefact.
+    functions:
+      - Processing of affective and non-verbal prosody
+      - Face and voice salience
+      - Right-lateralised inhibitory control
+    tasks:
+      - Emotional prosody and face processing
+      - Go/no-go with affective stimuli
+    artefacts:
+      - Horizontal eye movements (see F7)
+      - Masseter/temporalis EMG — the classic right-temple clench spike
+      - Pad drift on hair
+    expected: >-
+      20-60 uV, similar to F7. A bilateral, sustained high-amplitude burst at F7/F8
+      with a lot of 30-45 Hz power is jaw clench nine times out of ten.
+    related: [F4, FC6, T8]
+
+  - name: FC5
+    lobe: frontal
+    hemisphere: left
+    region: Left fronto-central, inferior (near the motor face/hand area)
+    placement: >-
+      Between F7 and T7, level with the top of the ear — the left fronto-central site
+      of the 10-20 system.
+    head: { x: -0.58, y: 0.18 }
+    summary: Motor planning and the sensorimotor rhythm used by motor-imagery BCI.
+    functions:
+      - Motor preparation and execution, left hand and face
+      - Sensorimotor rhythm (mu and beta, 8-30 Hz) that desynchronises with movement
+      - Speech motor planning
+      - Motor imagery, the basis of most BCI classifiers
+    tasks:
+      - Imagined or attempted left-hand movement
+      - Finger tapping
+      - Speech articulation
+    artefacts:
+      - Jaw and masseter EMG, which mimics the beta rise of movement
+      - Swallowing and tongue movement
+      - Eye movements, smaller here than at F7
+    expected: >-
+      15-40 uV. Watch 8-30 Hz power: a real movement or imagined movement drops it
+      over the contralateral side, whereas clenching raises it on both.
+    related: [F3, T7, FC6]
+
+  - name: FC6
+    lobe: frontal
+    hemisphere: right
+    region: Right fronto-central, inferior
+    placement: Mirror of FC5 on the right.
+    head: { x: 0.58, y: 0.18 }
+    summary: Right-hand motor imagery and the right half of the sensorimotor pair.
+    functions:
+      - Motor preparation and execution, right hand
+      - Sensorimotor rhythm desynchronisation
+      - Spatial attention and motor intention
+    tasks:
+      - Imagined or attempted right-hand movement
+      - Finger tapping
+      - Motor imagery BCI (FC6 versus FC5 is one of the few usable pairs here)
+    artefacts:
+      - Masseter EMG (both FC5 and FC6 light up with a clench)
+      - Swallowing
+      - Neck muscle tension
+    expected: >-
+      15-40 uV. A left/right motor-imagery contrast is only credible if FC5 and FC6
+      respond differently; if they move together, you are recording jaw.
+    related: [F4, T8, FC5]
+
+  - name: T7
+    lobe: temporal
+    hemisphere: left
+    region: Left mid-temporal (near superior temporal gyrus); the old name is T3
+    placement: >-
+      The left temple, level with the ear canal (the coronal line through the
+      preauricular points), just above and behind the ear.
+    head: { x: -0.95, y: -0.02 }
+    summary: Auditory and language cortex — with the noisiest pad on the headset.
+    functions:
+      - Auditory processing, including speech
+      - Language comprehension
+      - Verbal memory encoding
+      - Temporal alpha, which is normal and prominent here
+    tasks:
+      - Passive listening and auditory oddball
+      - Speech-in-noise and syllable discrimination
+      - Verbal memory encoding
+    artefacts:
+      - Temporalis EMG — the biggest problem on this pad; jaw clench produces
+        broadband 20-45 Hz power that looks nothing like cortex
+      - Ear and scalp movement
+      - Poor contact through hair, which is why T7/T8 often read as high-amplitude drift
+    expected: >-
+      20-50 uV with a clear alpha peak. More than ~25 percent of power above 30 Hz
+      means muscle, not brain.
+    related: [F7, P7, T8]
+
+  - name: T8
+    lobe: temporal
+    hemisphere: right
+    region: Right mid-temporal; the old name is T4
+    placement: Mirror of T7 on the right temple.
+    head: { x: 0.95, y: -0.02 }
+    summary: Non-verbal and tonal auditory processing, right-lateralised.
+    functions:
+      - Processing of pitch, timbre and music
+      - Non-verbal auditory attention
+      - Right-lateralised episodic memory
+    tasks:
+      - Tone and melody paradigms
+      - Environmental-sound detection
+      - Auditory oddball with non-speech stimuli
+    artefacts:
+      - Temporalis EMG (see T7)
+      - Ear movement
+      - Pad contact through hair
+    expected: >-
+      20-50 uV with clear alpha. T7 and T8 should be similar; a large asymmetry is
+      usually a pad that has come loose.
+    related: [F8, P8, T7]
+
+  - name: P7
+    lobe: parietal
+    hemisphere: left
+    region: Left posterior temporal / inferior parietal; the old name is T5
+    placement: >-
+      Behind T7 and a quarter of the way further back, at the left edge of the head —
+      the 10-20 P7 site.
+    head: { x: -0.72, y: -0.42 }
+    summary: Reading and language comprehension, and a reliable alpha site.
+    functions:
+      - Reading and visual word-form processing
+      - Language comprehension (Wernicke's area is nearby)
+      - Verbal short-term memory
+      - The P300 component of the oddball response
+    tasks:
+      - Reading and semantic decision
+      - Auditory or visual oddball
+      - Verbal memory load
+    artefacts:
+      - Neck and temporalis EMG
+      - Eye blinks, which are small this far back
+      - Alpha that is normal, not artefact — do not "clean" it away
+    expected: >-
+      20-50 uV with prominent alpha, more than the frontal channels and less than the
+      occipital ones.
+    related: [T7, O1, P8]
+
+  - name: P8
+    lobe: parietal
+    hemisphere: right
+    region: Right posterior temporal / inferior parietal; the old name is T6
+    placement: Mirror of P7 on the right.
+    head: { x: 0.72, y: -0.42 }
+    summary: Spatial attention and visual motion, right-lateralised.
+    functions:
+      - Spatial attention and visual search
+      - Motion and depth processing
+      - The right-lateralised P300
+      - Non-verbal working memory
+    tasks:
+      - Visual search and spatial cuing
+      - Motion-onset visual evoked potentials
+      - Oddball tasks
+    artefacts:
+      - Neck EMG
+      - Alpha, as at P7
+      - Electrode movement against hair
+    expected: >-
+      20-50 uV with clear alpha. P7/P8 asymmetry in alpha is common and usually just
+      reflects where the pads landed.
+    related: [T8, O2, P7]
+
+  - name: O1
+    lobe: occipital
+    hemisphere: left
+    region: Left primary visual cortex (calcarine fissure, left bank)
+    placement: >-
+      Low on the back of the head, a quarter of the way from the midline towards the
+      left ear and level with the bony bump at the back (the inion) — the 10-20 O1 site.
+    head: { x: -0.34, y: -0.90 }
+    summary: The alpha channel. If this and O2 do not show alpha, nothing else matters yet.
+    functions:
+      - Alpha rhythm, 8-12 Hz — the idling rhythm of the visual cortex
+      - Visual processing and visual attention
+      - Eyes-closed/eyes-open contrast, the classic reactivity test
+      - Visual evoked potentials to pattern-reversal stimuli
+    tasks:
+      - Eyes closed versus eyes open, alternating — the alpha test
+      - Visual oddball and pattern-reversal VEP
+      - Visual attention and mental imagery
+    artefacts:
+      - Neck and occipital EMG from head movement or tension
+      - Electrode movement against hair, which produces slow high-amplitude drift
+      - Mains hum at 50/60 Hz when the pad is dry — check the mains percentage
+      - Eye blinks affect O1/O2 *less* than the frontal pads, which is exactly why a
+        blink that appears here too means the pad is genuinely bad
+    expected: >-
+      With the eyes closed: the strongest 8-12 Hz peak of any channel, typically 20-60 uV
+      and sometimes more, attenuating sharply when the eyes open. A closed/open alpha
+      ratio above 1.5 is this project's evidence that the signal is a real brain.
+    related: [O2, P7, P8]
+
+  - name: O2
+    lobe: occipital
+    hemisphere: right
+    region: Right primary visual cortex (right bank of the calcarine fissure)
+    placement: Mirror of O1 on the right.
+    head: { x: 0.34, y: -0.90 }
+    summary: O1's twin; usually the larger alpha of the two.
+    functions:
+      - Alpha rhythm, 8-12 Hz
+      - Visual processing, with a right-hemisphere bias for motion and spatial attention
+      - Eyes-closed/eyes-open reactivity
+    tasks:
+      - Eyes closed versus eyes open — the alpha test
+      - Motion and spatial-attention paradigms
+    artefacts:
+      - Mains hum when dry
+      - Neck EMG
+      - On some units a persistent 27-28 Hz peak, which is not mains and is still
+        unexplained (see AGENTS.md open questions)
+    expected: >-
+      As O1, often slightly larger. O1 and O2 rising and falling together with the eyes
+      is the expected result; only one of them reacting usually means the other pad is
+      marginal.
+    related: [O1, P8, P7]
