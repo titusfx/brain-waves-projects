@@ -13,7 +13,7 @@
  * No dependencies: Node's own WebSocket and `fetch` are enough for CDP.
  *
  *   node tools/verify-web.mjs
- *   BASE_URL=http://127.0.0.1:4200 node tools/verify-web.mjs    # against `ng serve`
+ *   BASE_URL=http://127.0.0.1:4301 node tools/verify-web.mjs    # against `ng serve`
  *
  * Exit code 0 means every assertion passed and the console was clean.
  *
@@ -275,35 +275,80 @@ try {
     return health.body;
   });
 
-  await check(
-    'a connected-but-silent dongle is explained as an RF problem, not a software one',
-    async () => {
-      // `default_source: auto` starts the dongle when one is attached, so on a machine
-      // with the dongle plugged in and the headset off this is the state the app boots
-      // into — and the state a person is most likely to conclude "the app is broken"
-      // from. The check adapts: with no dongle attached, the honest message is different.
-      const started = await api('/api/system/source', {
-        method: 'POST',
-        body: JSON.stringify({ mode: 'live' }),
+  await check('the dongle is either streaming or honestly explained', async () => {
+    // This check has to hold in three states, and it must never fail for the *right*
+    // reason: no dongle attached, a dongle attached with the headset off (the state that
+    // makes a person conclude "the app is broken"), and a dongle that is genuinely
+    // streaming. `default_source: auto` means any of them can be what the app boots into.
+    const started = await api('/api/system/source', {
+      method: 'POST',
+      body: JSON.stringify({ mode: 'live' }),
+    });
+    const present = Boolean(started.body.device?.present);
+
+    // Give the headset a moment to be heard, then decide which state we are in.
+    let samples = 0;
+    for (let i = 0; i < 30 && samples === 0; i += 1) {
+      const status = await api('/api/system/status');
+      samples = status.body.stats.samples;
+      if (samples === 0) await sleep(200);
+    }
+
+    await cdp.goto(`${BASE}/`);
+    const page = await cdp.evaluate(PAGE_PROBE);
+
+    if (!present) {
+      await cdp.waitFor(`document.body.innerText.toLowerCase().includes('nothing is streaming')`, {
+        label: 'the idle notice',
+        timeout: 12000,
       });
-      const present = Boolean(started.body.device?.present);
-      await cdp.goto(`${BASE}/`);
-      const needle = present ? 'zero reports' : 'nothing is streaming';
-      await cdp.waitFor(
-        `document.body.innerText.toLowerCase().includes(${JSON.stringify(needle)})`,
-        { label: present ? 'the pairing checklist' : 'the idle notice', timeout: 12000 },
+      await cdp.shot('0-no-dongle');
+      await cdp.dump('0-no-dongle');
+      return { donglePresent: false };
+    }
+
+    if (samples > 0) {
+      // The real thing: a headset, over RF, through the decoder, into the browser.
+      await cdp.waitFor(`document.querySelectorAll('table tbody tr').length === 14`, {
+        label: 'the channel table for the live headset',
+        timeout: 15000,
+      });
+      const live = await cdp.evaluate(PAGE_PROBE);
+      assert(live.text.includes('dongle'), 'the header does not name the dongle source');
+      assert(live.text.includes('reports/s'), 'the source strip is missing');
+      const keyRow = await api('/api/system/status');
+      assert(
+        keyRow.body.stats.reports_per_second > 100,
+        `only ${keyRow.body.stats.reports_per_second} reports/s; the dongle should send ~159`,
       );
-      const page = await cdp.evaluate(PAGE_PROBE);
-      if (present) {
-        assert(page.text.includes('switched on'), 'the checklist omits the headset power switch');
-        assert(page.text.includes('pairing'), 'the checklist omits pairing');
-        assert(page.text.includes('fast-flashing'), 'the checklist omits the dongle LEDs');
-      }
-      await cdp.shot('0-silent-dongle');
-      await cdp.dump('0-silent-dongle');
-      return { donglePresent: present, source: started.body.source };
-    },
-  );
+      assert(
+        keyRow.body.stats.key_ok !== false,
+        `the byte-1 key oracle says WRONG KEY (${keyRow.body.stats.distinct_byte1} distinct values)`,
+      );
+      await cdp.shot('0-dongle-live');
+      await cdp.dump('0-dongle-live');
+      return {
+        donglePresent: true,
+        streaming: true,
+        samples: keyRow.body.stats.samples,
+        reportsPerSecond: keyRow.body.stats.reports_per_second,
+        keyOk: keyRow.body.stats.key_ok,
+      };
+    }
+
+    // Attached and silent: the RF/pairing checklist, not the cable.
+    await cdp.waitFor(`document.body.innerText.toLowerCase().includes('zero reports')`, {
+      label: 'the pairing checklist',
+      timeout: 12000,
+    });
+    const silent = await cdp.evaluate(PAGE_PROBE);
+    assert(silent.text.includes('switched on'), 'the checklist omits the headset power switch');
+    assert(silent.text.includes('pairing'), 'the checklist omits pairing');
+    assert(silent.text.includes('fast-flashing'), 'the checklist omits the dongle LEDs');
+    await cdp.shot('0-dongle-silent');
+    await cdp.dump('0-dongle-silent');
+    return { donglePresent: true, streaming: false };
+  });
 
   await check('the demo source starts and produces samples', async () => {
     const started = await api('/api/system/source', {
