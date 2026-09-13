@@ -4,6 +4,17 @@ These exist so that ``web/openapi.json`` is a real contract and the Angular clie
 generated ``schema.d.ts`` is worth having. Every field the browser reads is declared
 here; the WebSocket frame is the one exception, because it is not an OpenAPI concept
 and its type is hand-written on the client alongside the socket code that parses it.
+
+**Response models declare no defaults on purpose.** A default makes the field optional
+in the generated TypeScript, so the client has to treat every field as maybe-missing —
+which is exactly the uncertainty this contract exists to remove. Every field below is
+therefore required; where a field can legitimately be *null* it is typed ``T | None``
+without a default, which means "always present, possibly null". FastAPI validates every
+response against these models, so a payload that forgot a key fails its test rather
+than producing an `undefined` in the browser three layers away.
+
+Request models keep their defaults, because that is where optionality belongs: the
+client may omit them.
 """
 
 from __future__ import annotations
@@ -79,23 +90,23 @@ class CatalogModel(_Model):
 # --------------------------------------------------------------------------- #
 class FlowStepModel(_Model):
     label: str
-    seconds: float | None = None
-    speak: str | None = None
-    open_ended: bool = False
+    seconds: float | None
+    speak: str | None
+    open_ended: bool
 
 
 class FlowSpecModel(_Model):
-    id: str = ""
+    id: str
     name: str
-    mode: Literal["linear", "loop"] = "linear"
-    countdown_seconds: float = 3.0
-    repeat: int | None = None
-    cycles: int | None = None
-    rest_seconds: float = 0.0
-    discard_tail: int = 0
-    description: str = ""
+    mode: Literal["linear", "loop"]
+    countdown_seconds: float
+    repeat: int | None
+    cycles: int | None
+    rest_seconds: float
+    discard_tail: int
+    description: str
     steps: list[FlowStepModel]
-    total_seconds: float | None = None
+    total_seconds: float | None
 
 
 class ValidationModel(_Model):
@@ -108,15 +119,15 @@ class PlanPhaseModel(_Model):
     kind: str
     label: str
     cycle: int
-    duration: float | None = None
+    duration: float | None
 
 
 class PlanPreviewModel(_Model):
     phases: list[PlanPhaseModel]
-    total_seconds: float | None = None
-    cycles: int | None = None
-    discard_tail: int = 0
-    truncated: bool = False
+    total_seconds: float | None
+    cycles: int | None
+    discard_tail: int
+    truncated: bool
 
 
 class FlowStepInput(_Model):
@@ -161,8 +172,8 @@ class SegmentModel(_Model):
     start_sample: int
     end_sample: int
     samples: int
-    truncated: bool = False
-    discarded: bool = False
+    truncated: bool
+    discarded: bool
 
 
 class LibraryEntryModel(_Model):
@@ -175,12 +186,12 @@ class LibraryEntryModel(_Model):
     duration_s: float
     size_bytes: int
     channels: int
-    labels: list[LabelSummaryModel] = Field(default_factory=list)
-    flow_name: str | None = None
-    segments: int = 0
-    source: str | None = None
-    notes: str | None = None
-    dropped_chunks: int = 0
+    labels: list[LabelSummaryModel]
+    flow_name: str | None
+    segments: int
+    source: str | None
+    notes: str | None
+    dropped_chunks: int
 
 
 class LibraryModel(_Model):
@@ -193,7 +204,7 @@ class PreviewModel(_Model):
     t: list[float]
     data: list[list[float]]
     total_samples: int
-    decimation: int = 1
+    decimation: int
 
 
 class SpectrumModel(_Model):
@@ -215,22 +226,22 @@ class DeviceInterfaceModel(_Model):
 class DeviceModel(_Model):
     hid_available: bool
     present: bool
-    serial: str | None = None
-    streaming_interface: DeviceInterfaceModel | None = None
-    interfaces: list[DeviceInterfaceModel] = Field(default_factory=list)
+    serial: str | None
+    streaming_interface: DeviceInterfaceModel | None
+    interfaces: list[DeviceInterfaceModel]
 
 
 class SourceStatsModel(_Model):
-    mode: str = "idle"
-    label: str = ""
-    elapsed_s: float = 0.0
-    reports_seen: int = 0
-    samples: int = 0
-    reports_per_second: float = 0.0
-    distinct_byte1: int = 0
-    key_ok: bool | None = None
-    error: str | None = None
-    dropped_chunks: int = 0
+    mode: str
+    label: str
+    elapsed_s: float
+    reports_seen: int
+    samples: int
+    reports_per_second: float
+    distinct_byte1: int
+    key_ok: bool | None
+    error: str | None
+    dropped_chunks: int
 
 
 class RecordingStateModel(_Model):
@@ -240,9 +251,9 @@ class RecordingStateModel(_Model):
     samples: int
     duration: float
     segments: int
-    current_label: str | None = None
-    dropped_chunks: int = 0
-    recording: bool = True
+    current_label: str | None
+    dropped_chunks: int
+    recording: bool
 
 
 class EnginePhaseModel(_Model):
@@ -251,13 +262,13 @@ class EnginePhaseModel(_Model):
     cycle: int
     step_index: int
     start: float
-    end: float | None = None
-    duration: float | None = None
-    remaining: float | None = None
-    progress: float = 0.0
-    open_ended: bool = False
-    recordable: bool = False
-    speak: str | None = None
+    end: float | None
+    duration: float | None
+    remaining: float | None
+    progress: float
+    open_ended: bool
+    recordable: bool
+    speak: str | None
 
 
 class EngineStateModel(_Model):
@@ -267,10 +278,10 @@ class EngineStateModel(_Model):
     stopped: bool
     elapsed: float
     cycle: int
-    cycles: int | None = None
-    phase: EnginePhaseModel | None = None
-    upcoming: list[PlanPhaseModel] = Field(default_factory=list)
-    total_seconds: float | None = None
+    cycles: int | None
+    phase: EnginePhaseModel | None
+    upcoming: list[PlanPhaseModel]
+    total_seconds: float | None
 
 
 class RecordingSummaryModel(_Model):
@@ -282,27 +293,28 @@ class RecordingSummaryModel(_Model):
     fs: float
     samples: int
     duration: float
-    dropped_chunks: int = 0
-    kept_segments: list[SegmentModel] = Field(default_factory=list)
-    discarded_segments: list[SegmentModel] = Field(default_factory=list)
-    labels: list[LabelSummaryModel] = Field(default_factory=list)
+    dropped_chunks: int
+    kept_segments: list[SegmentModel]
+    discarded_segments: list[SegmentModel]
+    labels: list[LabelSummaryModel]
+    #: Only sent when the dataset was thrown away, so this one really may be absent.
     removed: bool | None = None
 
 
 class SessionStateModel(_Model):
     active: bool
-    id: str = ""
+    id: str
     flow: FlowSpecModel
     dataset_name: str
-    notes: str = ""
-    voice: bool = True
+    notes: str
+    voice: bool
     started: str
-    recording: bool = False
+    recording: bool
     engine: EngineStateModel
-    recording_state: RecordingStateModel | None = None
-    outcome: str | None = None
-    error: str | None = None
-    summary: RecordingSummaryModel | None = None
+    recording_state: RecordingStateModel | None
+    outcome: str | None
+    error: str | None
+    summary: RecordingSummaryModel | None
 
 
 class StatusModel(_Model):
@@ -312,11 +324,11 @@ class StatusModel(_Model):
     buffer_seconds: float
     subscribers: int
     device: DeviceModel
-    recording: RecordingStateModel | None = None
-    session: SessionStateModel | None = None
+    recording: RecordingStateModel | None
+    session: SessionStateModel | None
     recordings_dir: str
     fs: float
-    error: str | None = None
+    error: str | None
 
 
 # --------------------------------------------------------------------------- #
@@ -359,8 +371,3 @@ class StartSessionRequest(_Model):
         le=60,
         description="Override the flow's countdown for this run only.",
     )
-
-
-class SampleBlockModel(_Model):
-    t0: float
-    data: list[list[float]]

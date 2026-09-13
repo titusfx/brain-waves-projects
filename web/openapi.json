@@ -25,13 +25,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "key",
-          "name",
-          "range",
-          "summary",
-          "note"
-        ],
+        "required": ["key", "name", "range", "summary", "note"],
         "title": "BandDocModel",
         "type": "object"
       },
@@ -60,12 +54,7 @@
             "$ref": "#/components/schemas/MontageModel"
           }
         },
-        "required": [
-          "montage",
-          "bands",
-          "channels",
-          "disclaimer"
-        ],
+        "required": ["montage", "bands", "channels", "disclaimer"],
         "title": "CatalogModel",
         "type": "object"
       },
@@ -179,12 +168,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "product",
-          "serial",
-          "interface",
-          "streams"
-        ],
+        "required": ["product", "serial", "interface", "streams"],
         "title": "DeviceInterfaceModel",
         "type": "object"
       },
@@ -228,10 +212,7 @@
             ]
           }
         },
-        "required": [
-          "hid_available",
-          "present"
-        ],
+        "required": ["hid_available", "present", "serial", "streaming_interface", "interfaces"],
         "title": "DeviceModel",
         "type": "object"
       },
@@ -273,17 +254,14 @@
             "type": "string"
           },
           "open_ended": {
-            "default": false,
             "title": "Open Ended",
             "type": "boolean"
           },
           "progress": {
-            "default": 0.0,
             "title": "Progress",
             "type": "number"
           },
           "recordable": {
-            "default": false,
             "title": "Recordable",
             "type": "boolean"
           },
@@ -323,7 +301,14 @@
           "label",
           "cycle",
           "step_index",
-          "start"
+          "start",
+          "end",
+          "duration",
+          "remaining",
+          "progress",
+          "open_ended",
+          "recordable",
+          "speak"
         ],
         "title": "EnginePhaseModel",
         "type": "object"
@@ -392,7 +377,11 @@
           "finished",
           "stopped",
           "elapsed",
-          "cycle"
+          "cycle",
+          "cycles",
+          "phase",
+          "upcoming",
+          "total_seconds"
         ],
         "title": "EngineStateModel",
         "type": "object"
@@ -429,10 +418,7 @@
           },
           "mode": {
             "default": "linear",
-            "enum": [
-              "linear",
-              "loop"
-            ],
+            "enum": ["linear", "loop"],
             "title": "Mode",
             "type": "string"
           },
@@ -472,10 +458,7 @@
             "type": "array"
           }
         },
-        "required": [
-          "name",
-          "steps"
-        ],
+        "required": ["name", "steps"],
         "title": "FlowInput",
         "type": "object"
       },
@@ -483,7 +466,6 @@
         "additionalProperties": true,
         "properties": {
           "countdown_seconds": {
-            "default": 3.0,
             "title": "Countdown Seconds",
             "type": "number"
           },
@@ -499,26 +481,19 @@
             "title": "Cycles"
           },
           "description": {
-            "default": "",
             "title": "Description",
             "type": "string"
           },
           "discard_tail": {
-            "default": 0,
             "title": "Discard Tail",
             "type": "integer"
           },
           "id": {
-            "default": "",
             "title": "Id",
             "type": "string"
           },
           "mode": {
-            "default": "linear",
-            "enum": [
-              "linear",
-              "loop"
-            ],
+            "enum": ["linear", "loop"],
             "title": "Mode",
             "type": "string"
           },
@@ -538,7 +513,6 @@
             "title": "Repeat"
           },
           "rest_seconds": {
-            "default": 0.0,
             "title": "Rest Seconds",
             "type": "number"
           },
@@ -562,8 +536,17 @@
           }
         },
         "required": [
+          "id",
           "name",
-          "steps"
+          "mode",
+          "countdown_seconds",
+          "repeat",
+          "cycles",
+          "rest_seconds",
+          "discard_tail",
+          "description",
+          "steps",
+          "total_seconds"
         ],
         "title": "FlowSpecModel",
         "type": "object"
@@ -604,9 +587,7 @@
             "title": "Speak"
           }
         },
-        "required": [
-          "label"
-        ],
+        "required": ["label"],
         "title": "FlowStepInput",
         "type": "object"
       },
@@ -618,7 +599,6 @@
             "type": "string"
           },
           "open_ended": {
-            "default": false,
             "title": "Open Ended",
             "type": "boolean"
           },
@@ -645,9 +625,7 @@
             "title": "Speak"
           }
         },
-        "required": [
-          "label"
-        ],
+        "required": ["label", "seconds", "speak", "open_ended"],
         "title": "FlowStepModel",
         "type": "object"
       },
@@ -676,10 +654,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "x",
-          "y"
-        ],
+        "required": ["x", "y"],
         "title": "HeadPointModel",
         "type": "object"
       },
@@ -703,12 +678,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "label",
-          "segments",
-          "seconds",
-          "samples"
-        ],
+        "required": ["label", "segments", "seconds", "samples"],
         "title": "LabelSummaryModel",
         "type": "object"
       },
@@ -724,7 +694,6 @@
             "type": "string"
           },
           "dropped_chunks": {
-            "default": 0,
             "title": "Dropped Chunks",
             "type": "integer"
           },
@@ -782,7 +751,6 @@
             "type": "integer"
           },
           "segments": {
-            "default": 0,
             "title": "Segments",
             "type": "integer"
           },
@@ -811,7 +779,13 @@
           "samples",
           "duration_s",
           "size_bytes",
-          "channels"
+          "channels",
+          "labels",
+          "flow_name",
+          "segments",
+          "source",
+          "notes",
+          "dropped_chunks"
         ],
         "title": "LibraryEntryModel",
         "type": "object"
@@ -835,11 +809,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "recordings",
-          "directory",
-          "total"
-        ],
+        "required": ["recordings", "directory", "total"],
         "title": "LibraryModel",
         "type": "object"
       },
@@ -913,11 +883,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "kind",
-          "label",
-          "cycle"
-        ],
+        "required": ["kind", "label", "cycle", "duration"],
         "title": "PlanPhaseModel",
         "type": "object"
       },
@@ -936,7 +902,6 @@
             "title": "Cycles"
           },
           "discard_tail": {
-            "default": 0,
             "title": "Discard Tail",
             "type": "integer"
           },
@@ -959,14 +924,11 @@
             "title": "Total Seconds"
           },
           "truncated": {
-            "default": false,
             "title": "Truncated",
             "type": "boolean"
           }
         },
-        "required": [
-          "phases"
-        ],
+        "required": ["phases", "total_seconds", "cycles", "discard_tail", "truncated"],
         "title": "PlanPreviewModel",
         "type": "object"
       },
@@ -984,7 +946,6 @@
             "type": "array"
           },
           "decimation": {
-            "default": 1,
             "title": "Decimation",
             "type": "integer"
           },
@@ -1000,11 +961,7 @@
             "type": "integer"
           }
         },
-        "required": [
-          "t",
-          "data",
-          "total_samples"
-        ],
+        "required": ["t", "data", "total_samples", "decimation"],
         "title": "PreviewModel",
         "type": "object"
       },
@@ -1050,9 +1007,7 @@
             "type": "boolean"
           }
         },
-        "required": [
-          "label"
-        ],
+        "required": ["label"],
         "title": "QuickRecordRequest",
         "type": "object"
       },
@@ -1071,7 +1026,6 @@
             "title": "Current Label"
           },
           "dropped_chunks": {
-            "default": 0,
             "title": "Dropped Chunks",
             "type": "integer"
           },
@@ -1092,7 +1046,6 @@
             "type": "string"
           },
           "recording": {
-            "default": true,
             "title": "Recording",
             "type": "boolean"
           },
@@ -1111,7 +1064,10 @@
           "path",
           "samples",
           "duration",
-          "segments"
+          "segments",
+          "current_label",
+          "dropped_chunks",
+          "recording"
         ],
         "title": "RecordingStateModel",
         "type": "object"
@@ -1128,7 +1084,6 @@
             "type": "array"
           },
           "dropped_chunks": {
-            "default": 0,
             "title": "Dropped Chunks",
             "type": "integer"
           },
@@ -1188,7 +1143,11 @@
           "path",
           "fs",
           "samples",
-          "duration"
+          "duration",
+          "dropped_chunks",
+          "kept_segments",
+          "discarded_segments",
+          "labels"
         ],
         "title": "RecordingSummaryModel",
         "type": "object"
@@ -1205,10 +1164,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "name",
-          "explanation"
-        ],
+        "required": ["name", "explanation"],
         "title": "ReferenceModel",
         "type": "object"
       },
@@ -1220,7 +1176,6 @@
             "type": "integer"
           },
           "discarded": {
-            "default": false,
             "title": "Discarded",
             "type": "boolean"
           },
@@ -1261,7 +1216,6 @@
             "type": "integer"
           },
           "truncated": {
-            "default": false,
             "title": "Truncated",
             "type": "boolean"
           }
@@ -1276,7 +1230,9 @@
           "duration",
           "start_sample",
           "end_sample",
-          "samples"
+          "samples",
+          "truncated",
+          "discarded"
         ],
         "title": "SegmentModel",
         "type": "object"
@@ -1310,12 +1266,10 @@
             "$ref": "#/components/schemas/FlowSpecModel"
           },
           "id": {
-            "default": "",
             "title": "Id",
             "type": "string"
           },
           "notes": {
-            "default": "",
             "title": "Notes",
             "type": "string"
           },
@@ -1331,7 +1285,6 @@
             "title": "Outcome"
           },
           "recording": {
-            "default": false,
             "title": "Recording",
             "type": "boolean"
           },
@@ -1360,17 +1313,24 @@
             ]
           },
           "voice": {
-            "default": true,
             "title": "Voice",
             "type": "boolean"
           }
         },
         "required": [
           "active",
+          "id",
           "flow",
           "dataset_name",
+          "notes",
+          "voice",
           "started",
-          "engine"
+          "recording",
+          "engine",
+          "recording_state",
+          "outcome",
+          "error",
+          "summary"
         ],
         "title": "SessionStateModel",
         "type": "object"
@@ -1385,12 +1345,7 @@
             "type": "boolean"
           },
           "mode": {
-            "enum": [
-              "idle",
-              "live",
-              "demo",
-              "replay"
-            ],
+            "enum": ["idle", "live", "demo", "replay"],
             "title": "Mode",
             "type": "string"
           },
@@ -1414,9 +1369,7 @@
             "type": "number"
           }
         },
-        "required": [
-          "mode"
-        ],
+        "required": ["mode"],
         "title": "SourceRequest",
         "type": "object"
       },
@@ -1424,17 +1377,14 @@
         "additionalProperties": true,
         "properties": {
           "distinct_byte1": {
-            "default": 0,
             "title": "Distinct Byte1",
             "type": "integer"
           },
           "dropped_chunks": {
-            "default": 0,
             "title": "Dropped Chunks",
             "type": "integer"
           },
           "elapsed_s": {
-            "default": 0.0,
             "title": "Elapsed S",
             "type": "number"
           },
@@ -1461,31 +1411,38 @@
             "title": "Key Ok"
           },
           "label": {
-            "default": "",
             "title": "Label",
             "type": "string"
           },
           "mode": {
-            "default": "idle",
             "title": "Mode",
             "type": "string"
           },
           "reports_per_second": {
-            "default": 0.0,
             "title": "Reports Per Second",
             "type": "number"
           },
           "reports_seen": {
-            "default": 0,
             "title": "Reports Seen",
             "type": "integer"
           },
           "samples": {
-            "default": 0,
             "title": "Samples",
             "type": "integer"
           }
         },
+        "required": [
+          "mode",
+          "label",
+          "elapsed_s",
+          "reports_seen",
+          "samples",
+          "reports_per_second",
+          "distinct_byte1",
+          "key_ok",
+          "error",
+          "dropped_chunks"
+        ],
         "title": "SourceStatsModel",
         "type": "object"
       },
@@ -1511,11 +1468,7 @@
             "type": "array"
           }
         },
-        "required": [
-          "freqs",
-          "power",
-          "channel"
-        ],
+        "required": ["freqs", "power", "channel"],
         "title": "SpectrumModel",
         "type": "object"
       },
@@ -1657,8 +1610,11 @@
           "buffer_seconds",
           "subscribers",
           "device",
+          "recording",
+          "session",
           "recordings_dir",
-          "fs"
+          "fs",
+          "error"
         ],
         "title": "StatusModel",
         "type": "object"
@@ -1695,11 +1651,7 @@
             "type": "string"
           }
         },
-        "required": [
-          "loc",
-          "msg",
-          "type"
-        ],
+        "required": ["loc", "msg", "type"],
         "title": "ValidationError",
         "type": "object"
       },
@@ -1725,11 +1677,7 @@
             "type": "array"
           }
         },
-        "required": [
-          "valid",
-          "errors",
-          "warnings"
-        ],
+        "required": ["valid", "errors", "warnings"],
         "title": "ValidationModel",
         "type": "object"
       }
@@ -1759,9 +1707,7 @@
           }
         },
         "summary": "The whole montage, with documentation",
-        "tags": [
-          "channels"
-        ]
+        "tags": ["channels"]
       }
     },
     "/api/channels/{name}": {
@@ -1802,9 +1748,7 @@
           }
         },
         "summary": "One channel",
-        "tags": [
-          "channels"
-        ]
+        "tags": ["channels"]
       }
     },
     "/api/flows": {
@@ -1827,9 +1771,7 @@
           }
         },
         "summary": "Saved flows",
-        "tags": [
-          "flows"
-        ]
+        "tags": ["flows"]
       },
       "post": {
         "operationId": "create_flow_api_flows_post",
@@ -1866,9 +1808,7 @@
           }
         },
         "summary": "Save a new flow",
-        "tags": [
-          "flows"
-        ]
+        "tags": ["flows"]
       }
     },
     "/api/flows/preview": {
@@ -1908,9 +1848,7 @@
           }
         },
         "summary": "What this flow will do",
-        "tags": [
-          "flows"
-        ]
+        "tags": ["flows"]
       }
     },
     "/api/flows/validate": {
@@ -1950,9 +1888,7 @@
           }
         },
         "summary": "Check a flow without saving it",
-        "tags": [
-          "flows"
-        ]
+        "tags": ["flows"]
       }
     },
     "/api/flows/{flow_id}": {
@@ -1985,9 +1921,7 @@
           }
         },
         "summary": "Delete a flow",
-        "tags": [
-          "flows"
-        ]
+        "tags": ["flows"]
       },
       "get": {
         "operationId": "get_flow_api_flows__flow_id__get",
@@ -2025,9 +1959,7 @@
           }
         },
         "summary": "One saved flow",
-        "tags": [
-          "flows"
-        ]
+        "tags": ["flows"]
       },
       "put": {
         "operationId": "update_flow_api_flows__flow_id__put",
@@ -2075,9 +2007,7 @@
           }
         },
         "summary": "Update a saved flow",
-        "tags": [
-          "flows"
-        ]
+        "tags": ["flows"]
       }
     },
     "/api/recordings": {
@@ -2097,9 +2027,7 @@
           }
         },
         "summary": "Everything in recordings/",
-        "tags": [
-          "recordings"
-        ]
+        "tags": ["recordings"]
       }
     },
     "/api/recordings/{entry_id}": {
@@ -2139,9 +2067,7 @@
           }
         },
         "summary": "One recording",
-        "tags": [
-          "recordings"
-        ]
+        "tags": ["recordings"]
       }
     },
     "/api/recordings/{entry_id}/bands": {
@@ -2184,9 +2110,7 @@
           }
         },
         "summary": "Per-channel band power, whole recording",
-        "tags": [
-          "recordings"
-        ]
+        "tags": ["recordings"]
       }
     },
     "/api/recordings/{entry_id}/preview": {
@@ -2239,9 +2163,7 @@
           }
         },
         "summary": "Decimated samples",
-        "tags": [
-          "recordings"
-        ]
+        "tags": ["recordings"]
       }
     },
     "/api/recordings/{entry_id}/segments": {
@@ -2286,9 +2208,7 @@
           }
         },
         "summary": "Its labels",
-        "tags": [
-          "recordings"
-        ]
+        "tags": ["recordings"]
       }
     },
     "/api/recordings/{entry_id}/spectrum": {
@@ -2357,9 +2277,7 @@
           }
         },
         "summary": "Log power spectrum",
-        "tags": [
-          "recordings"
-        ]
+        "tags": ["recordings"]
       }
     },
     "/api/sessions": {
@@ -2399,9 +2317,7 @@
           }
         },
         "summary": "Run a flow",
-        "tags": [
-          "sessions"
-        ]
+        "tags": ["sessions"]
       }
     },
     "/api/sessions/current": {
@@ -2429,9 +2345,7 @@
           }
         },
         "summary": "The running session",
-        "tags": [
-          "sessions"
-        ]
+        "tags": ["sessions"]
       }
     },
     "/api/sessions/current/abort": {
@@ -2451,9 +2365,7 @@
           }
         },
         "summary": "Stop and discard",
-        "tags": [
-          "sessions"
-        ]
+        "tags": ["sessions"]
       }
     },
     "/api/sessions/current/stop": {
@@ -2473,9 +2385,7 @@
           }
         },
         "summary": "Stop and keep the data",
-        "tags": [
-          "sessions"
-        ]
+        "tags": ["sessions"]
       }
     },
     "/api/sessions/quick": {
@@ -2515,9 +2425,7 @@
           }
         },
         "summary": "Record one label",
-        "tags": [
-          "sessions"
-        ]
+        "tags": ["sessions"]
       }
     },
     "/api/system/devices": {
@@ -2537,9 +2445,7 @@
           }
         },
         "summary": "HID interfaces on the dongle",
-        "tags": [
-          "system"
-        ]
+        "tags": ["system"]
       }
     },
     "/api/system/source": {
@@ -2579,9 +2485,7 @@
           }
         },
         "summary": "Switch the stream",
-        "tags": [
-          "system"
-        ]
+        "tags": ["system"]
       }
     },
     "/api/system/status": {
@@ -2601,9 +2505,7 @@
           }
         },
         "summary": "Everything the header needs",
-        "tags": [
-          "system"
-        ]
+        "tags": ["system"]
       }
     },
     "/health": {
@@ -2626,9 +2528,7 @@
           }
         },
         "summary": "Liveness probe",
-        "tags": [
-          "system"
-        ]
+        "tags": ["system"]
       }
     }
   }

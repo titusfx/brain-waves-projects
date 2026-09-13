@@ -368,6 +368,10 @@ class RecordingLibrary:
                                 "end_sample": int(row["end_sample"]),
                                 "samples": int(row["end_sample"]) - int(row["start_sample"]),
                                 "truncated": bool(int(row.get("truncated", 0) or 0)),
+                                # `labels.csv` only ever holds kept states, so this is
+                                # always False here — but the field is part of the
+                                # contract, so it is always sent.
+                                "discarded": bool(int(row.get("discarded", 0) or 0)),
                             }
                         )
                     except (KeyError, ValueError):

@@ -4,1868 +4,1774 @@
  */
 
 export interface paths {
-    "/api/channels": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * The whole montage, with documentation
-         * @description Montage, frequency bands, and a documented entry for each of the 14 channels.
-         *
-         *     The prose is authored in ``domain/catalog/channels.yaml``; the loader refuses to
-         *     start if a documented channel is not a real channel of this montage.
-         */
-        get: operations["catalog_api_channels_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+  '/api/channels': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/channels/{name}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * One channel
-         * @description Case-insensitive: ``/api/channels/o1`` and ``/api/channels/O1`` are the same.
-         */
-        get: operations["channel_api_channels__name__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * The whole montage, with documentation
+     * @description Montage, frequency bands, and a documented entry for each of the 14 channels.
+     *
+     *     The prose is authored in ``domain/catalog/channels.yaml``; the loader refuses to
+     *     start if a documented channel is not a real channel of this montage.
+     */
+    get: operations['catalog_api_channels_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/channels/{name}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/flows": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Saved flows */
-        get: operations["list_flows_api_flows_get"];
-        put?: never;
-        /** Save a new flow */
-        post: operations["create_flow_api_flows_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * One channel
+     * @description Case-insensitive: ``/api/channels/o1`` and ``/api/channels/O1`` are the same.
+     */
+    get: operations['channel_api_channels__name__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/flows': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/flows/preview": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * What this flow will do
-         * @description The running order, expanded â€” the builder's timeline strip.
-         */
-        post: operations["preview_flow_api_flows_preview_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** Saved flows */
+    get: operations['list_flows_api_flows_get'];
+    put?: never;
+    /** Save a new flow */
+    post: operations['create_flow_api_flows_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/flows/preview': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/flows/validate": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Check a flow without saving it
-         * @description Errors make a flow unrunnable; warnings are things worth knowing.
-         *
-         *     The rules are the engine's own, so the builder cannot accept something the runner
-         *     will refuse â€” and the messages say what to change, not which field is wrong.
-         */
-        post: operations["check_flow_api_flows_validate_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * What this flow will do
+     * @description The running order, expanded â€” the builder's timeline strip.
+     */
+    post: operations['preview_flow_api_flows_preview_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/flows/validate': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/flows/{flow_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** One saved flow */
-        get: operations["get_flow_api_flows__flow_id__get"];
-        /** Update a saved flow */
-        put: operations["update_flow_api_flows__flow_id__put"];
-        post?: never;
-        /** Delete a flow */
-        delete: operations["delete_flow_api_flows__flow_id__delete"];
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Check a flow without saving it
+     * @description Errors make a flow unrunnable; warnings are things worth knowing.
+     *
+     *     The rules are the engine's own, so the builder cannot accept something the runner
+     *     will refuse â€” and the messages say what to change, not which field is wrong.
+     */
+    post: operations['check_flow_api_flows_validate_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/flows/{flow_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/recordings": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Everything in recordings/
-         * @description Newest first.
-         *
-         *     Three kinds are listed together because they are the same thing to a user:
-         *     ``dataset`` (written by a guided flow, so it has labels), ``session`` (a
-         *     ``live_view.py`` folder) and ``recording`` (a flat CSV from ``record.py``).
-         */
-        get: operations["list_recordings_api_recordings_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** One saved flow */
+    get: operations['get_flow_api_flows__flow_id__get'];
+    /** Update a saved flow */
+    put: operations['update_flow_api_flows__flow_id__put'];
+    post?: never;
+    /** Delete a flow */
+    delete: operations['delete_flow_api_flows__flow_id__delete'];
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/recordings': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/recordings/{entry_id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** One recording */
-        get: operations["get_recording_api_recordings__entry_id__get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Everything in recordings/
+     * @description Newest first.
+     *
+     *     Three kinds are listed together because they are the same thing to a user:
+     *     ``dataset`` (written by a guided flow, so it has labels), ``session`` (a
+     *     ``live_view.py`` folder) and ``recording`` (a flat CSV from ``record.py``).
+     */
+    get: operations['list_recordings_api_recordings_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/recordings/{entry_id}': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/recordings/{entry_id}/bands": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Per-channel band power, whole recording
-         * @description A quick summary of a dataset: which bands dominate on which channel.
-         *
-         *     This is the endpoint that answers "did the eyes-closed protocol actually produce
-         *     more occipital alpha than the eyes-open one?" without opening a notebook.
-         */
-        get: operations["get_bands_api_recordings__entry_id__bands_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /** One recording */
+    get: operations['get_recording_api_recordings__entry_id__get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/recordings/{entry_id}/bands': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/recordings/{entry_id}/preview": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Decimated samples
-         * @description For the chart. Decimated, not averaged, so transients survive.
-         */
-        get: operations["get_preview_api_recordings__entry_id__preview_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Per-channel band power, whole recording
+     * @description A quick summary of a dataset: which bands dominate on which channel.
+     *
+     *     This is the endpoint that answers "did the eyes-closed protocol actually produce
+     *     more occipital alpha than the eyes-open one?" without opening a notebook.
+     */
+    get: operations['get_bands_api_recordings__entry_id__bands_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/recordings/{entry_id}/preview': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/recordings/{entry_id}/segments": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Its labels
-         * @description The state table of a dataset. Empty for a recording that has no labels.
-         */
-        get: operations["get_segments_api_recordings__entry_id__segments_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Decimated samples
+     * @description For the chart. Decimated, not averaged, so transients survive.
+     */
+    get: operations['get_preview_api_recordings__entry_id__preview_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/recordings/{entry_id}/segments': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/recordings/{entry_id}/spectrum": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Log power spectrum
-         * @description One channel's spectrum, for checking that a dataset contains what it claims.
-         */
-        get: operations["get_spectrum_api_recordings__entry_id__spectrum_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Its labels
+     * @description The state table of a dataset. Empty for a recording that has no labels.
+     */
+    get: operations['get_segments_api_recordings__entry_id__segments_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/recordings/{entry_id}/spectrum': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/sessions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Run a flow
-         * @description Start a protocol.
-         *
-         *     The countdown runs first and is **not recorded**; the dataset is created the
-         *     moment it ends. If the operator stops during the countdown there is no dataset at
-         *     all, because there was never any data.
-         */
-        post: operations["start_session_api_sessions_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Log power spectrum
+     * @description One channel's spectrum, for checking that a dataset contains what it claims.
+     */
+    get: operations['get_spectrum_api_recordings__entry_id__spectrum_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/sessions': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/sessions/current": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * The running session
-         * @description ``null`` when nothing is running â€” which is the normal state.
-         */
-        get: operations["current_api_sessions_current_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Run a flow
+     * @description Start a protocol.
+     *
+     *     The countdown runs first and is **not recorded**; the dataset is created the
+     *     moment it ends. If the operator stops during the countdown there is no dataset at
+     *     all, because there was never any data.
+     */
+    post: operations['start_session_api_sessions_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/sessions/current': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/sessions/current/abort": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Stop and discard
-         * @description Stop and delete the dataset. For a run that went wrong.
-         */
-        post: operations["abort_session_api_sessions_current_abort_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * The running session
+     * @description ``null`` when nothing is running â€” which is the normal state.
+     */
+    get: operations['current_api_sessions_current_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/sessions/current/abort': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/sessions/current/stop": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Stop and keep the data
-         * @description Stop the run.
-         *
-         *     A looping protocol drops its tail states here â€” the one you interrupted plus the
-         *     completed one before it â€” because reaching for the button is itself a change in
-         *     what the subject is doing. See ``FlowSpec.effective_discard_tail``.
-         */
-        post: operations["stop_session_api_sessions_current_stop_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Stop and discard
+     * @description Stop and delete the dataset. For a run that went wrong.
+     */
+    post: operations['abort_session_api_sessions_current_abort_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/sessions/current/stop': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/sessions/quick": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Record one label
-         * @description Name it, press the button, hear 3-2-1, and record until you stop.
-         *
-         *     This is deliberately the same machinery as a flow â€” a one-state, open-ended,
-         *     linear protocol â€” rather than a second code path that could drift from it.
-         */
-        post: operations["quick_record_api_sessions_quick_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Stop and keep the data
+     * @description Stop the run.
+     *
+     *     A looping protocol drops its tail states here â€” the one you interrupted plus the
+     *     completed one before it â€” because reaching for the button is itself a change in
+     *     what the subject is doing. See ``FlowSpec.effective_discard_tail``.
+     */
+    post: operations['stop_session_api_sessions_current_stop_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/sessions/quick': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/system/devices": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * HID interfaces on the dongle
-         * @description What is plugged in. ``streaming_interface`` is the one that actually carries EEG.
-         */
-        get: operations["devices_api_system_devices_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Record one label
+     * @description Name it, press the button, hear 3-2-1, and record until you stop.
+     *
+     *     This is deliberately the same machinery as a flow â€” a one-state, open-ended,
+     *     linear protocol â€” rather than a second code path that could drift from it.
+     */
+    post: operations['quick_record_api_sessions_quick_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/system/devices': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/system/source": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        get?: never;
-        put?: never;
-        /**
-         * Switch the stream
-         * @description Choose the dongle, a recording, the synthetic signal, or nothing.
-         *
-         *     Refused with 409 while a dataset is being recorded: changing the signal under a
-         *     running protocol would silently mix two different things into one class.
-         */
-        post: operations["set_source_api_system_source_post"];
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * HID interfaces on the dongle
+     * @description What is plugged in. ``streaming_interface`` is the one that actually carries EEG.
+     */
+    get: operations['devices_api_system_devices_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/system/source': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/api/system/status": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Everything the header needs
-         * @description The current source, its health, the device, and any running session.
-         */
-        get: operations["status_api_system_status_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    get?: never;
+    put?: never;
+    /**
+     * Switch the stream
+     * @description Choose the dongle, a recording, the synthetic signal, or nothing.
+     *
+     *     Refused with 409 while a dataset is being recorded: changing the signal under a
+     *     running protocol would silently mix two different things into one class.
+     */
+    post: operations['set_source_api_system_source_post'];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/api/system/status': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    "/health": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /** Liveness probe */
-        get: operations["health_health_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
+    /**
+     * Everything the header needs
+     * @description The current source, its health, the device, and any running session.
+     */
+    get: operations['status_api_system_status_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  '/health': {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
+    /** Liveness probe */
+    get: operations['health_health_get'];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
 }
 export type webhooks = Record<string, never>;
 export interface components {
-    schemas: {
-        /** BandDocModel */
-        BandDocModel: {
-            /** Key */
-            key: string;
-            /** Name */
-            name: string;
-            /** Note */
-            note: string;
-            /** Range */
-            range: string;
-            /** Summary */
-            summary: string;
-        } & {
-            [key: string]: unknown;
-        };
-        /** CatalogModel */
-        CatalogModel: {
-            /** Bands */
-            bands: components["schemas"]["BandDocModel"][];
-            /** Channels */
-            channels: components["schemas"]["ChannelDocModel"][];
-            /** Disclaimer */
-            disclaimer: string;
-            montage: components["schemas"]["MontageModel"];
-        } & {
-            [key: string]: unknown;
-        };
-        /** ChannelDocModel */
-        ChannelDocModel: {
-            /** Artefacts */
-            artefacts: string[];
-            /** Expected */
-            expected: string;
-            /** Functions */
-            functions: string[];
-            head: components["schemas"]["HeadPointModel"];
-            /** Hemisphere */
-            hemisphere: string;
-            /** Index */
-            index: number;
-            /** Lobe */
-            lobe: string;
-            /** Name */
-            name: string;
-            /** Offset */
-            offset: number;
-            /** Placement */
-            placement: string;
-            /** Region */
-            region: string;
-            /** Related */
-            related: string[];
-            /** Summary */
-            summary: string;
-            /** Tasks */
-            tasks: string[];
-        } & {
-            [key: string]: unknown;
-        };
-        /** DeviceInterfaceModel */
-        DeviceInterfaceModel: {
-            /** Interface */
-            interface: number;
-            /** Product */
-            product: string;
-            /** Serial */
-            serial: string;
-            /** Streams */
-            streams: boolean;
-        } & {
-            [key: string]: unknown;
-        };
-        /** DeviceModel */
-        DeviceModel: {
-            /** Hid Available */
-            hid_available: boolean;
-            /** Interfaces */
-            interfaces?: components["schemas"]["DeviceInterfaceModel"][];
-            /** Present */
-            present: boolean;
-            /** Serial */
-            serial?: string | null;
-            streaming_interface?: components["schemas"]["DeviceInterfaceModel"] | null;
-        } & {
-            [key: string]: unknown;
-        };
-        /** EnginePhaseModel */
-        EnginePhaseModel: {
-            /** Cycle */
-            cycle: number;
-            /** Duration */
-            duration?: number | null;
-            /** End */
-            end?: number | null;
-            /** Kind */
-            kind: string;
-            /** Label */
-            label: string;
-            /**
-             * Open Ended
-             * @default false
-             */
-            open_ended: boolean;
-            /**
-             * Progress
-             * @default 0
-             */
-            progress: number;
-            /**
-             * Recordable
-             * @default false
-             */
-            recordable: boolean;
-            /** Remaining */
-            remaining?: number | null;
-            /** Speak */
-            speak?: string | null;
-            /** Start */
-            start: number;
-            /** Step Index */
-            step_index: number;
-        } & {
-            [key: string]: unknown;
-        };
-        /**
-         * EngineStateModel
-         * @description Where a running protocol is, right now.
-         */
-        EngineStateModel: {
-            /** Cycle */
-            cycle: number;
-            /** Cycles */
-            cycles?: number | null;
-            /** Elapsed */
-            elapsed: number;
-            /** Finished */
-            finished: boolean;
-            phase?: components["schemas"]["EnginePhaseModel"] | null;
-            /** Stopped */
-            stopped: boolean;
-            /** Total Seconds */
-            total_seconds?: number | null;
-            /** Upcoming */
-            upcoming?: components["schemas"]["PlanPhaseModel"][];
-        } & {
-            [key: string]: unknown;
-        };
-        /**
-         * FlowInput
-         * @description A protocol, as authored in the builder.
-         */
-        FlowInput: {
-            /**
-             * Countdown Seconds
-             * @default 3
-             */
-            countdown_seconds: number;
-            /**
-             * Description
-             * @default
-             */
-            description: string;
-            /** Discard Tail */
-            discard_tail?: number | null;
-            /**
-             * Mode
-             * @default linear
-             * @enum {string}
-             */
-            mode: "linear" | "loop";
-            /** Name */
-            name: string;
-            /** Repeat */
-            repeat?: number | null;
-            /**
-             * Rest Seconds
-             * @default 0
-             */
-            rest_seconds: number;
-            /** Steps */
-            steps: components["schemas"]["FlowStepInput"][];
-        } & {
-            [key: string]: unknown;
-        };
-        /** FlowSpecModel */
-        FlowSpecModel: {
-            /**
-             * Countdown Seconds
-             * @default 3
-             */
-            countdown_seconds: number;
-            /** Cycles */
-            cycles?: number | null;
-            /**
-             * Description
-             * @default
-             */
-            description: string;
-            /**
-             * Discard Tail
-             * @default 0
-             */
-            discard_tail: number;
-            /**
-             * Id
-             * @default
-             */
-            id: string;
-            /**
-             * Mode
-             * @default linear
-             * @enum {string}
-             */
-            mode: "linear" | "loop";
-            /** Name */
-            name: string;
-            /** Repeat */
-            repeat?: number | null;
-            /**
-             * Rest Seconds
-             * @default 0
-             */
-            rest_seconds: number;
-            /** Steps */
-            steps: components["schemas"]["FlowStepModel"][];
-            /** Total Seconds */
-            total_seconds?: number | null;
-        } & {
-            [key: string]: unknown;
-        };
-        /**
-         * FlowStepInput
-         * @description One state, as authored in the builder.
-         */
-        FlowStepInput: {
-            /** Label */
-            label: string;
-            /** Seconds */
-            seconds?: number | null;
-            /** Speak */
-            speak?: string | null;
-        } & {
-            [key: string]: unknown;
-        };
-        /** FlowStepModel */
-        FlowStepModel: {
-            /** Label */
-            label: string;
-            /**
-             * Open Ended
-             * @default false
-             */
-            open_ended: boolean;
-            /** Seconds */
-            seconds?: number | null;
-            /** Speak */
-            speak?: string | null;
-        } & {
-            [key: string]: unknown;
-        };
-        /** HTTPValidationError */
-        HTTPValidationError: {
-            /** Detail */
-            detail?: components["schemas"]["ValidationError"][];
-        };
-        /** HeadPointModel */
-        HeadPointModel: {
-            /** X */
-            x: number;
-            /** Y */
-            y: number;
-        } & {
-            [key: string]: unknown;
-        };
-        /** LabelSummaryModel */
-        LabelSummaryModel: {
-            /** Label */
-            label: string;
-            /** Samples */
-            samples: number;
-            /** Seconds */
-            seconds: number;
-            /** Segments */
-            segments: number;
-        } & {
-            [key: string]: unknown;
-        };
-        /** LibraryEntryModel */
-        LibraryEntryModel: {
-            /** Channels */
-            channels: number;
-            /** Created */
-            created: string;
-            /**
-             * Dropped Chunks
-             * @default 0
-             */
-            dropped_chunks: number;
-            /** Duration S */
-            duration_s: number;
-            /** Flow Name */
-            flow_name?: string | null;
-            /** Id */
-            id: string;
-            /** Kind */
-            kind: string;
-            /** Labels */
-            labels?: components["schemas"]["LabelSummaryModel"][];
-            /** Name */
-            name: string;
-            /** Notes */
-            notes?: string | null;
-            /** Path */
-            path: string;
-            /** Samples */
-            samples: number;
-            /**
-             * Segments
-             * @default 0
-             */
-            segments: number;
-            /** Size Bytes */
-            size_bytes: number;
-            /** Source */
-            source?: string | null;
-        } & {
-            [key: string]: unknown;
-        };
-        /** LibraryModel */
-        LibraryModel: {
-            /** Directory */
-            directory: string;
-            /** Recordings */
-            recordings: components["schemas"]["LibraryEntryModel"][];
-            /** Total */
-            total: number;
-        } & {
-            [key: string]: unknown;
-        };
-        /** MontageModel */
-        MontageModel: {
-            /** Midline Note */
-            midline_note: string;
-            /** Name */
-            name: string;
-            reference: components["schemas"]["ReferenceModel"];
-            /** Sampling Hz */
-            sampling_hz: number;
-            /** Scale */
-            scale: string;
-            /** Summary */
-            summary: string;
-            /** System */
-            system: string;
-        } & {
-            [key: string]: unknown;
-        };
-        /** PlanPhaseModel */
-        PlanPhaseModel: {
-            /** Cycle */
-            cycle: number;
-            /** Duration */
-            duration?: number | null;
-            /** Kind */
-            kind: string;
-            /** Label */
-            label: string;
-        } & {
-            [key: string]: unknown;
-        };
-        /** PlanPreviewModel */
-        PlanPreviewModel: {
-            /** Cycles */
-            cycles?: number | null;
-            /**
-             * Discard Tail
-             * @default 0
-             */
-            discard_tail: number;
-            /** Phases */
-            phases: components["schemas"]["PlanPhaseModel"][];
-            /** Total Seconds */
-            total_seconds?: number | null;
-            /**
-             * Truncated
-             * @default false
-             */
-            truncated: boolean;
-        } & {
-            [key: string]: unknown;
-        };
-        /** PreviewModel */
-        PreviewModel: {
-            /** Data */
-            data: number[][];
-            /**
-             * Decimation
-             * @default 1
-             */
-            decimation: number;
-            /** T */
-            t: number[];
-            /** Total Samples */
-            total_samples: number;
-        } & {
-            [key: string]: unknown;
-        };
-        /**
-         * QuickRecordRequest
-         * @description The one-button case: name it, press record, it counts 3-2-1 and records.
-         */
-        QuickRecordRequest: {
-            /**
-             * Countdown Seconds
-             * @default 3
-             */
-            countdown_seconds: number;
-            /** Dataset Name */
-            dataset_name?: string | null;
-            /**
-             * Label
-             * @description What this data is, e.g. 'eyes closed'.
-             */
-            label: string;
-            /**
-             * Notes
-             * @default
-             */
-            notes: string;
-            /**
-             * Voice
-             * @default true
-             */
-            voice: boolean;
-        } & {
-            [key: string]: unknown;
-        };
-        /** RecordingStateModel */
-        RecordingStateModel: {
-            /** Current Label */
-            current_label?: string | null;
-            /**
-             * Dropped Chunks
-             * @default 0
-             */
-            dropped_chunks: number;
-            /** Duration */
-            duration: number;
-            /** Id */
-            id: string;
-            /** Name */
-            name: string;
-            /** Path */
-            path: string;
-            /**
-             * Recording
-             * @default true
-             */
-            recording: boolean;
-            /** Samples */
-            samples: number;
-            /** Segments */
-            segments: number;
-        } & {
-            [key: string]: unknown;
-        };
-        /**
-         * RecordingSummaryModel
-         * @description What a finished dataset contains, and what was deliberately thrown away.
-         */
-        RecordingSummaryModel: {
-            /** Discarded Segments */
-            discarded_segments?: components["schemas"]["SegmentModel"][];
-            /**
-             * Dropped Chunks
-             * @default 0
-             */
-            dropped_chunks: number;
-            /** Duration */
-            duration: number;
-            /** Fs */
-            fs: number;
-            /** Id */
-            id: string;
-            /** Kept Segments */
-            kept_segments?: components["schemas"]["SegmentModel"][];
-            /** Labels */
-            labels?: components["schemas"]["LabelSummaryModel"][];
-            /** Name */
-            name: string;
-            /** Path */
-            path: string;
-            /** Removed */
-            removed?: boolean | null;
-            /** Samples */
-            samples: number;
-        } & {
-            [key: string]: unknown;
-        };
-        /** ReferenceModel */
-        ReferenceModel: {
-            /** Explanation */
-            explanation: string;
-            /** Name */
-            name: string;
-        } & {
-            [key: string]: unknown;
-        };
-        /** SegmentModel */
-        SegmentModel: {
-            /** Cycle */
-            cycle: number;
-            /**
-             * Discarded
-             * @default false
-             */
-            discarded: boolean;
-            /** Duration */
-            duration: number;
-            /** End Sample */
-            end_sample: number;
-            /** End Time */
-            end_time: number;
-            /** Index */
-            index: number;
-            /** Label */
-            label: string;
-            /** Samples */
-            samples: number;
-            /** Start Sample */
-            start_sample: number;
-            /** Start Time */
-            start_time: number;
-            /** Step Index */
-            step_index: number;
-            /**
-             * Truncated
-             * @default false
-             */
-            truncated: boolean;
-        } & {
-            [key: string]: unknown;
-        };
-        /** SessionStateModel */
-        SessionStateModel: {
-            /** Active */
-            active: boolean;
-            /** Dataset Name */
-            dataset_name: string;
-            engine: components["schemas"]["EngineStateModel"];
-            /** Error */
-            error?: string | null;
-            flow: components["schemas"]["FlowSpecModel"];
-            /**
-             * Id
-             * @default
-             */
-            id: string;
-            /**
-             * Notes
-             * @default
-             */
-            notes: string;
-            /** Outcome */
-            outcome?: string | null;
-            /**
-             * Recording
-             * @default false
-             */
-            recording: boolean;
-            recording_state?: components["schemas"]["RecordingStateModel"] | null;
-            /** Started */
-            started: string;
-            summary?: components["schemas"]["RecordingSummaryModel"] | null;
-            /**
-             * Voice
-             * @default true
-             */
-            voice: boolean;
-        } & {
-            [key: string]: unknown;
-        };
-        /**
-         * SourceRequest
-         * @description Switch the stream: the dongle, a recording, the synthetic signal, or nothing.
-         */
-        SourceRequest: {
-            /**
-             * Loop
-             * @default true
-             */
-            loop: boolean;
-            /**
-             * Mode
-             * @enum {string}
-             */
-            mode: "idle" | "live" | "demo" | "replay";
-            /**
-             * Replay Id
-             * @description Library id of the recording to replay (mode='replay').
-             */
-            replay_id?: string | null;
-            /**
-             * Replay Speed
-             * @default 1
-             */
-            replay_speed: number;
-        } & {
-            [key: string]: unknown;
-        };
-        /** SourceStatsModel */
-        SourceStatsModel: {
-            /**
-             * Distinct Byte1
-             * @default 0
-             */
-            distinct_byte1: number;
-            /**
-             * Dropped Chunks
-             * @default 0
-             */
-            dropped_chunks: number;
-            /**
-             * Elapsed S
-             * @default 0
-             */
-            elapsed_s: number;
-            /** Error */
-            error?: string | null;
-            /** Key Ok */
-            key_ok?: boolean | null;
-            /**
-             * Label
-             * @default
-             */
-            label: string;
-            /**
-             * Mode
-             * @default idle
-             */
-            mode: string;
-            /**
-             * Reports Per Second
-             * @default 0
-             */
-            reports_per_second: number;
-            /**
-             * Reports Seen
-             * @default 0
-             */
-            reports_seen: number;
-            /**
-             * Samples
-             * @default 0
-             */
-            samples: number;
-        } & {
-            [key: string]: unknown;
-        };
-        /** SpectrumModel */
-        SpectrumModel: {
-            /** Channel */
-            channel: string;
-            /** Freqs */
-            freqs: number[];
-            /** Power */
-            power: number[];
-        } & {
-            [key: string]: unknown;
-        };
-        /**
-         * StartSessionRequest
-         * @description Run a saved flow, or an inline one.
-         */
-        StartSessionRequest: {
-            /**
-             * Countdown Seconds
-             * @description Override the flow's countdown for this run only.
-             */
-            countdown_seconds?: number | null;
-            /** Dataset Name */
-            dataset_name?: string | null;
-            flow?: components["schemas"]["FlowInput"] | null;
-            /** Flow Id */
-            flow_id?: string | null;
-            /**
-             * Notes
-             * @default
-             */
-            notes: string;
-            /**
-             * Voice
-             * @default true
-             */
-            voice: boolean;
-        } & {
-            [key: string]: unknown;
-        };
-        /** StatusModel */
-        StatusModel: {
-            /** Buffer Seconds */
-            buffer_seconds: number;
-            device: components["schemas"]["DeviceModel"];
-            /** Error */
-            error?: string | null;
-            /** Fs */
-            fs: number;
-            recording?: components["schemas"]["RecordingStateModel"] | null;
-            /** Recordings Dir */
-            recordings_dir: string;
-            session?: components["schemas"]["SessionStateModel"] | null;
-            /** Source */
-            source: string;
-            /** Source Label */
-            source_label: string;
-            stats: components["schemas"]["SourceStatsModel"];
-            /** Subscribers */
-            subscribers: number;
-        } & {
-            [key: string]: unknown;
-        };
-        /** ValidationError */
-        ValidationError: {
-            /** Context */
-            ctx?: Record<string, never>;
-            /** Input */
-            input?: unknown;
-            /** Location */
-            loc: (string | number)[];
-            /** Message */
-            msg: string;
-            /** Error Type */
-            type: string;
-        };
-        /** ValidationModel */
-        ValidationModel: {
-            /** Errors */
-            errors: string[];
-            /** Valid */
-            valid: boolean;
-            /** Warnings */
-            warnings: string[];
-        } & {
-            [key: string]: unknown;
-        };
+  schemas: {
+    /** BandDocModel */
+    BandDocModel: {
+      /** Key */
+      key: string;
+      /** Name */
+      name: string;
+      /** Note */
+      note: string;
+      /** Range */
+      range: string;
+      /** Summary */
+      summary: string;
+    } & {
+      [key: string]: unknown;
     };
-    responses: never;
-    parameters: never;
-    requestBodies: never;
-    headers: never;
-    pathItems: never;
+    /** CatalogModel */
+    CatalogModel: {
+      /** Bands */
+      bands: components['schemas']['BandDocModel'][];
+      /** Channels */
+      channels: components['schemas']['ChannelDocModel'][];
+      /** Disclaimer */
+      disclaimer: string;
+      montage: components['schemas']['MontageModel'];
+    } & {
+      [key: string]: unknown;
+    };
+    /** ChannelDocModel */
+    ChannelDocModel: {
+      /** Artefacts */
+      artefacts: string[];
+      /** Expected */
+      expected: string;
+      /** Functions */
+      functions: string[];
+      head: components['schemas']['HeadPointModel'];
+      /** Hemisphere */
+      hemisphere: string;
+      /** Index */
+      index: number;
+      /** Lobe */
+      lobe: string;
+      /** Name */
+      name: string;
+      /** Offset */
+      offset: number;
+      /** Placement */
+      placement: string;
+      /** Region */
+      region: string;
+      /** Related */
+      related: string[];
+      /** Summary */
+      summary: string;
+      /** Tasks */
+      tasks: string[];
+    } & {
+      [key: string]: unknown;
+    };
+    /** DeviceInterfaceModel */
+    DeviceInterfaceModel: {
+      /** Interface */
+      interface: number;
+      /** Product */
+      product: string;
+      /** Serial */
+      serial: string;
+      /** Streams */
+      streams: boolean;
+    } & {
+      [key: string]: unknown;
+    };
+    /** DeviceModel */
+    DeviceModel: {
+      /** Hid Available */
+      hid_available: boolean;
+      /** Interfaces */
+      interfaces: components['schemas']['DeviceInterfaceModel'][];
+      /** Present */
+      present: boolean;
+      /** Serial */
+      serial: string | null;
+      streaming_interface: components['schemas']['DeviceInterfaceModel'] | null;
+    } & {
+      [key: string]: unknown;
+    };
+    /** EnginePhaseModel */
+    EnginePhaseModel: {
+      /** Cycle */
+      cycle: number;
+      /** Duration */
+      duration: number | null;
+      /** End */
+      end: number | null;
+      /** Kind */
+      kind: string;
+      /** Label */
+      label: string;
+      /** Open Ended */
+      open_ended: boolean;
+      /** Progress */
+      progress: number;
+      /** Recordable */
+      recordable: boolean;
+      /** Remaining */
+      remaining: number | null;
+      /** Speak */
+      speak: string | null;
+      /** Start */
+      start: number;
+      /** Step Index */
+      step_index: number;
+    } & {
+      [key: string]: unknown;
+    };
+    /**
+     * EngineStateModel
+     * @description Where a running protocol is, right now.
+     */
+    EngineStateModel: {
+      /** Cycle */
+      cycle: number;
+      /** Cycles */
+      cycles: number | null;
+      /** Elapsed */
+      elapsed: number;
+      /** Finished */
+      finished: boolean;
+      phase: components['schemas']['EnginePhaseModel'] | null;
+      /** Stopped */
+      stopped: boolean;
+      /** Total Seconds */
+      total_seconds: number | null;
+      /** Upcoming */
+      upcoming: components['schemas']['PlanPhaseModel'][];
+    } & {
+      [key: string]: unknown;
+    };
+    /**
+     * FlowInput
+     * @description A protocol, as authored in the builder.
+     */
+    FlowInput: {
+      /**
+       * Countdown Seconds
+       * @default 3
+       */
+      countdown_seconds: number;
+      /**
+       * Description
+       * @default
+       */
+      description: string;
+      /** Discard Tail */
+      discard_tail?: number | null;
+      /**
+       * Mode
+       * @default linear
+       * @enum {string}
+       */
+      mode: 'linear' | 'loop';
+      /** Name */
+      name: string;
+      /** Repeat */
+      repeat?: number | null;
+      /**
+       * Rest Seconds
+       * @default 0
+       */
+      rest_seconds: number;
+      /** Steps */
+      steps: components['schemas']['FlowStepInput'][];
+    } & {
+      [key: string]: unknown;
+    };
+    /** FlowSpecModel */
+    FlowSpecModel: {
+      /** Countdown Seconds */
+      countdown_seconds: number;
+      /** Cycles */
+      cycles: number | null;
+      /** Description */
+      description: string;
+      /** Discard Tail */
+      discard_tail: number;
+      /** Id */
+      id: string;
+      /**
+       * Mode
+       * @enum {string}
+       */
+      mode: 'linear' | 'loop';
+      /** Name */
+      name: string;
+      /** Repeat */
+      repeat: number | null;
+      /** Rest Seconds */
+      rest_seconds: number;
+      /** Steps */
+      steps: components['schemas']['FlowStepModel'][];
+      /** Total Seconds */
+      total_seconds: number | null;
+    } & {
+      [key: string]: unknown;
+    };
+    /**
+     * FlowStepInput
+     * @description One state, as authored in the builder.
+     */
+    FlowStepInput: {
+      /** Label */
+      label: string;
+      /** Seconds */
+      seconds?: number | null;
+      /** Speak */
+      speak?: string | null;
+    } & {
+      [key: string]: unknown;
+    };
+    /** FlowStepModel */
+    FlowStepModel: {
+      /** Label */
+      label: string;
+      /** Open Ended */
+      open_ended: boolean;
+      /** Seconds */
+      seconds: number | null;
+      /** Speak */
+      speak: string | null;
+    } & {
+      [key: string]: unknown;
+    };
+    /** HTTPValidationError */
+    HTTPValidationError: {
+      /** Detail */
+      detail?: components['schemas']['ValidationError'][];
+    };
+    /** HeadPointModel */
+    HeadPointModel: {
+      /** X */
+      x: number;
+      /** Y */
+      y: number;
+    } & {
+      [key: string]: unknown;
+    };
+    /** LabelSummaryModel */
+    LabelSummaryModel: {
+      /** Label */
+      label: string;
+      /** Samples */
+      samples: number;
+      /** Seconds */
+      seconds: number;
+      /** Segments */
+      segments: number;
+    } & {
+      [key: string]: unknown;
+    };
+    /** LibraryEntryModel */
+    LibraryEntryModel: {
+      /** Channels */
+      channels: number;
+      /** Created */
+      created: string;
+      /** Dropped Chunks */
+      dropped_chunks: number;
+      /** Duration S */
+      duration_s: number;
+      /** Flow Name */
+      flow_name: string | null;
+      /** Id */
+      id: string;
+      /** Kind */
+      kind: string;
+      /** Labels */
+      labels: components['schemas']['LabelSummaryModel'][];
+      /** Name */
+      name: string;
+      /** Notes */
+      notes: string | null;
+      /** Path */
+      path: string;
+      /** Samples */
+      samples: number;
+      /** Segments */
+      segments: number;
+      /** Size Bytes */
+      size_bytes: number;
+      /** Source */
+      source: string | null;
+    } & {
+      [key: string]: unknown;
+    };
+    /** LibraryModel */
+    LibraryModel: {
+      /** Directory */
+      directory: string;
+      /** Recordings */
+      recordings: components['schemas']['LibraryEntryModel'][];
+      /** Total */
+      total: number;
+    } & {
+      [key: string]: unknown;
+    };
+    /** MontageModel */
+    MontageModel: {
+      /** Midline Note */
+      midline_note: string;
+      /** Name */
+      name: string;
+      reference: components['schemas']['ReferenceModel'];
+      /** Sampling Hz */
+      sampling_hz: number;
+      /** Scale */
+      scale: string;
+      /** Summary */
+      summary: string;
+      /** System */
+      system: string;
+    } & {
+      [key: string]: unknown;
+    };
+    /** PlanPhaseModel */
+    PlanPhaseModel: {
+      /** Cycle */
+      cycle: number;
+      /** Duration */
+      duration: number | null;
+      /** Kind */
+      kind: string;
+      /** Label */
+      label: string;
+    } & {
+      [key: string]: unknown;
+    };
+    /** PlanPreviewModel */
+    PlanPreviewModel: {
+      /** Cycles */
+      cycles: number | null;
+      /** Discard Tail */
+      discard_tail: number;
+      /** Phases */
+      phases: components['schemas']['PlanPhaseModel'][];
+      /** Total Seconds */
+      total_seconds: number | null;
+      /** Truncated */
+      truncated: boolean;
+    } & {
+      [key: string]: unknown;
+    };
+    /** PreviewModel */
+    PreviewModel: {
+      /** Data */
+      data: number[][];
+      /** Decimation */
+      decimation: number;
+      /** T */
+      t: number[];
+      /** Total Samples */
+      total_samples: number;
+    } & {
+      [key: string]: unknown;
+    };
+    /**
+     * QuickRecordRequest
+     * @description The one-button case: name it, press record, it counts 3-2-1 and records.
+     */
+    QuickRecordRequest: {
+      /**
+       * Countdown Seconds
+       * @default 3
+       */
+      countdown_seconds: number;
+      /** Dataset Name */
+      dataset_name?: string | null;
+      /**
+       * Label
+       * @description What this data is, e.g. 'eyes closed'.
+       */
+      label: string;
+      /**
+       * Notes
+       * @default
+       */
+      notes: string;
+      /**
+       * Voice
+       * @default true
+       */
+      voice: boolean;
+    } & {
+      [key: string]: unknown;
+    };
+    /** RecordingStateModel */
+    RecordingStateModel: {
+      /** Current Label */
+      current_label: string | null;
+      /** Dropped Chunks */
+      dropped_chunks: number;
+      /** Duration */
+      duration: number;
+      /** Id */
+      id: string;
+      /** Name */
+      name: string;
+      /** Path */
+      path: string;
+      /** Recording */
+      recording: boolean;
+      /** Samples */
+      samples: number;
+      /** Segments */
+      segments: number;
+    } & {
+      [key: string]: unknown;
+    };
+    /**
+     * RecordingSummaryModel
+     * @description What a finished dataset contains, and what was deliberately thrown away.
+     */
+    RecordingSummaryModel: {
+      /** Discarded Segments */
+      discarded_segments: components['schemas']['SegmentModel'][];
+      /** Dropped Chunks */
+      dropped_chunks: number;
+      /** Duration */
+      duration: number;
+      /** Fs */
+      fs: number;
+      /** Id */
+      id: string;
+      /** Kept Segments */
+      kept_segments: components['schemas']['SegmentModel'][];
+      /** Labels */
+      labels: components['schemas']['LabelSummaryModel'][];
+      /** Name */
+      name: string;
+      /** Path */
+      path: string;
+      /** Removed */
+      removed?: boolean | null;
+      /** Samples */
+      samples: number;
+    } & {
+      [key: string]: unknown;
+    };
+    /** ReferenceModel */
+    ReferenceModel: {
+      /** Explanation */
+      explanation: string;
+      /** Name */
+      name: string;
+    } & {
+      [key: string]: unknown;
+    };
+    /** SegmentModel */
+    SegmentModel: {
+      /** Cycle */
+      cycle: number;
+      /** Discarded */
+      discarded: boolean;
+      /** Duration */
+      duration: number;
+      /** End Sample */
+      end_sample: number;
+      /** End Time */
+      end_time: number;
+      /** Index */
+      index: number;
+      /** Label */
+      label: string;
+      /** Samples */
+      samples: number;
+      /** Start Sample */
+      start_sample: number;
+      /** Start Time */
+      start_time: number;
+      /** Step Index */
+      step_index: number;
+      /** Truncated */
+      truncated: boolean;
+    } & {
+      [key: string]: unknown;
+    };
+    /** SessionStateModel */
+    SessionStateModel: {
+      /** Active */
+      active: boolean;
+      /** Dataset Name */
+      dataset_name: string;
+      engine: components['schemas']['EngineStateModel'];
+      /** Error */
+      error: string | null;
+      flow: components['schemas']['FlowSpecModel'];
+      /** Id */
+      id: string;
+      /** Notes */
+      notes: string;
+      /** Outcome */
+      outcome: string | null;
+      /** Recording */
+      recording: boolean;
+      recording_state: components['schemas']['RecordingStateModel'] | null;
+      /** Started */
+      started: string;
+      summary: components['schemas']['RecordingSummaryModel'] | null;
+      /** Voice */
+      voice: boolean;
+    } & {
+      [key: string]: unknown;
+    };
+    /**
+     * SourceRequest
+     * @description Switch the stream: the dongle, a recording, the synthetic signal, or nothing.
+     */
+    SourceRequest: {
+      /**
+       * Loop
+       * @default true
+       */
+      loop: boolean;
+      /**
+       * Mode
+       * @enum {string}
+       */
+      mode: 'idle' | 'live' | 'demo' | 'replay';
+      /**
+       * Replay Id
+       * @description Library id of the recording to replay (mode='replay').
+       */
+      replay_id?: string | null;
+      /**
+       * Replay Speed
+       * @default 1
+       */
+      replay_speed: number;
+    } & {
+      [key: string]: unknown;
+    };
+    /** SourceStatsModel */
+    SourceStatsModel: {
+      /** Distinct Byte1 */
+      distinct_byte1: number;
+      /** Dropped Chunks */
+      dropped_chunks: number;
+      /** Elapsed S */
+      elapsed_s: number;
+      /** Error */
+      error: string | null;
+      /** Key Ok */
+      key_ok: boolean | null;
+      /** Label */
+      label: string;
+      /** Mode */
+      mode: string;
+      /** Reports Per Second */
+      reports_per_second: number;
+      /** Reports Seen */
+      reports_seen: number;
+      /** Samples */
+      samples: number;
+    } & {
+      [key: string]: unknown;
+    };
+    /** SpectrumModel */
+    SpectrumModel: {
+      /** Channel */
+      channel: string;
+      /** Freqs */
+      freqs: number[];
+      /** Power */
+      power: number[];
+    } & {
+      [key: string]: unknown;
+    };
+    /**
+     * StartSessionRequest
+     * @description Run a saved flow, or an inline one.
+     */
+    StartSessionRequest: {
+      /**
+       * Countdown Seconds
+       * @description Override the flow's countdown for this run only.
+       */
+      countdown_seconds?: number | null;
+      /** Dataset Name */
+      dataset_name?: string | null;
+      flow?: components['schemas']['FlowInput'] | null;
+      /** Flow Id */
+      flow_id?: string | null;
+      /**
+       * Notes
+       * @default
+       */
+      notes: string;
+      /**
+       * Voice
+       * @default true
+       */
+      voice: boolean;
+    } & {
+      [key: string]: unknown;
+    };
+    /** StatusModel */
+    StatusModel: {
+      /** Buffer Seconds */
+      buffer_seconds: number;
+      device: components['schemas']['DeviceModel'];
+      /** Error */
+      error: string | null;
+      /** Fs */
+      fs: number;
+      recording: components['schemas']['RecordingStateModel'] | null;
+      /** Recordings Dir */
+      recordings_dir: string;
+      session: components['schemas']['SessionStateModel'] | null;
+      /** Source */
+      source: string;
+      /** Source Label */
+      source_label: string;
+      stats: components['schemas']['SourceStatsModel'];
+      /** Subscribers */
+      subscribers: number;
+    } & {
+      [key: string]: unknown;
+    };
+    /** ValidationError */
+    ValidationError: {
+      /** Context */
+      ctx?: Record<string, never>;
+      /** Input */
+      input?: unknown;
+      /** Location */
+      loc: (string | number)[];
+      /** Message */
+      msg: string;
+      /** Error Type */
+      type: string;
+    };
+    /** ValidationModel */
+    ValidationModel: {
+      /** Errors */
+      errors: string[];
+      /** Valid */
+      valid: boolean;
+      /** Warnings */
+      warnings: string[];
+    } & {
+      [key: string]: unknown;
+    };
+  };
+  responses: never;
+  parameters: never;
+  requestBodies: never;
+  headers: never;
+  pathItems: never;
 }
 export type $defs = Record<string, never>;
 export interface operations {
-    catalog_api_channels_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["CatalogModel"];
-                };
-            };
-        };
+  catalog_api_channels_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    channel_api_channels__name__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                name: string;
-            };
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ChannelDocModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['CatalogModel'];
         };
+      };
     };
-    list_flows_api_flows_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FlowSpecModel"][];
-                };
-            };
-        };
+  };
+  channel_api_channels__name__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        name: string;
+      };
+      cookie?: never;
     };
-    create_flow_api_flows_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["FlowInput"];
-            };
+        content: {
+          'application/json': components['schemas']['ChannelDocModel'];
         };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FlowSpecModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    preview_flow_api_flows_preview_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["FlowInput"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PlanPreviewModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  list_flows_api_flows_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    check_flow_api_flows_validate_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["FlowInput"];
-            };
+        content: {
+          'application/json': components['schemas']['FlowSpecModel'][];
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ValidationModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+      };
     };
-    get_flow_api_flows__flow_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                flow_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FlowSpecModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  create_flow_api_flows_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    update_flow_api_flows__flow_id__put: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                flow_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["FlowInput"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["FlowSpecModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FlowInput'];
+      };
     };
-    delete_flow_api_flows__flow_id__delete: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                flow_id: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            204: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content?: never;
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['FlowSpecModel'];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    list_recordings_api_recordings_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LibraryModel"];
-                };
-            };
-        };
+  };
+  preview_flow_api_flows_preview_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    get_recording_api_recordings__entry_id__get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                entry_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["LibraryEntryModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FlowInput'];
+      };
     };
-    get_bands_api_recordings__entry_id__bands_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                entry_id: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: unknown;
-                    };
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['PlanPreviewModel'];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    get_preview_api_recordings__entry_id__preview_get: {
-        parameters: {
-            query?: {
-                points?: number;
-            };
-            header?: never;
-            path: {
-                entry_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["PreviewModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  check_flow_api_flows_validate_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    get_segments_api_recordings__entry_id__segments_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                entry_id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SegmentModel"][];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FlowInput'];
+      };
     };
-    get_spectrum_api_recordings__entry_id__spectrum_get: {
-        parameters: {
-            query?: {
-                channel?: string;
-                seconds?: number | null;
-            };
-            header?: never;
-            path: {
-                entry_id: string;
-            };
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SpectrumModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['ValidationModel'];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    start_session_api_sessions_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["StartSessionRequest"];
-            };
-        };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionStateModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
-        };
+  };
+  get_flow_api_flows__flow_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        flow_id: string;
+      };
+      cookie?: never;
     };
-    current_api_sessions_current_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionStateModel"] | null;
-                };
-            };
+        content: {
+          'application/json': components['schemas']['FlowSpecModel'];
         };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    abort_session_api_sessions_current_abort_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionStateModel"];
-                };
-            };
-        };
+  };
+  update_flow_api_flows__flow_id__put: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        flow_id: string;
+      };
+      cookie?: never;
     };
-    stop_session_api_sessions_current_stop_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionStateModel"];
-                };
-            };
-        };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['FlowInput'];
+      };
     };
-    quick_record_api_sessions_quick_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["QuickRecordRequest"];
-            };
+        content: {
+          'application/json': components['schemas']['FlowSpecModel'];
         };
-        responses: {
-            /** @description Successful Response */
-            201: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["SessionStateModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
     };
-    devices_api_system_devices_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["DeviceModel"];
-                };
-            };
-        };
+  };
+  delete_flow_api_flows__flow_id__delete: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        flow_id: string;
+      };
+      cookie?: never;
     };
-    set_source_api_system_source_post: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      204: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["SourceRequest"];
-            };
+        content?: never;
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
         };
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StatusModel"];
-                };
-            };
-            /** @description Validation Error */
-            422: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["HTTPValidationError"];
-                };
-            };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
         };
+      };
     };
-    status_api_system_status_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["StatusModel"];
-                };
-            };
-        };
+  };
+  list_recordings_api_recordings_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
     };
-    health_health_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
         };
-        requestBody?: never;
-        responses: {
-            /** @description Successful Response */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": {
-                        [key: string]: string;
-                    };
-                };
-            };
+        content: {
+          'application/json': components['schemas']['LibraryModel'];
         };
+      };
     };
+  };
+  get_recording_api_recordings__entry_id__get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entry_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['LibraryEntryModel'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_bands_api_recordings__entry_id__bands_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entry_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            [key: string]: unknown;
+          };
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_preview_api_recordings__entry_id__preview_get: {
+    parameters: {
+      query?: {
+        points?: number;
+      };
+      header?: never;
+      path: {
+        entry_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['PreviewModel'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_segments_api_recordings__entry_id__segments_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        entry_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SegmentModel'][];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  get_spectrum_api_recordings__entry_id__spectrum_get: {
+    parameters: {
+      query?: {
+        channel?: string;
+        seconds?: number | null;
+      };
+      header?: never;
+      path: {
+        entry_id: string;
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SpectrumModel'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  start_session_api_sessions_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['StartSessionRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SessionStateModel'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  current_api_sessions_current_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SessionStateModel'] | null;
+        };
+      };
+    };
+  };
+  abort_session_api_sessions_current_abort_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SessionStateModel'];
+        };
+      };
+    };
+  };
+  stop_session_api_sessions_current_stop_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SessionStateModel'];
+        };
+      };
+    };
+  };
+  quick_record_api_sessions_quick_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['QuickRecordRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      201: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['SessionStateModel'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  devices_api_system_devices_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['DeviceModel'];
+        };
+      };
+    };
+  };
+  set_source_api_system_source_post: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        'application/json': components['schemas']['SourceRequest'];
+      };
+    };
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StatusModel'];
+        };
+      };
+      /** @description Validation Error */
+      422: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['HTTPValidationError'];
+        };
+      };
+    };
+  };
+  status_api_system_status_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': components['schemas']['StatusModel'];
+        };
+      };
+    };
+  };
+  health_health_get: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Successful Response */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          'application/json': {
+            [key: string]: string;
+          };
+        };
+      };
+    };
+  };
 }
