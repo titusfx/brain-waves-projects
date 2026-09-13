@@ -29,6 +29,7 @@ export type PlanPhase = Schemas['PlanPhaseModel'];
 
 export type LibraryEntry = Schemas['LibraryEntryModel'];
 export type LibraryListing = Schemas['LibraryModel'];
+export type DeletedRecording = Schemas['DeletedRecordingModel'];
 export type LabelSummary = Schemas['LabelSummaryModel'];
 export type Segment = Schemas['SegmentModel'];
 export type Preview = Schemas['PreviewModel'];
@@ -48,4 +49,16 @@ export type EnginePhase = Schemas['EnginePhaseModel'];
 export type SourceRequest = Schemas['SourceRequest'];
 export type QuickRecordRequest = Schemas['QuickRecordRequest'];
 export type StartSessionRequest = Schemas['StartSessionRequest'];
-export type EndpointMetadata = Schemas['ChannelDocModel'];
+
+// --- discovery -----------------------------------------------------------------
+export type Discovery = Schemas['DiscoveryModel'];
+export type DiscoveryClass = Schemas['DiscoveryClassModel'];
+export type DiscoveryInstance = Schemas['DiscoveryInstanceModel'];
+export type DiscoveryRequest = Schemas['DiscoveryRequest'];
+export type ClassSummary = Schemas['ClassSummaryModel'];
+export type Comparison = Schemas['ComparisonModel'];
+export type EffectBin = Schemas['EffectBinModel'];
+export type BandEffect = Schemas['BandEffectModel'];
+export type Separability = Schemas['SeparabilityModel'];
+export type ChannelRank = Schemas['ChannelRankModel'];
+export type ExcludedState = Schemas['ExcludedStateModel'];
