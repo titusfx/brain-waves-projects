@@ -30,8 +30,16 @@ interface NavItem {
         class="flex flex-wrap items-center gap-3 border-b border-slate-800/80 bg-slate-950/80 px-4 py-2.5 backdrop-blur"
       >
         <a routerLink="/" class="flex items-center gap-2 text-slate-100 no-underline">
-          <span class="grid h-7 w-7 place-items-center rounded-md bg-emerald-500/15 text-emerald-300">
-            <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor" stroke-width="2">
+          <span
+            class="grid h-7 w-7 place-items-center rounded-md bg-emerald-500/15 text-emerald-300"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              class="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
               <path d="M2 12h3l2-6 3 12 3-9 2 5h7" stroke-linecap="round" stroke-linejoin="round" />
             </svg>
           </span>
@@ -53,7 +61,9 @@ interface NavItem {
 
         <div class="ml-auto flex flex-wrap items-center gap-2">
           <!-- Which signal are we actually reading? -->
-          <div class="flex items-center gap-1 rounded-lg border border-slate-700/60 bg-slate-900/60 p-0.5">
+          <div
+            class="flex items-center gap-1 rounded-lg border border-slate-700/60 bg-slate-900/60 p-0.5"
+          >
             <button
               type="button"
               class="btn btn-ghost !px-2 !py-1"

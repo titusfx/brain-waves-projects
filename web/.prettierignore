@@ -1,0 +1,13 @@
+# Build output and dependencies
+dist
+.angular
+node_modules
+coverage
+
+# Generated from the backend's OpenAPI document by `npm run api:types`. Formatting it
+# would produce a diff on every regeneration that nobody wrote and nobody can act on.
+openapi.json
+src/app/core/api/schema.d.ts
+
+# npm owns this file's exact shape.
+package-lock.json

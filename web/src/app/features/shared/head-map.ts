@@ -28,8 +28,12 @@ interface Dot {
   selector: 'eeg-head-map',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <svg viewBox="-118 -118 236 236" class="h-auto w-full select-none" role="img"
-         aria-label="Top-down map of the 14 electrode positions">
+    <svg
+      viewBox="-118 -118 236 236"
+      class="h-auto w-full select-none"
+      role="img"
+      aria-label="Top-down map of the 14 electrode positions"
+    >
       <!-- skull -->
       <circle cx="0" cy="0" r="100" fill="rgb(15 23 42 / 0.5)" stroke="#475569" stroke-width="2" />
       <!-- nose (anterior is up) -->
@@ -38,8 +42,24 @@ interface Dot {
       <path d="M -100 -20 q -15 20 0 40" fill="none" stroke="#475569" stroke-width="2" />
       <path d="M 100 -20 q 15 20 0 40" fill="none" stroke="#475569" stroke-width="2" />
       <!-- midline -->
-      <line x1="0" y1="-99" x2="0" y2="99" stroke="#334155" stroke-width="1" stroke-dasharray="3 5" />
-      <line x1="-99" y1="0" x2="99" y2="0" stroke="#334155" stroke-width="1" stroke-dasharray="3 5" />
+      <line
+        x1="0"
+        y1="-99"
+        x2="0"
+        y2="99"
+        stroke="#334155"
+        stroke-width="1"
+        stroke-dasharray="3 5"
+      />
+      <line
+        x1="-99"
+        y1="0"
+        x2="99"
+        y2="0"
+        stroke="#334155"
+        stroke-width="1"
+        stroke-dasharray="3 5"
+      />
 
       @for (dot of dots(); track dot.name) {
         <g
@@ -52,7 +72,14 @@ interface Dot {
           [attr.aria-label]="dot.name + ' — ' + dot.status"
         >
           @if (dot.active) {
-            <circle [attr.cx]="dot.px" [attr.cy]="dot.py" r="17" fill="none" stroke="#6ee7b7" stroke-width="2" />
+            <circle
+              [attr.cx]="dot.px"
+              [attr.cy]="dot.py"
+              r="17"
+              fill="none"
+              stroke="#6ee7b7"
+              stroke-width="2"
+            />
           }
           <circle
             [attr.cx]="dot.px"
@@ -70,8 +97,13 @@ interface Dot {
             font-size="9"
             font-weight="600"
             fill="#020617"
-          >{{ dot.name }}</text>
-          <title>{{ dot.name }} — {{ dot.status }}{{ dot.amplitude === null ? '' : ' · ' + dot.amplitude + ' µV' }}</title>
+          >
+            {{ dot.name }}
+          </text>
+          <title>
+            {{ dot.name }} — {{ dot.status
+            }}{{ dot.amplitude === null ? '' : ' · ' + dot.amplitude + ' µV' }}
+          </title>
         </g>
       }
     </svg>

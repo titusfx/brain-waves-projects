@@ -43,9 +43,14 @@ module.exports = tseslint.config(
         'error',
         { type: 'element', prefix: 'eeg', style: 'kebab-case' },
       ],
+      // `no-public` rather than `explicit`: the point of this rule is to make the
+      // *inner* API explicit — a member is private or protected only on purpose — while
+      // a component's inputs, outputs and signals are public by definition, and
+      // `public readonly channels = input(...)` on forty declarations is noise that
+      // hides the four members that really are internal.
       '@typescript-eslint/explicit-member-accessibility': [
         'error',
-        { accessibility: 'explicit', overrides: { constructors: 'no-public' } },
+        { accessibility: 'no-public', overrides: { constructors: 'no-public' } },
       ],
       '@typescript-eslint/no-unused-vars': [
         'error',
