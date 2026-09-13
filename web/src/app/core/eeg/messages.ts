@@ -23,7 +23,7 @@ import type {
   SessionState,
   SourceStats,
   Status,
-} from './models';
+} from '../api/models';
 
 /** One channel's display numbers, recomputed by the server over the display window. */
 export interface ChannelMetrics {
@@ -148,10 +148,4 @@ export interface PingFrame {
 }
 
 export type StreamFrame =
-  | HelloFrame
-  | HistoryFrame
-  | TickFrame
-  | SessionFrame
-  | SourceFrame
-  | RecordingFrame
-  | PingFrame;
+  HelloFrame | HistoryFrame | TickFrame | SessionFrame | SourceFrame | RecordingFrame | PingFrame;

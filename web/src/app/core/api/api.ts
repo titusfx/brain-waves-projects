@@ -40,8 +40,23 @@ export class Api {
     return firstValueFrom(this.http.get<Status>(`${BASE}/system/status`));
   }
 
-  async setSource(request: SourceRequest): Promise<Status> {
-    return firstValueFrom(this.http.post<Status>(`${BASE}/system/source`, request));
+  /**
+   * Switch the stream.
+   *
+   * The fields the server defaults (`loop`, `replay_speed`) are filled in here rather
+   * than at every call site: `openapi-typescript` types a property that carries an
+   * OpenAPI `default` as required, on the grounds that the server always ends up with a
+   * value. Saying so once, explicitly, is clearer than doing it in five components.
+   */
+  async setSource(request: Partial<SourceRequest> & Pick<SourceRequest, 'mode'>): Promise<Status> {
+    return firstValueFrom(
+      this.http.post<Status>(`${BASE}/system/source`, {
+        replay_id: null,
+        replay_speed: 1,
+        loop: true,
+        ...request,
+      }),
+    );
   }
 
   // ---------------------------------------------------------------- channels
@@ -50,7 +65,9 @@ export class Api {
   }
 
   async channel(name: string): Promise<ChannelDoc> {
-    return firstValueFrom(this.http.get<ChannelDoc>(`${BASE}/channels/${encodeURIComponent(name)}`));
+    return firstValueFrom(
+      this.http.get<ChannelDoc>(`${BASE}/channels/${encodeURIComponent(name)}`),
+    );
   }
 
   // --------------------------------------------------------------- recordings
@@ -59,7 +76,9 @@ export class Api {
   }
 
   async recording(id: string): Promise<LibraryEntry> {
-    return firstValueFrom(this.http.get<LibraryEntry>(`${BASE}/recordings/${encodeURIComponent(id)}`));
+    return firstValueFrom(
+      this.http.get<LibraryEntry>(`${BASE}/recordings/${encodeURIComponent(id)}`),
+    );
   }
 
   async segments(id: string): Promise<Segment[]> {
@@ -97,7 +116,9 @@ export class Api {
   }
 
   async updateFlow(id: string, input: FlowInput): Promise<FlowSpec> {
-    return firstValueFrom(this.http.put<FlowSpec>(`${BASE}/flows/${encodeURIComponent(id)}`, input));
+    return firstValueFrom(
+      this.http.put<FlowSpec>(`${BASE}/flows/${encodeURIComponent(id)}`, input),
+    );
   }
 
   async deleteFlow(id: string): Promise<void> {
@@ -121,8 +142,18 @@ export class Api {
     return firstValueFrom(this.http.post<SessionState>(`${BASE}/sessions`, request));
   }
 
-  async quickRecord(request: QuickRecordRequest): Promise<SessionState> {
-    return firstValueFrom(this.http.post<SessionState>(`${BASE}/sessions/quick`, request));
+  async quickRecord(
+    request: Partial<QuickRecordRequest> & Pick<QuickRecordRequest, 'label'>,
+  ): Promise<SessionState> {
+    return firstValueFrom(
+      this.http.post<SessionState>(`${BASE}/sessions/quick`, {
+        countdown_seconds: 3,
+        dataset_name: null,
+        notes: '',
+        voice: true,
+        ...request,
+      }),
+    );
   }
 
   async stopSession(): Promise<SessionState> {
