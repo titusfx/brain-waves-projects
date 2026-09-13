@@ -7,13 +7,15 @@ import {
   input,
   signal,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { Api } from '../../core/api/api';
 import type { LabelSummary, LibraryEntry, Preview, Segment, Spectrum } from '../../core/api/models';
 import { EegStream } from '../../core/eeg/stream';
 import { bytes, errorMessage, humanDuration } from '../../core/format';
 import { SampleChart, SpectrumChart } from '../shared/charts';
+import { ConfirmDialog } from '../shared/confirm-dialog';
+import { DiscoveryPanel } from './discovery-panel';
 
 const KIND_LABEL: Record<string, string> = {
   dataset: 'labelled dataset',
@@ -44,7 +46,14 @@ function labelColour(label: string): string {
 @Component({
   selector: 'eeg-datasets-page',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [SampleChart, SpectrumChart],
+  imports: [
+    SampleChart,
+    SpectrumChart,
+    DiscoveryPanel,
+    ConfirmDialog,
+    RouterLink,
+    RouterLinkActive,
+  ],
   template: `
     <div class="grid gap-4 xl:grid-cols-[minmax(0,340px)_minmax(0,1fr)]">
       <!-- --------------------------------------------------------- the list -->
@@ -75,10 +84,10 @@ function labelColour(label: string): string {
 
         <ul class="flex max-h-[70vh] flex-col gap-1 overflow-y-auto pr-1">
           @for (entry of entries(); track entry.id) {
-            <li>
+            <li class="flex items-stretch gap-1">
               <button
                 type="button"
-                class="panel-tight w-full cursor-pointer px-2.5 py-2 text-left transition hover:bg-slate-800/50"
+                class="panel-tight min-w-0 flex-1 cursor-pointer px-2.5 py-2 text-left transition hover:bg-slate-800/50"
                 [class.!border-emerald-500]="entry.id === selectedId()"
                 (click)="open(entry.id)"
               >
@@ -109,6 +118,15 @@ function labelColour(label: string): string {
                 }
                 <p class="mt-1 text-[10px] text-slate-600">{{ entry.created }}</p>
               </button>
+              <button
+                type="button"
+                class="btn btn-ghost shrink-0 !px-2"
+                [attr.aria-label]="'Delete ' + entry.name"
+                [title]="'Delete ' + entry.name"
+                (click)="askDelete(entry)"
+              >
+                🗑
+              </button>
             </li>
           }
         </ul>
@@ -116,7 +134,28 @@ function labelColour(label: string): string {
 
       <!-- ------------------------------------------------------- the detail -->
       <section class="flex flex-col gap-4">
-        @if (selected(); as entry) {
+        @if (id()) {
+          <nav class="flex items-center gap-1 border-b border-slate-800 pb-2">
+            <a
+              class="rounded-md px-3 py-1.5 text-[13px] font-medium text-slate-400 no-underline transition hover:bg-slate-800/60 hover:text-slate-100"
+              routerLinkActive="!bg-slate-800 !text-emerald-300"
+              [routerLinkActiveOptions]="{ exact: true }"
+              [routerLink]="['/datasets', id()]"
+              >Overview</a
+            >
+            <a
+              class="rounded-md px-3 py-1.5 text-[13px] font-medium text-slate-400 no-underline transition hover:bg-slate-800/60 hover:text-slate-100"
+              routerLinkActive="!bg-slate-800 !text-emerald-300"
+              [routerLink]="['/datasets', id(), 'discovery']"
+              title="Compare instances of a state, and find what separates two states"
+              >Discovery</a
+            >
+          </nav>
+        }
+
+        @if (isDiscovery()) {
+          <eeg-discovery-panel [entryId]="id() ?? ''" />
+        } @else if (selected(); as entry) {
           <div class="panel p-4">
             <div class="flex flex-wrap items-center gap-2">
               <h2 class="text-lg font-semibold text-slate-100">{{ entry.name }}</h2>
@@ -136,6 +175,15 @@ function labelColour(label: string): string {
                   title="Feed this recording through the whole app"
                 >
                   ▶ Replay
+                </button>
+                <button
+                  type="button"
+                  class="btn"
+                  [disabled]="busy()"
+                  (click)="askDelete(entry)"
+                  title="Delete this recording from disk"
+                >
+                  🗑 Delete
                 </button>
               </div>
             </div>
@@ -168,13 +216,22 @@ function labelColour(label: string): string {
           <!-- ------------------------------------------------------ timeline -->
           @if (segments().length) {
             <div class="panel p-4">
-              <h3 class="label">States, in proportion</h3>
-              <div class="flex h-6 w-full overflow-hidden rounded-md border border-slate-700">
+              <div class="flex flex-wrap items-center gap-2">
+                <h3 class="label mb-0">States, in proportion</h3>
+                <span class="text-[11px] text-slate-500">
+                  Click a state to show only its window below — and to take it to Discovery.
+                </span>
+              </div>
+              <div class="mt-2 flex h-6 w-full overflow-hidden rounded-md border border-slate-700">
                 @for (segment of segments(); track segment.index) {
-                  <div
-                    class="h-full border-r border-slate-900/70 last:border-r-0"
+                  <button
+                    type="button"
+                    class="h-full cursor-pointer border-r border-slate-900/70 p-0 last:border-r-0"
+                    [class.ring-2]="range()?.index === segment.index"
+                    [class.ring-emerald-400]="range()?.index === segment.index"
                     [style.flex-grow]="segment.samples || 1"
                     [style.background]="colour(segment.label)"
+                    [style.opacity]="range() && range()?.index !== segment.index ? 0.45 : 1"
                     [title]="
                       segment.label +
                       ' · cycle ' +
@@ -184,7 +241,8 @@ function labelColour(label: string): string {
                       ' s' +
                       (segment.truncated ? ' (interrupted)' : '')
                     "
-                  ></div>
+                    (click)="showSegment(segment)"
+                  ></button>
                 }
               </div>
               <div class="mt-2 flex flex-wrap gap-2">
@@ -206,6 +264,21 @@ function labelColour(label: string): string {
           <div class="panel p-4">
             <div class="flex flex-wrap items-center gap-2">
               <h3 class="label mb-0">Samples (decimated)</h3>
+              @if (range(); as window) {
+                <span class="badge badge-ok">
+                  only {{ window.label }} #{{ window.index }} · {{ window.start.toFixed(1) }}–{{
+                    window.end.toFixed(1)
+                  }}
+                  s
+                </span>
+                <button
+                  type="button"
+                  class="btn btn-ghost !px-2 !py-0.5 !text-[11px]"
+                  (click)="clearRange()"
+                >
+                  whole recording
+                </button>
+              }
               <div class="ml-auto flex flex-wrap gap-1">
                 @for (preset of presets; track preset.label) {
                   <button
@@ -248,7 +321,12 @@ function labelColour(label: string): string {
                 }
               </select>
               <span class="text-[11px] text-slate-500">
-                Check O1/O2 with the eyes closed: alpha sits at 8–12 Hz.
+                @if (range(); as window) {
+                  Only {{ window.label }} #{{ window.index }}, averaged over its window.
+                } @else {
+                  Check O1/O2 with the eyes closed: alpha sits at 8–12 Hz. Pick a state above to see
+                  one instance on its own.
+                }
               </span>
             </div>
             <div class="mt-2 h-56 overflow-hidden rounded-lg">
@@ -277,7 +355,11 @@ function labelColour(label: string): string {
                 </thead>
                 <tbody class="mono">
                   @for (segment of segments(); track segment.index) {
-                    <tr class="border-t border-slate-800/60">
+                    <tr
+                      class="cursor-pointer border-t border-slate-800/60 hover:bg-slate-800/40"
+                      [class.!bg-emerald-950]="range()?.index === segment.index"
+                      (click)="showSegment(segment)"
+                    >
                       <td class="px-3 py-1 text-slate-500">{{ segment.index }}</td>
                       <td class="px-3 py-1">
                         <span class="inline-flex items-center gap-1.5 text-slate-100">
@@ -315,6 +397,23 @@ function labelColour(label: string): string {
         }
       </section>
     </div>
+
+    <!--
+      Deleting is the one thing here with no undo, so it never happens from a click:
+      it happens from a second click, on a dialog that names what will go.
+    -->
+    @if (pendingDelete(); as target) {
+      <eeg-confirm-dialog
+        [title]="'Delete “' + target.name + '”?'"
+        [message]="deleteMessage(target)"
+        [detail]="deleteDetail(target)"
+        [warning]="deleteWarning()"
+        confirmLabel="Delete for good"
+        [busy]="busy()"
+        (cancelled)="cancelDelete()"
+        (confirmed)="confirmDelete()"
+      />
+    }
   `,
 })
 export class DatasetsPage {
@@ -330,6 +429,9 @@ export class DatasetsPage {
    */
   readonly id = input<string | undefined>(undefined);
 
+  /** Route data: `overview` or `discovery`. `undefined` outside those routes. */
+  readonly tab = input<string | undefined>(undefined);
+
   protected readonly entries = signal<LibraryEntry[]>([]);
   protected readonly segments = signal<Segment[]>([]);
   protected readonly preview = signal<Preview | null>(null);
@@ -340,6 +442,24 @@ export class DatasetsPage {
   protected readonly busy = signal(false);
   protected readonly error = signal<string | null>(null);
 
+  /**
+   * The state being looked at, if any.
+   *
+   * Everything below — the traces and the spectrum — follows this, which is what turns
+   * "eyes open" from a label in a table into a window you can actually inspect, and then
+   * take to the Discovery tab to compare with another instance of the same state.
+   */
+  protected readonly range = signal<{
+    index: number;
+    label: string;
+    start: number;
+    end: number;
+  } | null>(null);
+
+  /** The recording the confirmation dialog is asking about, if any. */
+  protected readonly pendingDelete = signal<LibraryEntry | null>(null);
+  protected readonly deleteWarning = signal<string | null>(null);
+
   protected readonly presets = [
     { label: 'Occipital', channels: ['O1', 'O2'] },
     { label: 'Frontal', channels: ['AF3', 'AF4', 'F3', 'F4'] },
@@ -347,6 +467,7 @@ export class DatasetsPage {
   ];
 
   protected readonly selectedId = computed(() => this.id());
+  protected readonly isDiscovery = computed(() => this.tab() === 'discovery');
   protected readonly selected = computed(
     () => this.entries().find((entry) => entry.id === this.id()) ?? null,
   );
@@ -364,6 +485,27 @@ export class DatasetsPage {
       const id = this.id();
       if (id) void this.loadDetail(id);
     });
+    // Following the selected state reloads only the charts, so clicking through the
+    // states of a dataset does not re-read the whole library listing each time.
+    effect(() => {
+      const range = this.range();
+      if (!this.loaded) return;
+      void this.applyRange(range);
+    });
+  }
+
+  private async applyRange(
+    range: { index: number; label: string; start: number; end: number } | null,
+  ): Promise<void> {
+    const id = this.id();
+    if (!id) return;
+    const window_ = range ? { start: range.start, end: range.end } : {};
+    const [preview, spectrum] = await Promise.all([
+      this.api.preview(id, 1200, window_).catch(() => null),
+      this.api.spectrum(id, this.spectrumChannel(), window_).catch(() => null),
+    ]);
+    this.preview.set(preview);
+    this.spectrum.set(spectrum);
   }
 
   protected async reload(): Promise<void> {
@@ -392,27 +534,65 @@ export class DatasetsPage {
   private async loadDetail(id: string): Promise<void> {
     if (!id || id === this.loaded) return;
     this.loaded = id;
+    this.range.set(null);
     this.segments.set([]);
     this.preview.set(null);
     this.spectrum.set(null);
     try {
-      const [segments, preview] = await Promise.all([
-        this.api.segments(id).catch(() => [] as Segment[]),
-        this.api.preview(id, 1200).catch(() => null),
-      ]);
+      const segments = await this.api.segments(id).catch(() => [] as Segment[]);
       this.segments.set(segments);
-      this.preview.set(preview);
-      await this.loadSpectrum(this.spectrumChannel(), id);
+      await this.refreshWindow();
     } catch (error) {
       this.error.set(errorMessage(error));
     }
   }
 
+  /**
+   * Load the samples and the spectrum for whatever window is selected.
+   *
+   * With no window that is the whole recording; with one it is a single state, which is
+   * what makes "show me only what the eyes-open states look like" a click rather than a
+   * download.
+   */
+  private async refreshWindow(): Promise<void> {
+    const id = this.id();
+    if (!id) return;
+    const range = this.range();
+    const window_ = range ? { start: range.start, end: range.end } : {};
+    const [preview, spectrum] = await Promise.all([
+      this.api.preview(id, 1200, window_).catch(() => null),
+      this.api.spectrum(id, this.spectrumChannel(), window_).catch(() => null),
+    ]);
+    this.preview.set(preview);
+    this.spectrum.set(spectrum);
+  }
+
+  /** Show one state's window only, or the whole recording again. */
+  protected showSegment(segment: Segment): void {
+    const current = this.range();
+    if (current && current.index === segment.index) {
+      this.range.set(null);
+    } else {
+      this.range.set({
+        index: segment.index,
+        label: segment.label,
+        start: segment.start_time,
+        end: segment.end_time,
+      });
+    }
+  }
+
+  protected clearRange(): void {
+    this.range.set(null);
+  }
+
   protected async loadSpectrum(channel: string, id = this.id()): Promise<void> {
     this.spectrumChannel.set(channel);
     if (!id) return;
+    const range = this.range();
+    const window_ = range ? { start: range.start, end: range.end } : {};
     try {
-      this.spectrum.set(await this.api.spectrum(id, channel));
+      this.spectrum.set(await this.api.spectrum(id, channel, window_));
     } catch {
       this.spectrum.set(null);
     }
@@ -430,6 +610,77 @@ export class DatasetsPage {
     } finally {
       this.busy.set(false);
     }
+  }
+
+  // ---------------------------------------------------------------- deleting
+  protected askDelete(entry: LibraryEntry): void {
+    this.deleteWarning.set(null);
+    this.pendingDelete.set(entry);
+  }
+
+  protected cancelDelete(): void {
+    this.pendingDelete.set(null);
+    this.deleteWarning.set(null);
+  }
+
+  /**
+   * Delete, but only what the dialog named.
+   *
+   * The entry is re-read from the signal rather than trusted from the click, and the id
+   * is the one the server was shown — so a dialog left open while the library refreshed
+   * cannot delete something other than what it described.
+   */
+  protected async confirmDelete(): Promise<void> {
+    const target = this.pendingDelete();
+    if (!target || this.busy()) return;
+    this.busy.set(true);
+    this.deleteWarning.set(null);
+    this.error.set(null);
+    try {
+      const removed = await this.api.deleteRecording(target.id);
+      this.pendingDelete.set(null);
+      const listing = await this.api.recordings();
+      this.entries.set(listing.recordings);
+      if (this.id() === removed.id) {
+        // The page was showing the thing that no longer exists.
+        this.loaded = '';
+        this.segments.set([]);
+        this.preview.set(null);
+        this.spectrum.set(null);
+        const next = listing.recordings[0];
+        await this.router.navigate(next ? ['/datasets', next.id] : ['/datasets'], {
+          replaceUrl: true,
+        });
+        if (next) await this.loadDetail(next.id);
+      }
+    } catch (error) {
+      // Kept open on purpose: if the server refused — a replay is streaming it, say —
+      // the operator should see why against the dialog that asked.
+      this.deleteWarning.set(errorMessage(error));
+    } finally {
+      this.busy.set(false);
+    }
+  }
+
+  /** What the dialog promises is about to be removed. */
+  protected deleteDetail(entry: LibraryEntry): string[] {
+    const lines = [
+      `${this.kindLabel(entry.kind)} · ${this.duration(entry.duration_s)} · ${entry.samples} samples · ${this.size(entry.size_bytes)}`,
+    ];
+    if (entry.segments) {
+      lines.push(`${entry.segments} recorded state(s), with their labels`);
+    }
+    if (entry.labels.length) {
+      lines.push(`labels: ${entry.labels.map((label) => label.label).join(', ')}`);
+    }
+    lines.push(entry.path);
+    return lines;
+  }
+
+  protected deleteMessage(entry: LibraryEntry): string {
+    return entry.kind === 'dataset'
+      ? 'This removes the whole dataset folder — samples, labels, metadata and events — from disk.'
+      : 'This removes the recording file from disk.';
   }
 
   protected kindLabel(kind: string): string {

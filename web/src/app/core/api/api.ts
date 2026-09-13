@@ -5,6 +5,9 @@ import { firstValueFrom } from 'rxjs';
 import type {
   ChannelCatalog,
   ChannelDoc,
+  DeletedRecording,
+  Discovery,
+  DiscoveryRequest,
   FlowInput,
   FlowSpec,
   FlowValidation,
@@ -81,24 +84,73 @@ export class Api {
     );
   }
 
+  /**
+   * Delete a recording or dataset from disk. Irreversible.
+   *
+   * The server refuses anything the current source or recording is using (409), so a
+   * live replay cannot be deleted out from under itself. The confirmation belongs in the
+   * UI, in front of this call.
+   */
+  async deleteRecording(id: string): Promise<DeletedRecording> {
+    return firstValueFrom(
+      this.http.delete<DeletedRecording>(`${BASE}/recordings/${encodeURIComponent(id)}`),
+    );
+  }
+
   async segments(id: string): Promise<Segment[]> {
     return firstValueFrom(
       this.http.get<Segment[]>(`${BASE}/recordings/${encodeURIComponent(id)}/segments`),
     );
   }
 
-  async preview(id: string, points = 900): Promise<Preview> {
-    const params = new HttpParams().set('points', points);
+  /** A window within the recording, in seconds from its start (the `labels.csv` clock). */
+  async preview(
+    id: string,
+    points = 900,
+    range: { start?: number; end?: number } = {},
+  ): Promise<Preview> {
+    let params = new HttpParams().set('points', points);
+    if (range.start !== undefined) params = params.set('start', range.start);
+    if (range.end !== undefined) params = params.set('end', range.end);
     return firstValueFrom(
       this.http.get<Preview>(`${BASE}/recordings/${encodeURIComponent(id)}/preview`, { params }),
     );
   }
 
-  async spectrum(id: string, channel = 'O1', seconds?: number): Promise<Spectrum> {
+  async spectrum(
+    id: string,
+    channel = 'O1',
+    range: { start?: number; end?: number } = {},
+  ): Promise<Spectrum> {
     let params = new HttpParams().set('channel', channel);
-    if (seconds !== undefined) params = params.set('seconds', seconds);
+    if (range.start !== undefined) params = params.set('start', range.start);
+    if (range.end !== undefined) params = params.set('end', range.end);
     return firstValueFrom(
       this.http.get<Spectrum>(`${BASE}/recordings/${encodeURIComponent(id)}/spectrum`, { params }),
+    );
+  }
+
+  /**
+   * What repeats within a state, and what separates two of them.
+   *
+   * The parameters that have server-side defaults are filled in here for the same reason
+   * as `setSource`: `openapi-typescript` types a defaulted field as required, and the
+   * caller should only have to say which states it cares about.
+   */
+  async discover(
+    id: string,
+    request: Partial<DiscoveryRequest> & Pick<DiscoveryRequest, 'channel'>,
+  ): Promise<Discovery> {
+    return firstValueFrom(
+      this.http.post<Discovery>(`${BASE}/recordings/${encodeURIComponent(id)}/discovery`, {
+        labels: null,
+        instances: null,
+        window_seconds: 6,
+        points: 600,
+        min_seconds: 2,
+        permutations: 200,
+        ...request,
+      }),
     );
   }
 

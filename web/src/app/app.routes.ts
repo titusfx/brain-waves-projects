@@ -37,11 +37,21 @@ export const routes: Routes = [
     path: 'datasets',
     title: 'Datasets · EPOC+ workbench',
     loadComponent: () => import('./features/datasets/datasets-page').then((m) => m.DatasetsPage),
+    data: { tab: 'overview' },
   },
   {
     path: 'datasets/:id',
     title: 'Dataset · EPOC+ workbench',
     loadComponent: () => import('./features/datasets/datasets-page').then((m) => m.DatasetsPage),
+    data: { tab: 'overview' },
+  },
+  {
+    // Its own route rather than a panel flag: the Discovery view is the one worth
+    // linking someone to, and a URL that says so is how that happens.
+    path: 'datasets/:id/discovery',
+    title: 'Discovery · EPOC+ workbench',
+    loadComponent: () => import('./features/datasets/datasets-page').then((m) => m.DatasetsPage),
+    data: { tab: 'discovery' },
   },
   { path: '**', redirectTo: '' },
 ];
