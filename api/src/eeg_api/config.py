@@ -75,7 +75,18 @@ class Settings(BaseSettings):
     web_dist: Path = PROJECT_ROOT / "web" / "dist" / "web" / "browser"
 
     # --- http --------------------------------------------------------------
+    #: Origins allowed to call this API directly from a browser.
+    #:
+    #: The dev server proxies `/api` and `/ws` server-side, so it does not *need* an entry
+    #: here — but a page opened against the dev server that calls the API cross-origin
+    #: does, and a CORS failure is a confusing way to discover that.
+    #:
+    #: 4200 was Angular's default and 4300 is what this project first used; both are
+    #: already taken by other projects on the author's machine, which is why the dev
+    #: server here runs on **4301** (see the root `package.json`).
     cors_origins: list[str] = [
+        "http://localhost:4301",
+        "http://127.0.0.1:4301",
         "http://localhost:4200",
         "http://127.0.0.1:4200",
         "http://localhost:4300",
