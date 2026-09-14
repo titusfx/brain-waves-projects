@@ -22,6 +22,7 @@
     "typecheck:api": "uv --directory api run mypy src",
     "arch": "uv --directory api run lint-imports",
     "verify:web": "node tools/verify-web.mjs",
+    "linkedin": "node tools/linkedin-capture.mjs",
     "verify": "npm run lint && npm run typecheck:api && npm run arch && npm run test && npm run build:web"
   }
 }

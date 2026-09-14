@@ -13,6 +13,7 @@ env/
 .ruff_cache/
 .import_linter_cache/
 .uv-cache/
+linkedin/
 
 # ---- Node / npm caches (same reason as .uv-cache: keep caches out of the repo) ----
 .npm-cache/
