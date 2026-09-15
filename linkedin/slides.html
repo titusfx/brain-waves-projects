@@ -1,0 +1,481 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>EPOC+ workbench — LinkedIn carousel</title>
+    <!--
+      The five text slides of the LinkedIn carousel. Rendered to PNG by
+      tools/linkedin-capture.mjs at exactly 1080x1350 each (4:5, LinkedIn's tallest
+      in-feed image), so the deck is reproducible from the repo instead of hand-made
+      in a design tool.
+
+      Deliberately standalone: no Tailwind, no build step, no fonts to fetch. It has to
+      render correctly in a headless browser with no network, and it should still look
+      like the app it is advertising — same slate/emerald palette as web/src/app/app.ts.
+
+      Slides 5-7 of the deck are not here. They are real screenshots of the running app,
+      because a carousel about a working instrument should show the instrument. The capture
+      tool assembles all eight in order.
+
+      The type scale is deliberately conservative. Each card is a fixed 1350px tall with
+      `overflow: hidden`, so the failure mode of an over-tight card is a silently clipped
+      footer rather than a broken layout — every size here is chosen to leave the densest
+      card (slide 2) roughly 150px of slack. If you edit the prose, re-check that.
+    -->
+    <style>
+      :root {
+        --slate-950: #020617;
+        --slate-900: #0f172a;
+        --slate-800: #1e293b;
+        --slate-400: #94a3b8;
+        --slate-300: #cbd5e1;
+        --slate-100: #f1f5f9;
+        --emerald-300: #6ee7b7;
+        --emerald-400: #34d399;
+        --sky-400: #38bdf8;
+        --rose-400: #fb7185;
+        --amber-300: #fcd34d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        background: var(--slate-950);
+      }
+
+      /* One slide is one 4:5 card. No margins: the capture tool screenshots each slide by
+         its absolute offset, so a gap here would land in the middle of an image. */
+      .slide {
+        position: relative;
+        width: 1080px;
+        height: 1350px;
+        padding: 84px;
+        display: flex;
+        flex-direction: column;
+        background: var(--slate-950);
+        color: var(--slate-100);
+        font-family:
+          Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+          sans-serif;
+        overflow: hidden;
+      }
+
+      /* A faint grid, so a flat dark card still reads as "engineered" rather than "empty". */
+      .slide::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+        background-size: 72px 72px;
+        pointer-events: none;
+      }
+
+      .slide > * {
+        position: relative;
+      }
+
+      .kicker {
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--slate-400);
+      }
+
+      .kicker em {
+        font-style: normal;
+        color: var(--emerald-400);
+      }
+
+      h1 {
+        font-size: 88px;
+        line-height: 1.08;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 64px;
+        line-height: 1.12;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .lede {
+        font-size: 40px;
+        line-height: 1.4;
+        color: var(--slate-300);
+        font-weight: 500;
+      }
+
+      .accent {
+        color: var(--emerald-400);
+      }
+
+      .price {
+        color: var(--amber-300);
+        white-space: nowrap;
+      }
+
+      .footer {
+        margin-top: auto;
+        padding-top: 34px;
+        border-top: 2px solid var(--slate-800);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 24px;
+        font-size: 26px;
+        color: var(--slate-400);
+        font-weight: 500;
+      }
+
+      .footer strong {
+        color: var(--slate-300);
+        font-weight: 600;
+      }
+
+      .spacer {
+        flex: 1;
+      }
+
+      code {
+        font-family: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
+        font-size: 0.92em;
+        background: rgba(148, 163, 184, 0.14);
+        border-radius: 8px;
+        padding: 4px 12px;
+        color: var(--emerald-300);
+      }
+
+      /* ---------------------------------------------------------------- slide 1 */
+      .hook .lede {
+        margin-top: 48px;
+        font-size: 42px;
+      }
+
+      /* ---------------------------------------------------------------- slide 2 */
+      .wire {
+        font-family: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
+        background: var(--slate-900);
+        border: 2px solid var(--slate-800);
+        border-radius: 20px;
+        padding: 36px 40px;
+        font-size: 28px;
+        line-height: 1.6;
+        color: var(--slate-300);
+        white-space: pre;
+      }
+
+      .wire b {
+        color: var(--emerald-300);
+        font-weight: 600;
+      }
+
+      .wire i {
+        color: var(--slate-400);
+        font-style: normal;
+      }
+
+      /* ---------------------------------------------------------------- slide 3 */
+      .bugs {
+        display: flex;
+        flex-direction: column;
+        gap: 38px;
+        margin-top: 10px;
+      }
+
+      .bug {
+        background: var(--slate-900);
+        border: 2px solid var(--slate-800);
+        border-left: 10px solid var(--rose-400);
+        border-radius: 18px;
+        padding: 38px 40px;
+      }
+
+      .bug h3 {
+        font-size: 40px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin-bottom: 16px;
+      }
+
+      .bug p {
+        font-size: 33px;
+        line-height: 1.45;
+        color: var(--slate-300);
+      }
+
+      .bugs .bug:last-child {
+        border-left-color: var(--amber-300);
+      }
+
+      /* ---------------------------------------------------------------- slide 4 */
+      .oracles {
+        display: flex;
+        flex-direction: column;
+        gap: 34px;
+        margin-top: 38px;
+      }
+
+      .oracle {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+      }
+
+      .oracle .num {
+        flex: none;
+        width: 68px;
+        height: 68px;
+        border-radius: 9999px;
+        display: grid;
+        place-items: center;
+        background: rgba(16, 185, 129, 0.16);
+        color: var(--emerald-300);
+        font-size: 34px;
+        font-weight: 700;
+      }
+
+      .oracle h3 {
+        font-size: 38px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .oracle p {
+        font-size: 31px;
+        line-height: 1.45;
+        color: var(--slate-400);
+      }
+
+      .numbers {
+        margin-top: 40px;
+        background: var(--slate-900);
+        border: 2px solid var(--slate-800);
+        border-radius: 18px;
+        padding: 32px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
+
+      .numbers div {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 31px;
+        color: var(--slate-400);
+        gap: 24px;
+      }
+
+      .numbers span:last-child {
+        font-family: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
+        font-size: 35px;
+        font-weight: 700;
+        color: var(--slate-100);
+        white-space: nowrap;
+      }
+
+      .numbers .good span:last-child {
+        color: var(--emerald-400);
+      }
+
+      .numbers .bad span:last-child {
+        color: var(--rose-400);
+      }
+
+      /* ---------------------------------------------------------------- slide 8 */
+      /* Emerald rather than rose: this card used to be the caveat and is now the result. */
+      .proven {
+        background: linear-gradient(150deg, rgba(16, 185, 129, 0.16), transparent 62%);
+      }
+
+      .checklist {
+        margin-top: 44px;
+        display: flex;
+        flex-direction: column;
+        gap: 26px;
+        font-size: 34px;
+        line-height: 1.42;
+        color: var(--slate-300);
+      }
+
+      .checklist b {
+        color: var(--slate-100);
+        font-weight: 700;
+      }
+
+      .repo {
+        margin-top: 44px;
+        background: var(--slate-900);
+        border: 2px solid var(--slate-800);
+        border-radius: 18px;
+        padding: 32px 40px;
+        font-size: 34px;
+        line-height: 1.5;
+      }
+
+      .repo code {
+        background: none;
+        padding: 0;
+        font-size: 33px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ============================================================ 1 · the hook -->
+    <section class="slide hook" id="slide-1">
+      <p class="kicker">Emotiv EPOC+ · <em>reverse engineering</em></p>
+      <div class="spacer"></div>
+      <h1>
+        <span class="price">~$1,068/year</span><br />
+        to read raw data from<br />
+        a headset <span class="accent">you own</span>.
+      </h1>
+      <p class="lede">
+        So the USB dongle encrypts its own output to enforce it.<br /><br />
+        I reverse-engineered it instead.
+      </p>
+      <div class="spacer"></div>
+      <div class="footer">
+        <strong>Raw EEG, no Emotiv software, no licence</strong>
+        <span>1 / 8</span>
+      </div>
+    </section>
+
+    <!-- ==================================================== 2 · the wire format -->
+    <section class="slide" id="slide-2">
+      <p class="kicker">The protocol · <em>solved</em></p>
+      <h2 style="margin: 28px 0 38px">The whole format</h2>
+      <div class="wire">HID report  32 bytes
+cipher      AES-128-ECB
+key         <b>derived from the dongle serial</b>
+
+byte 0      counter
+byte 1      type  <b>0x10</b> = EEG · <b>0x20</b> = status
+bytes 2..31 <b>15 × 16-bit little-endian fields</b>
+
+  F3  FC5 AF3 F7  T7  P7  O1
+  <i>quality</i>
+  O2  P8  T8  F8  AF4 FC6 F4
+
+scale       <b>1 LSB = 0.51 µV</b>
+            <i>plus a ~16 mV DC offset per channel,</i>
+            <i>removed with a 0.5 Hz highpass</i></div>
+      <div class="spacer"></div>
+      <div class="footer">
+        <strong>128 Hz · 14 channels · 159 reports/s</strong>
+        <span>2 / 8</span>
+      </div>
+    </section>
+
+    <!-- ==================================================== 3 · the two bugs -->
+    <section class="slide" id="slide-3">
+      <p class="kicker">Why it stayed broken · <em>2017 → 2025</em></p>
+      <h2 style="margin: 28px 0 34px">Neither bug was the crypto</h2>
+      <div class="bugs">
+        <div class="bug">
+          <h3>1 · It picked the wrong key</h3>
+          <p>
+            emokit chooses its AES key with <code>serial.startswith("UD2016")</code> — a literal
+            string test. My dongle is a 2018 unit, so it silently took the wrong key and printed
+            confident garbage. No exception. No warning.
+          </p>
+        </div>
+        <div class="bug">
+          <h3>2 · It read the bytes backwards</h3>
+          <p>
+            Every 16-bit sample field was decoded <b>big</b>-endian. They are
+            <b>little</b>-endian. Same offsets, opposite order — which is why it looked like a
+            signal for eight years.
+          </p>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="footer">
+        <strong>Offsets were right. Byte order was wrong.</strong>
+        <span>3 / 8</span>
+      </div>
+    </section>
+
+    <!-- ======================================================= 4 · the oracles -->
+    <section class="slide" id="slide-4">
+      <p class="kicker">Why you can believe it · <em>two oracles</em></p>
+      <h2 style="margin: 28px 0 30px">A wrong key never throws</h2>
+      <p class="lede" style="font-size: 34px">
+        It produces beautiful, plausible, meaningless numbers. So nothing here is claimed without
+        a check a wrong key cannot pass:
+      </p>
+      <div class="oracles">
+        <div class="oracle">
+          <span class="num">1</span>
+          <div>
+            <h3>Byte 1 must collapse</h3>
+            <p>Correct: 2 distinct values (0x10 / 0x20). Wrong: ~256.</p>
+          </div>
+        </div>
+        <div class="oracle">
+          <span class="num">2</span>
+          <div>
+            <h3>Autocorrelation</h3>
+            <p>Real EEG is band-limited and correlated in time. Noise is not.</p>
+          </div>
+        </div>
+      </div>
+      <div class="numbers">
+        <div class="good"><span>little-endian, EEG packets</span><span>+0.797</span></div>
+        <div><span>big-endian — what emokit did</span><span>+0.480</span></div>
+        <div class="bad"><span>wrong key</span><span>+0.007</span></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="footer">
+        <strong>Verify before claiming</strong>
+        <span>4 / 8</span>
+      </div>
+    </section>
+
+    <!-- ================================================= 8 · and then the proof -->
+    <section class="slide proven" id="slide-8">
+      <p class="kicker">The test that matters · <em>confirmed</em></p>
+      <h2 style="margin: 28px 0 28px">It is a real brain.</h2>
+      <p class="lede" style="font-size: 34px">
+        Plausible numbers aren't evidence. The test: an 8–12 Hz occipital peak that rises when
+        the eyes close.
+      </p>
+      <div class="numbers" style="margin-top: 34px; padding: 28px 40px; gap: 16px">
+        <div class="good"><span>occipital peak rose with the eyes closed</span><span>every pair</span></div>
+        <div class="good"><span>on O1 and on O2</span><span>consistent</span></div>
+        <div><span>the measured values</span><span>withheld</span></div>
+      </div>
+      <div class="checklist" style="font-size: 31px; margin-top: 38px; gap: 22px">
+        <div>
+          <b>Seven pairs, wet pads, real dongle</b> — not one lucky window, and not the demo.
+        </div>
+        <div>
+          The numbers are derived from my own brain activity, so they stay private. Ask and I'll
+          show the evidence.
+        </div>
+        <div>
+          <b>Screenshots show the app's labelled synthetic source, not the real session.</b>
+        </div>
+      </div>
+      <div class="repo" style="margin-top: 34px">
+        Code, MIT, credited to emokit →<br />
+        <code>github.com/titusfx/brain-waves-projects</code>
+      </div>
+      <div class="spacer"></div>
+      <div class="footer">
+        <strong>EPOC+ workbench · FastAPI + Angular</strong>
+        <span>8 / 8</span>
+      </div>
+    </section>
+  </body>
+</html>
