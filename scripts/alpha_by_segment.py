@@ -14,7 +14,9 @@ session of seven alternating pairs into equal thirds produces three windows that
 BOTH states, which averages the effect away and can report it inverted.
 
 On `recordings/eyes-closed-eyes-open_2026-09-13_14-56-10` — a real recording with an
-unambiguous alpha effect — `alpha_test.py --file` printed `NOT DETECTED (ratio 0.73x)`.
+unambiguous alpha effect — `alpha_test.py --file` printed `NOT DETECTED`. (The exact ratio it
+prints is itself a real-session measurement, so it lives in `private/real-session-evidence.md`
+with the rest of them.)
 
 This script reads `labels.csv` and compares every labelled segment against the others carrying
 the same label, so the verdict is over the whole session rather than a 20-second slice of it.

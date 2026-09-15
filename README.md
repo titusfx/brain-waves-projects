@@ -4,8 +4,70 @@ Open-source tooling for the **Emotiv EPOC+** 14-channel mobile EEG headset
 (owner's part code `EMO-EPO-BT9X-03`) — getting raw EEG out of a device whose
 vendor gates it behind a paid licence.
 
+<p align="center">
+  <a href="docs/demo/workbench-demo.mp4"><img src="docs/images/hero.png" width="860" alt="Raw EEG, no licence — the EPOC+ workbench"></a>
+</p>
+
+<p align="center">
+  <img alt="licence: MIT" src="https://img.shields.io/badge/licence-MIT-10b981">
+  <img alt="python 3.14" src="https://img.shields.io/badge/python-3.14-3776ab">
+  <img alt="Angular 22" src="https://img.shields.io/badge/Angular-22-dd0031">
+  <img alt="alpha rhythm confirmed" src="https://img.shields.io/badge/alpha%20rhythm-confirmed-10b981">
+  <img alt="not affiliated with Emotiv" src="https://img.shields.io/badge/not%20affiliated%20with-Emotiv-64748b">
+</p>
+
 > **Project knowledge lives in an Obsidian vault: [`eeg-vault/`](eeg-vault/Home.md).**
 > Start there. It is the durable memory of this project.
+
+---
+
+## See it running
+
+**▶ [58-second demo](docs/demo/workbench-demo.mp4)** — the workbench driving a synthetic head
+end to end: live monitor → protocol builder → countdown → dataset → discovery. No headset, no
+Emotiv software, no account.
+
+**📄 [11-slide carousel (PDF)](docs/linkedin-carousel.pdf)** — the story in order: the paywall,
+the two bugs that kept this headset "unsupported" for eight years, the app, and the alpha result.
+
+All of it is regenerated from the running app — `npm run build:web && npm run api:prod`, then
+`npm run linkedin -- --video` / `--pdf` / `--readme`. The media in `docs/` is committed; the
+build output in `linkedin/out/` is not.
+
+<details>
+<summary>⚠️ Want the video to play <em>inline</em> instead of opening a page? (YouTube, unlisted is fine)</summary>
+
+GitHub will play a repository `.mp4` from its own file page, but a README cannot embed a player
+for one. If you want a click-to-play thumbnail in the text, upload `docs/demo/workbench-demo.mp4`
+to YouTube and replace the link above with this, leaving everything else alone:
+
+```html
+<a href="https://youtu.be/XXXXXXXXXXX"><img src="docs/images/monitor.png" width="640" alt="Watch the demo"></a>
+```
+
+The committed file stays either way, so clones and the vault keep a working copy.
+
+</details>
+
+### Screenshots
+
+Every image below is the app's **labelled synthetic source** — the header reads `demo` precisely so
+it cannot be mistaken for a person. The author's real recording is biometric data and is not
+published anywhere; see [*Scope, legality and privacy*](#scope-legality-and-privacy).
+
+<p align="center">
+  <img src="docs/images/monitor.png" width="31%" alt="Monitor: EEG traces, a 10-20 contact map and a live O1/O2 alpha meter">
+  <img src="docs/images/protocols.png" width="31%" alt="Protocols: a guided protocol builder with the expanded run order previewed">
+  <img src="docs/images/run-countdown.png" width="31%" alt="Run: a spoken countdown before recording begins">
+</p>
+<p align="center">
+  <img src="docs/images/run-finished.png" width="31%" alt="Run: the finished dataset summary">
+  <img src="docs/images/dataset-states.png" width="31%" alt="Datasets: the label timeline and spectra">
+  <img src="docs/images/discovery.png" width="31%" alt="Discovery: effect size per frequency bin">
+</p>
+<p align="center">
+  <em><b>Monitor</b> · <b>Protocols</b> · <b>Run</b> &nbsp;|&nbsp; <b>Run summary</b> · <b>Datasets</b> · <b>Discovery</b></em>
+</p>
 
 ## TL;DR
 
@@ -14,7 +76,7 @@ vendor gates it behind a paid licence.
 | **The problem** | Emotiv's official API (Cortex) requires a **paid licence** (~$1,068/yr) for **raw** EEG, and blocks free accounts at session activation with error `-32006`. The community USB driver (`emokit`) is free and offline but **archived** (last real commit April 2017) and officially does not support EPOC+ units from **2016 onwards**. The modern open ecosystem (BrainFlow, OpenBCI) has **zero** Emotiv support. |
 | **The sharp edge** | `emokit` picks its crypto with `serial.startswith("UD2016")` — a *literal string*, though serials encode the build date (`UD2016`+`0103`+counter). This unit is `UD20180927003B78` (**2018-09-27**), which fails that test too, so stock emokit silently uses the **wrong key**. The decoder here picks the crypto path from the *parsed date* instead. |
 | **The plan** | Determine empirically which acquisition route works on *this* unit, prove it with the alpha test, hide it behind a `Source` interface, and build everything downstream to be device-agnostic. |
-| **Where we are** | The protocol is solved and **verified on this unit**: 32-byte AES-128-ECB reports, 16-bit little-endian fields, `1 LSB = 0.51 µV`, **159 reports/s** sustained over 180 s, 14/14 channels in the 10–85 µV physiological range. The one substantive task left is proving the signal is a real brain — the **alpha test**. |
+| **Where we are** | The protocol is solved and **verified on this unit**: 32-byte AES-128-ECB reports, 16-bit little-endian fields, `1 LSB = 0.51 µV`, **159 reports/s** sustained over 180 s, 14/14 channels usable with amplitudes in the physiological range. And the signal is **proven to be a real brain** — the eyes-closed alpha rhythm is confirmed over the occipital channels, consistently in every eyes-closed segment of the session. |
 | **The app** | `api/` (FastAPI) + `web/` (Angular 22): a live monitor with the montage's contact map, clickable documentation for all 14 electrodes, a protocol builder for guided datasets — *"start with 5, lie down 10, stand up 20"*, or a loop that repeats until you stop — and a dataset browser. It runs with **no headset attached**: a labelled synthetic source generates a real eyes-closed alpha burst so the whole thing can be used and tested before the pads are wet. → [*The workbench*](#the-workbench-web-app) |
 | **The consolation prize** | The **free** Cortex tier still gives band power, mental commands, facial expressions, motion and contact quality — enough to ship a real app for $0. |
 | **The first step** | `.venv\Scripts\python.exe scripts\live_view.py` — plug the dongle in and watch. Every run is recorded, and `--replay` re-watches it later. Or `npm run api` + `npm run web` and use the app. |
@@ -46,6 +108,7 @@ brain-waves-projects/
 │   ├── live_view.py               # ⭐ real-time viewer; records every run, replays one
 │   ├── record.py                  # record N seconds of decoded uV to a datestamped CSV
 │   ├── alpha_test.py              # the acceptance test: eyes-closed/open + verdict
+│   ├── alpha_by_segment.py        # ⭐ label-aware alpha test on a labelled dataset
 │   ├── monitor.py                 # is data flowing? every 3 s
 │   ├── recording_paths.py         # where recordings go (recordings/<name>_<datestamp>)
 │   ├── decode_to_csv.py           # reference decoder (imported by the others)
@@ -72,7 +135,16 @@ brain-waves-projects/
 │       ├── core/                  # api client, the socket as signals, speech, formatting
 │       └── features/              # monitor · channels · flows · run · datasets
 ├── tools/
-│   └── verify-web.mjs             # drives the built app in headless Chrome and asserts
+│   ├── verify-web.mjs             # drives the built app in headless Chrome and asserts
+│   └── linkedin-capture.mjs       # the committed assets in docs/ — screenshots, banner, video, PDF
+├── docs/                          # ⭐ committed media: README banner, screenshots, demo video, carousel
+│   ├── hero.html                  #   the banner's source (rendered by linkedin-capture.mjs)
+│   ├── images/                    #   the screenshots the README embeds
+│   ├── demo/workbench-demo.mp4    #   the 58-second demo
+│   └── linkedin-carousel.pdf      #   the 11-slide deck
+├── linkedin/                      # the launch decks: authored HTML (committed) + output (ignored)
+│   ├── slides.html · carousel.html #  the authored decks (source, committed)
+│   └── out/                       #   build output — stills, video, frames, PDF, page previews
 ├── vendor/
 │   ├── README.md                  # provenance + licence of the vendored clone
 │   └── emokit/                    # pristine clone (public domain) — DO NOT EDIT
@@ -142,6 +214,16 @@ It prompts the eyes-closed / eyes-open protocol and prints a verdict
 (**ALPHA CONFIRMED** needs a closed/open ratio above 1.5 on the occipital channels).
 
 If you have not seen the alpha peak, you do not have EEG yet.
+
+**✅ This test has passed.** On 2026-09-13, with all 16 pads wetted, the occipital peak rose with
+the eyes closed in every pair of the session. The measured values are withheld — they are derived
+from the author's own brain activity — and the full narrative record is
+`eeg-vault/04-sessions/2026-09-13-alpha-confirmed.md`.
+
+⚠️ **On a labelled dataset use `scripts\alpha_by_segment.py` instead.** `alpha_test.py --file` is
+not label-aware: it cuts the file into equal thirds and assumes the first is eyes-closed, which
+on a 7-cycle dataset compares two mixtures of both states and reports a **false negative**
+(measured: `NOT DETECTED (0.73x)` on a recording that is unambiguously positive).
 
 ## Recording and replay
 
@@ -253,10 +335,33 @@ scale      1 LSB = 0.51 uV   (needs a 0.5 Hz highpass to remove ~16 mV DC offset
 | Fields are 16-bit **little-endian** — emokit decoded them big-endian | ✅ **LE won 13/15 fields**; autocorrelation 0.555 (BE) → **0.797 (LE)** |
 | The decode is real physiology | ✅ amplitudes 7–54 µV; neighbours correlate (F7/F8 **+0.53**); theta/beta spectrum, low delta; controls ≈ 0 |
 | **Verification on this unit** (`UD20180927003B78`) | ✅ **verified on hardware 2026-02-14** — 159 reports/s sustained for 180 s; byte 1 collapses to 2 values (the key check); 14/14 channels in range |
-| **Alpha rhythm — proof it is a brain** | ⬜ **open — the only substantive task left** (see *Run the alpha test* above) |
+| **Alpha rhythm — proof it is a brain** | ✅ **CONFIRMED 2026-09-13** — the 8–12 Hz occipital peak rose with the eyes closed, consistently in every eyes-closed segment of a seven-pair session, on O1 and on O2. The measured values are **deliberately withheld**: they are derived from the author's own brain activity and are not published. → `eeg-vault/04-sessions/2026-09-13-alpha-confirmed.md` |
 
 So the *"Unsupported: Epoc+(2016+)"* claim is beaten. emokit's byte **offsets** were right; its byte
 **order** was wrong. Full write-up: `eeg-vault/02-software/ud2016-crypto-crack.md`.
+
+### And the signal is a real brain, not just plausible numbers
+
+<p align="center">
+  <img src="docs/images/alpha-confirmed.png" width="420" alt="Alpha rhythm confirmed — the occipital peak rose with the eyes closed in every pair">
+</p>
+
+This is the check the whole project was waiting on. A wrong AES key does not throw — it produces
+confident, plausible numbers — so the only way to know the decode is real is the classic
+physiological signature: an **8–12 Hz eyes-closed peak over the occipital electrodes**. Wet all 16
+pads, alternate eyes closed / eyes open, seven times, and it is there — the peak rose with the eyes
+closed, **consistently in every pair**, on O1 and on O2.
+
+Two honest caveats, because they are the point. First, the effect is uneven across the occiput: one
+channel carried it much more strongly than the other, so the electrode fit still needs work. Second,
+`scripts/alpha_test.py --file` initially reported `NOT DETECTED` on this very recording — it is not
+label-aware and compares mixtures of both states; the label-aware `scripts/alpha_by_segment.py` is
+what found it.
+
+**The measured values are not published.** Band shares, peak ratios and per-channel amplitudes are
+derived from the author's own brain activity — biometric data — so they stay out of the repository
+and out of this README. The result is stated; the evidence is kept. Full narrative record:
+`eeg-vault/04-sessions/2026-09-13-alpha-confirmed.md`.
 
 ## Research status
 
@@ -271,8 +376,8 @@ So the *"Unsupported: Epoc+(2016+)"* claim is beaten. emokit's byte **offsets** 
 - ✅ **emokit is public domain** — freely vendorable (clone in `vendor/emokit/`)
 - ✅ **Why the licence exists** — the dongle encrypts specifically to enforce it
 - ✅ **AES key + packet layout + scaling — solved, with a working decoder**
-- ✅ **Verified on this specific unit** — 159 reports/s for 180 s, 14/14 channels 10–85 µV
-- ⬜ **Alpha rhythm confirmed** — the last piece of evidence; needs the headset on a head
+- ✅ **Verified on this specific unit** — 159 reports/s for 180 s, 14/14 channels in the physiological range
+- ✅ **Alpha rhythm confirmed** — the eyes-closed 8–12 Hz occipital peak is real, consistently in every pair; the signal is a brain (measured values withheld)
 - ⬜ Battery / gyro fields — not needed for EEG
 
 ## Scope, legality and privacy

@@ -1,0 +1,583 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>EPOC+ workbench — LinkedIn carousel</title>
+    <!--
+      The uploadable carousel: 11 slides of 1080x1350, printed to PDF by
+      `npm run linkedin -- --pdf` (tools/linkedin-capture.mjs → Page.printToPDF).
+
+      Why a PDF: LinkedIn removed its native carousel format in 2023. What the platform calls a
+      carousel post today is a **document post** — a PDF the feed renders as a swipeable deck and
+      that viewers can download. Specs: <=100 MB, <=300 pages, PDF/PPT/PPTX/DOC/DOCX.
+      https://www.linkedin.com/help/linkedin/answer/a523062
+
+      Structure: hook → the payoff → the app → why it was broken → why you can believe it → the
+      proof → the ask. Page 2 is the Discovery screen because it is the screen that reads as
+      "this is a real instrument" fastest; the two-bug explainer sits at page 8, where it doubles
+      as the reason the result at page 10 took eight years to reach. Six of the eleven slides show
+      the running workbench.
+
+      LAYOUT — why the screenshots are not full-bleed:
+      The first version put the headline in a gradient scrim over a full-bleed screenshot, and it
+      printed the headline ON TOP of the thing the slide was about: slide 6 buried the "Dataset
+      written" card, slide 8 covered the electrode table. A gradient cannot know where the
+      interesting pixels are. So each image slide is now a fixed 990px image area with a solid
+      360px caption bar underneath, and the image is cropped with `object-position` instead. Two
+      slides anchor to the bottom so the crop removes their least interesting region — the empty
+      protocol form on slide 6, the saved-protocol list on slide 4.
+
+      HONESTY CONSTRAINT — read before editing the images:
+      every screenshot is the app's **synthetic** source, labelled `demo` in the app's own header.
+      The author's real recording is biometric data and is deliberately not published, so every
+      image slide says so. Do not remove those chips, and do not swap in a real session.
+
+      Standalone on purpose: no Tailwind, no build step, no network fonts. It has to render in a
+      headless browser and look like the app it advertises (same slate/emerald palette as
+      web/src/app/app.ts). Each card is a fixed height with `overflow: hidden`, so keep headlines
+      to two lines — `out/pdf-check/` renders every page to PNG so this is checkable, not guessed.
+    -->
+    <style>
+      :root {
+        --slate-950: #020617;
+        --slate-900: #0f172a;
+        --slate-800: #1e293b;
+        --slate-400: #94a3b8;
+        --slate-300: #cbd5e1;
+        --slate-100: #f1f5f9;
+        --emerald-300: #6ee7b7;
+        --emerald-400: #34d399;
+        --rose-400: #fb7185;
+        --amber-300: #fcd34d;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      /* One PDF page per slide, at the feed's 4:5. */
+      @page {
+        size: 1080px 1350px;
+        margin: 0;
+      }
+
+      html,
+      body {
+        background: var(--slate-950);
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      .slide {
+        position: relative;
+        width: 1080px;
+        height: 1350px;
+        padding: 84px;
+        display: flex;
+        flex-direction: column;
+        background: var(--slate-950);
+        color: var(--slate-100);
+        font-family:
+          Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+          sans-serif;
+        overflow: hidden;
+        break-after: page;
+        page-break-after: always;
+      }
+
+      /* The last slide must not emit a trailing blank page. */
+      .slide:last-of-type {
+        break-after: auto;
+        page-break-after: auto;
+      }
+
+      .slide::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+        background-size: 72px 72px;
+        pointer-events: none;
+      }
+
+      .slide > * {
+        position: relative;
+      }
+
+      .kicker {
+        font-size: 28px;
+        font-weight: 600;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+        color: var(--slate-400);
+      }
+
+      .kicker em {
+        font-style: normal;
+        color: var(--emerald-400);
+      }
+
+      h1 {
+        font-size: 88px;
+        line-height: 1.08;
+        font-weight: 800;
+        letter-spacing: -0.025em;
+      }
+
+      h2 {
+        font-size: 64px;
+        line-height: 1.12;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+      }
+
+      .lede {
+        font-size: 40px;
+        line-height: 1.4;
+        color: var(--slate-300);
+        font-weight: 500;
+      }
+
+      .accent {
+        color: var(--emerald-400);
+      }
+
+      .price {
+        color: var(--amber-300);
+        white-space: nowrap;
+      }
+
+      .spacer {
+        flex: 1;
+      }
+
+      .footer {
+        margin-top: auto;
+        padding-top: 34px;
+        border-top: 2px solid var(--slate-800);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 24px;
+        font-size: 26px;
+        color: var(--slate-400);
+        font-weight: 500;
+      }
+
+      .footer strong {
+        color: var(--slate-300);
+        font-weight: 600;
+      }
+
+      code {
+        font-family: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
+        font-size: 0.92em;
+        background: rgba(148, 163, 184, 0.14);
+        border-radius: 8px;
+        padding: 4px 12px;
+        color: var(--emerald-300);
+      }
+
+      /* --------------------------------------------------------------- bugs */
+      .bugs {
+        display: flex;
+        flex-direction: column;
+        gap: 38px;
+        margin-top: 14px;
+      }
+
+      .bug {
+        background: var(--slate-900);
+        border: 2px solid var(--slate-800);
+        border-left: 10px solid var(--rose-400);
+        border-radius: 18px;
+        padding: 38px 40px;
+      }
+
+      .bug h3 {
+        font-size: 40px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        margin-bottom: 16px;
+      }
+
+      .bug p {
+        font-size: 33px;
+        line-height: 1.45;
+        color: var(--slate-300);
+      }
+
+      .bugs .bug:last-child {
+        border-left-color: var(--amber-300);
+      }
+
+      /* ------------------------------------------------------------ oracles */
+      .oracles {
+        display: flex;
+        flex-direction: column;
+        gap: 34px;
+        margin-top: 38px;
+      }
+
+      .oracle {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+      }
+
+      .oracle .num {
+        flex: none;
+        width: 68px;
+        height: 68px;
+        border-radius: 9999px;
+        display: grid;
+        place-items: center;
+        background: rgba(16, 185, 129, 0.16);
+        color: var(--emerald-300);
+        font-size: 34px;
+        font-weight: 700;
+      }
+
+      .oracle h3 {
+        font-size: 38px;
+        font-weight: 700;
+        margin-bottom: 10px;
+      }
+
+      .oracle p {
+        font-size: 31px;
+        line-height: 1.45;
+        color: var(--slate-400);
+      }
+
+      /* ------------------------------------------------------------ numbers */
+      .numbers {
+        margin-top: 38px;
+        background: var(--slate-900);
+        border: 2px solid var(--slate-800);
+        border-radius: 18px;
+        padding: 30px 40px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      .numbers div {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        font-size: 31px;
+        color: var(--slate-400);
+        gap: 24px;
+      }
+
+      .numbers span:last-child {
+        font-family: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
+        font-size: 35px;
+        font-weight: 700;
+        color: var(--slate-100);
+        white-space: nowrap;
+      }
+
+      .numbers .good span:last-child {
+        color: var(--emerald-400);
+      }
+
+      .numbers .bad span:last-child {
+        color: var(--rose-400);
+      }
+
+      /* -------------------------------------------------------- image slides */
+      /* 990px of screenshot + a 360px caption bar = 1350. The image is cropped rather than
+         overlapped, so the headline can never land on the thing the slide is about. */
+      .shot {
+        padding: 0;
+      }
+
+      .shot img {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        width: 100%;
+        height: 990px;
+        object-fit: cover;
+        object-position: top center;
+      }
+
+      /* For screens whose payoff is below the fold: drop the least interesting strip instead
+         of the most interesting one. */
+      .shot.from-bottom img {
+        top: auto;
+        bottom: 360px;
+        object-position: bottom center;
+      }
+
+      .caption {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 360px;
+        padding: 34px 56px;
+        background: var(--slate-950);
+        border-top: 3px solid rgba(16, 185, 129, 0.45);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        overflow: hidden;
+      }
+
+      .caption h3 {
+        font-size: 46px;
+        line-height: 1.12;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        margin-bottom: 12px;
+      }
+
+      .caption p {
+        font-size: 27px;
+        line-height: 1.4;
+        color: var(--slate-300);
+        font-weight: 500;
+      }
+
+      /* Says out loud what the app's own header already says. Not decoration. */
+      .chip {
+        align-self: flex-start;
+        margin-top: 16px;
+        font-family: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
+        font-size: 22px;
+        font-weight: 600;
+        color: var(--emerald-300);
+        background: rgba(16, 185, 129, 0.14);
+        border: 2px solid rgba(16, 185, 129, 0.35);
+        border-radius: 9999px;
+        padding: 6px 18px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ================================================== 1 · the hook -->
+    <section class="slide" id="slide-1">
+      <p class="kicker">Emotiv EPOC+ · <em>reverse engineering</em></p>
+      <div class="spacer"></div>
+      <h1>
+        <span class="price">~$1,068/year</span><br />
+        to read raw data from<br />
+        a headset <span class="accent">you own</span>.
+      </h1>
+      <p class="lede" style="margin-top: 48px; font-size: 42px">
+        So the dongle encrypts its own output to enforce it.<br /><br />
+        I reverse-engineered it instead.
+      </p>
+      <div class="spacer"></div>
+      <div class="footer">
+        <strong>Swipe → raw EEG, no Emotiv software, no licence</strong>
+        <span>1 / 11</span>
+      </div>
+    </section>
+
+    <!-- ======================================================== 2 · discovery -->
+    <section class="slide shot" id="slide-2">
+      <img src="out/stills/09-discovery.png" alt="The Discovery screen: per-state spectra with their spread, and a difference-per-frequency-bin chart" />
+      <div class="caption">
+        <h3>It measures. It doesn't cheerlead.</h3>
+        <p>
+          Effect size per frequency bin, the 70% of bins both states share, and a p-value that
+          states the floor it cannot beat.
+        </p>
+        <span class="chip">synthetic source · the app labels it demo</span>
+      </div>
+    </section>
+
+    <!-- ============================================================ 3 · monitor -->
+    <section class="slide shot" id="slide-3">
+      <img src="out/stills/01-monitor.png" alt="The Monitor screen: a 10-20 contact map and live EEG traces" />
+      <div class="caption">
+        <h3>14 channels of raw EEG, live.</h3>
+        <p>
+          No Emotiv software, no account, no licence — straight off the dongle at 128 Hz, with a
+          contact map and a live O1/O2 alpha meter.
+        </p>
+        <span class="chip">synthetic source · the app labels it demo</span>
+      </div>
+    </section>
+
+    <!-- ========================================================== 4 · protocols -->
+    <section class="slide shot from-bottom" id="slide-4">
+      <img src="out/stills/03-protocols.png" alt="The Protocols builder: a looping eyes-closed / eyes-open protocol, its states, and the expanded run order it will produce" />
+      <div class="caption">
+        <h3>Tell it what to do. It runs the experiment.</h3>
+        <p>
+          eyes closed 20 s → eyes open 15 s, repeat — labelled as it goes, with the run order
+          previewed before you save.
+        </p>
+        <span class="chip">synthetic source · the app labels it demo</span>
+      </div>
+    </section>
+
+    <!-- ========================================================= 5 · countdown -->
+    <section class="slide shot" id="slide-5">
+      <img src="out/stills/04-run-countdown.png" alt="The Run screen counting down from 3" />
+      <div class="caption">
+        <h3>3, 2, 1 — spoken out loud.</h3>
+        <p>
+          The countdown isn't data, so the file is created the moment it reaches zero. Stop during
+          it and you get no dataset at all — because there was nothing to record.
+        </p>
+        <span class="chip">synthetic source · the app labels it demo</span>
+      </div>
+    </section>
+
+    <!-- ========================================================== 6 · written -->
+    <section class="slide shot from-bottom" id="slide-6">
+      <img src="out/stills/06-run-finished.png" alt="The Run screen reporting a written dataset: duration, sample count and the kept state" />
+      <div class="caption">
+        <h3>Dataset written. Labelled. Sample-exact.</h3>
+        <p>Boundaries are queued with a stream time and applied by the writer as it passes them.</p>
+        <span class="chip">synthetic source · the app labels it demo</span>
+      </div>
+    </section>
+
+    <!-- =========================================================== 7 · states -->
+    <section class="slide shot" id="slide-7">
+      <img src="out/stills/08-dataset-states.png" alt="A dataset overview: label timeline, decimated O1 and O2 traces" />
+      <div class="caption">
+        <h3>Every state, in proportion.</h3>
+        <p>
+          Click a state and every chart narrows to its window. Four files: eeg.csv, labels.csv,
+          meta.json, events.jsonl.
+        </p>
+        <span class="chip">synthetic source · the app labels it demo</span>
+      </div>
+    </section>
+
+    <!-- ============================================ 8 · why it was broken -->
+    <section class="slide" id="slide-8">
+      <p class="kicker">Why nobody had this working · <em>2017 → 2025</em></p>
+      <h2 style="margin: 28px 0 34px">Neither bug was the crypto.</h2>
+      <div class="bugs">
+        <div class="bug">
+          <h3>1 · It picked the wrong key</h3>
+          <p>
+            emokit chooses its AES key with <code>serial.startswith("UD2016")</code> — a literal
+            string test. My dongle is a 2018 unit, so it silently took the wrong key and printed
+            confident garbage. No exception. No warning.
+          </p>
+        </div>
+        <div class="bug">
+          <h3>2 · It read the bytes backwards</h3>
+          <p>
+            Every 16-bit sample field was decoded <b>big</b>-endian. They are
+            <b>little</b>-endian. Same offsets, opposite order — which is why the output still
+            looked like a signal for eight years.
+          </p>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="footer">
+        <strong>The offsets were right. The byte order was wrong.</strong>
+        <span>8 / 11</span>
+      </div>
+    </section>
+
+    <!-- ========================================================== 9 · oracles -->
+    <section class="slide" id="slide-9">
+      <p class="kicker">Why you can believe it · <em>two oracles</em></p>
+      <h2 style="margin: 28px 0 30px">A wrong key never throws.</h2>
+      <p class="lede" style="font-size: 34px">
+        It produces beautiful, plausible, meaningless numbers. So nothing here is claimed without
+        a check a wrong key cannot pass:
+      </p>
+      <div class="oracles">
+        <div class="oracle">
+          <span class="num">1</span>
+          <div>
+            <h3>Byte 1 must collapse</h3>
+            <p>Correct: 2 distinct values (0x10 / 0x20). Wrong: ~256.</p>
+          </div>
+        </div>
+        <div class="oracle">
+          <span class="num">2</span>
+          <div>
+            <h3>Autocorrelation</h3>
+            <p>Real EEG is band-limited and correlated in time. Noise is not.</p>
+          </div>
+        </div>
+      </div>
+      <div class="numbers">
+        <div class="good"><span>little-endian, EEG packets</span><span>+0.797</span></div>
+        <div><span>big-endian — what emokit did</span><span>+0.480</span></div>
+        <div class="bad"><span>wrong key</span><span>+0.007</span></div>
+      </div>
+      <div class="spacer"></div>
+      <div class="footer">
+        <strong>Verify before claiming</strong>
+        <span>9 / 11</span>
+      </div>
+    </section>
+
+    <!-- ============================================================ 10 · proof -->
+    <section class="slide" id="slide-10">
+      <p class="kicker">And then the test that matters · <em>confirmed</em></p>
+      <h2 style="margin: 28px 0 26px">It is a real brain.</h2>
+      <p class="lede" style="font-size: 34px">
+        The eyes-closed alpha rhythm — an 8–12 Hz peak over the occipital channels that rises when
+        the eyes close and drops when they open.
+      </p>
+      <div class="numbers">
+        <div class="good"><span>the peak rose with the eyes closed</span><span>every pair</span></div>
+        <div class="good"><span>on O1 and on O2</span><span>consistent</span></div>
+        <div><span>the measured values</span><span>withheld</span></div>
+      </div>
+      <p class="lede" style="font-size: 31px; margin-top: 28px">
+        Seven pairs, wet pads, real dongle — not the demo. The numbers are derived from my own
+        brain activity, so they stay private.
+      </p>
+      <p class="lede" style="font-size: 27px; margin-top: 14px; color: var(--slate-400)">
+        A wrong key produces beautiful charts too — which is exactly why this check existed.
+      </p>
+      <div class="spacer"></div>
+      <div class="footer">
+        <strong>Verify before claiming</strong>
+        <span>10 / 11</span>
+      </div>
+    </section>
+
+    <!-- ============================================================== 11 · ask -->
+    <section class="slide" id="slide-11">
+      <p class="kicker">Your turn</p>
+      <h2 style="margin: 28px 0 30px">What would you build on it?</h2>
+      <div class="oracles">
+        <div class="oracle">
+          <span class="num">→</span>
+          <div>
+            <h3>Code, MIT, credited to emokit</h3>
+            <p><code>github.com/titusfx/brain-waves-projects</code></p>
+          </div>
+        </div>
+        <div class="oracle">
+          <span class="num">🔒</span>
+          <div>
+            <h3>Why you're looking at a synthetic head</h3>
+            <p>
+              Every screenshot in this deck is the app's labelled demo source. My real session is
+              biometric data, so it stays private — the numbers are what I'm willing to publish.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="footer">
+        <strong>#EEG #BCI #ReverseEngineering #OpenSource</strong>
+        <span>11 / 11</span>
+      </div>
+    </section>
+  </body>
+</html>

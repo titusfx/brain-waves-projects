@@ -33,14 +33,15 @@ live, documents every electrode, and builds guided protocols. → §11, and
 | Packet layout | ✅ **solved** (16-bit little-endian) |
 | Live acquisition | ✅ **working** — 159 reports/s sustained for 180 s |
 | Decode to µV | ✅ **working** — amplitudes in physiological range |
-| Electrode contact | ✅ **good** — 14/14 channels `ok`, 10–85 µV |
+| Electrode contact | ✅ **good** — 14/14 channels usable, amplitudes in the physiological range |
 | Web workbench (`api/` + `web/`) | ✅ **working** — live monitor, channel reference, protocol builder, labelled datasets, a **discovery** screen and deleting with confirmation. Every chart zooms (scroll, anchored at the pointer) and reads out every series on hover. Verified end to end by `tools/verify-web.mjs` (18/18), and the dongle path exercised against the real, silent device. |
-| **Alpha rhythm confirmed** | ⬜ **NOT YET — this is the only substantive task left** |
+| **Alpha rhythm confirmed** | ✅ **CONFIRMED on real hardware, 2026-09-13** — wet pads, 7 eyes-closed/eyes-open pairs, and the 8–12 Hz occipital peak rose with the eyes closed in **every** pair. The measured values are deliberately **not published** — they are derived from the author's own brain activity — and live in `private/` (git-ignored). → `eeg-vault/04-sessions/2026-09-13-alpha-confirmed.md` |
 | Battery level | ⬜ unidentified |
 | Gyro / motion | ⬜ unidentified (`emokit`'s is a stub returning `42`) |
 
-**The acquisition chain is proven. What is not yet proven is that the decoded signal is a
-real brain.** That is the alpha test (§7).
+**The acquisition chain is proven, and so is the signal.** The eyes-closed alpha rhythm —
+the check that separates real brain activity from plausible-looking numbers — is confirmed;
+see §7 for the result and §7b for the one caveat about the tool that used to report it.
 
 ---
 
@@ -142,7 +143,8 @@ setting `UV_CACHE_DIR` inside the workspace avoids the problem entirely.
 | `probe_device.py` | enumerate HID, print VID/PID/serial, classify crypto path. `--demo` needs no hardware. |
 | `live_view.py` | **real-time viewer**: per-channel amplitude, the 10–100 µV "normal range" marker, contact status, and a live 8–12 Hz alpha meter for O1/O2. Best tool for physical debugging. **Records every run** to `recordings/live_<YYYY-MM-DD_HH-MM-SS>/` (`eeg.csv` + `screen.txt`), no flags needed. `--replay <csv\|dir> [--speed N]` plays a recording back through the same screen. |
 | `record.py N [out.csv]` | record N seconds to CSV (decoded µV). **Omit the filename** and it writes `recordings/eeg_<YYYY-MM-DD_HH-MM-SS>.csv`, so runs never overwrite. |
-| `alpha_test.py` | prompted eyes-closed/eyes-open protocol + verdict; saves `recordings/alpha_<YYYY-MM-DD_HH-MM-SS>.csv`. `--file x.csv` analyses an existing recording (writes nothing). |
+| `alpha_test.py` | prompted eyes-closed/eyes-open protocol + verdict; saves `recordings/alpha_<YYYY-MM-DD_HH-MM-SS>.csv`. `--file x.csv` analyses an existing recording (writes nothing) — but it is **not label-aware**, so on a labelled dataset it gives a false negative (§7b). |
+| `alpha_by_segment.py` | **the label-aware alpha test.** Reads a dataset's `labels.csv` and compares every eyes-closed segment against every eyes-open one, with a pairwise consistency check. Use this on datasets; use `alpha_test.py` for the live prompted protocol. Read-only, exits non-zero on failure. |
 | `monitor.py` | watch the stream and report every 3 s whether data is flowing. |
 | `recording_paths.py` | where recordings go (`recordings/<prefix>_<stamp>[...]`); imported by the three tools above so names stay uniform. |
 | `test_ud2016_crypto.py` | test all 4 key derivations against emokit's real captured ciphertext. |
@@ -161,34 +163,61 @@ change the packet handling, change it in `scripts/decode_to_csv.py` **and**
 
 ---
 
-## 7. ⭐ The next task: the alpha test
+## 7. ✅ The alpha test — PASSED (2026-09-13)
 
-**Goal:** prove the decoded signal is real brain, not artefact.
+**Goal:** prove the decoded signal is real brain, not artefact. **Met.**
 
-**Protocol** — put the headset on, wet **all 16 pads** (14 EEG + **2 references**), then
-alternate eyes closed / eyes open ~20 s each, about 4 cycles.
+Seven eyes-closed/eyes-open pairs, wet pads, real dongle, ~245 s. The 8–12 Hz occipital peak rose
+with the eyes closed — consistently, in **every** pair, on O1 and on O2 — clearing the pass
+criterion of a closed/open alpha ratio above 1.5.
 
-**Pass criteria:**
-- `alpha_test.py` alpha peak ratio **> 1.5** on O1/O2, or
-- `live_view.py` shows the O1/O2 `peak` column rising above 1.5 and the `share` rising with
-  eyes closed.
+**The measured values are deliberately not committed.** Band shares, peak ratios and per-channel
+amplitudes are derived from the author's own brain activity, so they live in `private/`
+(git-ignored — `private/real-session-evidence.md`) and this document states the result
+qualitatively. Narrative record: `eeg-vault/04-sessions/2026-09-13-alpha-confirmed.md`.
 
-Either way the session is on disk: `live_view.py` records every run to
-`recordings/live_<stamp>/`, so a failed attempt can be replayed
-(`live_view.py --replay recordings\live_<stamp>`) and analysed
-(`alpha_test.py --file recordings\live_<stamp>\eeg.csv`) without the headset — do that
-before asking the subject to sit through another run.
+```powershell
+.venv\Scripts\python.exe scripts\alpha_by_segment.py recordings\eyes-closed-eyes-open_2026-09-13_14-56-10
+```
 
-**If it fails, in order of likelihood:**
-1. **The 2 reference pads (CMS/DRL) are dry.** If they are, common-mode rejection fails and
-   *every* channel shows a large common artefact. This was the cause of the first failed
-   session — 10 of 14 channels sat at 200–280 µV.
+**The protocol that worked:** wet **all 16 pads** (14 EEG + **2 references**), then alternate
+eyes closed / eyes open ~20 s each for ~7 cycles. Mains contamination on the occipital channels
+collapsed — from severe in the failed session, where only 8 pads were wetted, to negligible — and
+that was the whole difference. It confirms the diagnosis that the earlier negative result was
+physics, not software.
+
+**If a future session fails, in order of likelihood:**
+1. **The 2 reference pads (CMS/DRL) are dry.** Common-mode rejection then fails and *every*
+   channel shows a large common artefact — in the failed session ten of the fourteen channels
+   sat far above the physiological amplitude range.
 2. Electrodes not on scalp (hair in the way, headset loose, pads not soaked).
 3. Subject not relaxed, moving, or talking.
 
 A **negative result is not evidence of a decoding problem.** The decoder is verified. It is a
 contact problem. The diagnostic that separates the two: *if the decode were broken, all 14
 channels would be wrong together — a per-channel difference means physics, not software.*
+
+---
+
+## 7b. ⚠️ Which alpha test to use — `alpha_test.py --file` is not label-aware
+
+`alpha_test.py --file <csv>` never reads `labels.csv`. It cuts the file into three equal thirds
+and calls part 1 "eyes closed" and part 2 "eyes open":
+
+```python
+seg = n // 3
+parts = [data[:seg], data[seg:2*seg], data[2*seg:3*seg]]
+```
+
+That is correct for the fixed 20/15/20 s recording its own `record()` writes, and wrong for a
+dataset: a third of a 245 s session of seven alternating pairs contains *both* states, so the
+comparison is between two mixtures and the sign can come out either way.
+
+**Measured:** on the confirmed recording above, `alpha_test.py --file` reports
+**`NOT DETECTED (ratio 0.73x)`** — the opposite of the truth.
+
+Use **`scripts/alpha_by_segment.py`** on datasets (label-aware, with a pairwise consistency
+check). `alpha_test.py` remains the right tool for the live prompted protocol.
 
 ---
 
@@ -223,9 +252,10 @@ channels would be wrong together — a per-channel difference means physics, not
 | `03-project/web-workbench.md` | **the app**: architecture, the protocol model, the dataset format, what was verified |
 | `03-project/decisions-log.md` | ADRs — read before changing architecture |
 | `04-sessions/2026-02-14-first-live-session.md` | the first real session, including the failed one |
+| `04-sessions/2026-09-13-alpha-confirmed.md` | ⭐ **the alpha rhythm confirmed** — the result that proves the signal is a real brain, plus the `alpha_test.py --file` false negative |
 | `99-sources/references.md` | **every source + a verified/unverified ledger** |
 
-That is the key subset — the vault holds **19 notes** in total. The others are
+That is the key subset — the vault holds **20 notes** in total. The others are
 `01-device/connection-and-dongle.md`, `02-software/opensource-landscape.md`,
 `02-software/ecosystems-without-support.md`, `02-software/lsl-and-interop.md`, and
 `03-project/glossary.md`. Start from `Home.md` for the full map.

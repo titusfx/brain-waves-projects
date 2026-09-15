@@ -27,7 +27,7 @@ Status legend: ✅ done · 🔄 in progress · ⬜ not started · ⛔ blocked
 
 ---
 
-## Phase 1 — Acquisition 🔄 *the hard part*
+## Phase 1 — Acquisition ✅ *done*
 
 Goal: **one command that prints live, correct-looking EEG from this specific headset.**
 
@@ -39,15 +39,13 @@ Goal: **one command that prints live, correct-looking EEG from this specific hea
 - [x] **1.3b `UD2016` literal-string bug** ✅ — **this unit is a confirmed victim of it**; bypassed by calling `new_crypto_key()` directly. No emokit flag covers it.
 - [x] **1.3d Live acquisition working** ✅ — interface **1** (`EEG Signals`) streams ~160 reports/s; **1532–1909 EEG samples** decoded per run; amplitudes **7–16 µV** (sane). → `scripts/read_live.py`
 - [x] **1.3c Field layout reverse-engineered** ✅ — little-endian 16-bit fields; **LE wins 12/14 on this dongle too**. → [[ud2016-crypto-crack]]
-- [ ] **1.4 ⭐ VALIDATE WITH THE ALPHA TEST** — **the only thing left.** All data so far was captured with **dry electrodes on a desk**, so it is noise floor, not brain (amplitudes 7–16 µV, no temporal structure). If acquisition is correct, then with saline-wetted pads on a head:
-  - eyes **closed** → clear spectral peak at **8–12 Hz** in `O1`/`O2`
-  - eyes **open** → that peak **attenuates**
-  - packet rate steady at 128 (or 256) Hz
-  - If decryption is wrong you get high-entropy garbage with **no** physiological structure. **Never trust a stream you have not alpha-tested.**
-- [ ] **1.5 Check contact quality** — all 14 electrodes reading "Good"/"Excellent" before drawing any conclusion from the signal.
-- [ ] **1.6 Fallback decision** — if no crypto path works: [[cortex-api]] for the free streams, or pivot to synthetic-only development. Log the decision in [[decisions-log]].
+- [x] **1.4 ⭐ VALIDATE WITH THE ALPHA TEST** ✅ — **PASSED 2026-09-13.** All 16 pads wetted, seven eyes-closed/eyes-open pairs off the real dongle. The 8–12 Hz occipital peak rose with the eyes closed — consistently, in **every** pair, on O1 and on O2 — clearing the pass criterion of a closed/open ratio above 1.5. The decoded signal is a real brain. The measured values are withheld (biometric data) and live in `private/`. → [[2026-09-13-alpha-confirmed]]
+  - The earlier failure was contact, exactly as predicted: mains contamination on the occipital channels collapsed once all 16 pads were wetted. **Never trust a stream you have not alpha-tested.**
+  - ⚠️ Use `scripts/alpha_by_segment.py` on a **labelled dataset** — `alpha_test.py --file` is not label-aware and reports a false negative on one.
+- [x] **1.5 Check contact quality** ✅ — 14/14 channels usable in the successful session, occipital channels in the normal range with negligible mains, and the weakest channel still acceptable. Frontotemporal channels read well above the physiological range, consistent with EMG rather than brain — do not use them quantitatively yet.
+- [x] **1.6 Fallback decision** ✅ — not needed: the hardware route works end to end. [[cortex-api]] stays on file only for the free band-power / mental-command streams.
 
-**Exit criteria:** 60 seconds of recorded, alpha-verified raw EEG, saved to disk, reproducible.
+**Exit criteria:** 60 seconds of recorded, alpha-verified raw EEG, saved to disk, reproducible. **Met — well over it.**
 
 ---
 

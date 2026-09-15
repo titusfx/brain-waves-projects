@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>EPOC+ workbench — README hero</title>
+    <!--
+      The README banner, rendered to `docs/images/hero.png` by
+      `npm run linkedin -- --readme` (tools/linkedin-capture.mjs → cdp.shotElement).
+
+      A landscape banner exists because the app screenshots are all 4:5 — a phone-shaped image at
+      the top of a README eats the whole first screen. This crops one of them into a wide frame
+      instead, and puts the claim next to it.
+
+      Rendered after the screenshots have been copied into docs/images/, so the relative src
+      below resolves. Standalone: no Tailwind, no network fonts, same palette as the app.
+    -->
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        background: #020617;
+      }
+
+      #hero {
+        position: relative;
+        width: 1280px;
+        height: 640px;
+        padding: 56px;
+        display: flex;
+        align-items: center;
+        gap: 44px;
+        background:
+          radial-gradient(900px 420px at 12% 0%, rgba(16, 185, 129, 0.16), transparent 70%),
+          #020617;
+        color: #f1f5f9;
+        font-family:
+          Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+          sans-serif;
+        overflow: hidden;
+      }
+
+      #hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+        background-size: 64px 64px;
+        pointer-events: none;
+      }
+
+      .left {
+        position: relative;
+        flex: 1 1 auto;
+        min-width: 0;
+      }
+
+      .kicker {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #94a3b8;
+      }
+
+      .kicker em {
+        font-style: normal;
+        color: #34d399;
+      }
+
+      h1 {
+        margin-top: 18px;
+        font-size: 76px;
+        line-height: 1.04;
+        font-weight: 800;
+        letter-spacing: -0.03em;
+      }
+
+      h1 span {
+        color: #34d399;
+      }
+
+      .tagline {
+        margin-top: 20px;
+        font-size: 27px;
+        line-height: 1.42;
+        color: #cbd5e1;
+        font-weight: 500;
+      }
+
+      .chips {
+        margin-top: 30px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+
+      .chips span {
+        font-family: 'Cascadia Mono', Consolas, 'SF Mono', Menlo, monospace;
+        font-size: 19px;
+        font-weight: 600;
+        border-radius: 9999px;
+        padding: 7px 16px;
+        color: #cbd5e1;
+        background: rgba(148, 163, 184, 0.1);
+        border: 2px solid rgba(148, 163, 184, 0.22);
+        white-space: nowrap;
+      }
+
+      .chips .on {
+        color: #6ee7b7;
+        background: rgba(16, 185, 129, 0.14);
+        border-color: rgba(16, 185, 129, 0.4);
+      }
+
+      .foot {
+        margin-top: 26px;
+        font-size: 21px;
+        color: #64748b;
+        font-weight: 500;
+      }
+
+      .right {
+        position: relative;
+        flex: 0 0 520px;
+        height: 528px;
+        border-radius: 22px;
+        border: 2px solid #1e293b;
+        overflow: hidden;
+        background: #0f172a;
+        box-shadow: 0 30px 70px rgba(0, 0, 0, 0.55);
+      }
+
+      .right img {
+        width: 100%;
+        height: 100%;
+        /* Crop to the montage at the top of the Monitor screen — the part that reads as
+           "this is a real instrument" at a glance. */
+        object-fit: cover;
+        object-position: top center;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="hero">
+      <div class="left">
+        <p class="kicker">Emotiv EPOC+ · <em>open-source driver</em></p>
+        <h1>Raw EEG,<br /><span>no licence.</span></h1>
+        <p class="tagline">
+          Emotiv gates raw data behind a ~$1,068/year licence — and encrypts the USB stream to
+          enforce it. This reads it anyway.
+        </p>
+        <div class="chips">
+          <span>14 channels</span>
+          <span>128 Hz</span>
+          <span>AES-128-ECB cracked</span>
+          <span class="on">alpha rhythm confirmed</span>
+        </div>
+        <p class="foot">MIT · credited to the emokit authors · not affiliated with Emotiv</p>
+      </div>
+      <div class="right">
+        <img src="images/monitor.png" alt="The EPOC+ workbench Monitor screen" />
+      </div>
+    </div>
+  </body>
+</html>

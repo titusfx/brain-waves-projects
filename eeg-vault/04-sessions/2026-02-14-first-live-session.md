@@ -24,46 +24,34 @@ Serial `UD20180927003B78` · 180 s recording · 22 933 EEG samples · `alpha_tes
 
 ## ❌ Alpha not detected — and the reason is contact, not code
 
-### Evidence 1 — amplitudes are 2–3× too large on 10 of 14 channels
+### Evidence 1 — the amplitudes were wrong on ten of fourteen channels
 
-| channel | amp µV | mains % | reading |
-| --- | --- | --- | --- |
-| F3 | 194 | 2.8 | ⚠️ too large |
-| FC5 | 215 | 2.0 | ⚠️ too large |
-| AF3 | 215 | 2.1 | ⚠️ too large |
-| F7 | 203 | 2.2 | ⚠️ too large |
-| T7 | 231 | 1.7 | ⚠️ too large |
-| **P7** | **103** | 6.0 | borderline |
-| **O1** | **20** | 29.7 | low amp + high mains = poor contact |
-| **O2** | **14** | 46.9 | low amp + high mains = poor contact |
-| P8 | 206 | 2.4 | ⚠️ too large |
-| T8 | 206 | 2.1 | ⚠️ too large |
-| F8 | 282 | 1.7 | ⚠️ too large |
-| AF4 | 213 | 2.6 | ⚠️ too large |
-| FC6 | 209 | 2.3 | ⚠️ too large |
-| F4 | 229 | 1.7 | ⚠️ too large |
+The per-channel amplitudes and mains contamination are recorded in
+`private/real-session-evidence.md` (git-ignored — they are derived from a real person's brain).
+The *pattern* is what carries the diagnosis, and that is preserved here:
 
-Normal scalp EEG is **10–100 µV**. 200–280 µV sustained across three minutes is artefact — muscle (EMG), drift, or a bad common reference.
+- **Ten of the fourteen channels** sustained amplitudes far above the physiological range for the
+  whole three minutes — consistent with muscle (EMG), drift, or a bad common reference.
+- **The occipital and parietal channels (O1, O2, P7) read in the normal range** — but with very
+  high mains contamination, which is the signature of an electrode barely touching.
 
-**This is the key diagnostic argument:** if the *decode* were wrong, the error would hit all 14 channels equally. Instead, **O1/O2/P7 read normal (14–103 µV) while the other ten read 200+ µV.** A decoding bug cannot produce a per-channel difference — a physical contact difference can. **The decoder is fine; the electrodes are not.**
+Normal scalp EEG is **10–100 µV**.
+
+**This is the key diagnostic argument:** if the *decode* were wrong, the error would hit all 14
+channels equally. Instead the good channels and the bad channels were *different channels*. A
+decoding bug cannot produce a per-channel difference — a physical contact difference can.
+**The decoder is fine; the electrodes are not.**
 
 ### Evidence 2 — the spectrum has no alpha peak
 
-O2 power by 1 Hz bin: 1–2 Hz = **199.6**, 27–28 Hz = **209.0**, and the whole 8–12 Hz alpha band sits flat at ~30–32. There is **no bump above the 1/f background** in the alpha band.
+The O2 spectrum was dominated by two features: strong **1–2 Hz drift** (electrode/DC settling) and
+a **narrow peak around 27–28 Hz** — not mains (50/60 Hz), so likely EMG or an electrode artefact.
+That peak is still an open question (see `AGENTS.md` §8). The whole 8–12 Hz alpha band sat flat,
+with **no bump above the 1/f background**: there was no alpha peak to find.
 
-Two things dominate instead:
-- **1–2 Hz drift** — electrode/DC settling.
-- **A strong narrow peak at 27–28 Hz** — not mains (50/60 Hz), so likely EMG or an electrode artefact. Worth noting for later.
-
-Alpha "peak ratio" (alpha ÷ mean of theta & beta):
-
-| region | mean ratio |
-| --- | --- |
-| occipital (O1, O2) | **0.52** |
-| frontal | 0.29 |
-| occipital/frontal | **1.80×** |
-
-A ratio **below 1.0 means there is no alpha peak at all**. The 1.80× occipital/frontal gradient is in the *right direction* (alpha is genuinely occipital-dominant) — weak evidence of real signal, but nowhere near conclusive.
+The occipital-over-frontal alpha gradient *was* in the right direction — alpha is genuinely
+occipital-dominant — so that was weak evidence of real signal. It was nowhere near conclusive and
+should not have been quoted as a result. The ratios themselves are in `private/`.
 
 ## Root cause: only 8 of 16 pads were wetted
 

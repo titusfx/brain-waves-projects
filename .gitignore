@@ -13,7 +13,10 @@ env/
 .ruff_cache/
 .import_linter_cache/
 .uv-cache/
-linkedin/
+# The carousel's authored slides (linkedin/slides.html) are source and belong in the repo —
+# tools/linkedin-capture.mjs renders them. Only the generated PNGs, the demo video and the
+# frame dumps are bulky build output.
+linkedin/out/
 
 # ---- Node / npm caches (same reason as .uv-cache: keep caches out of the repo) ----
 .npm-cache/
@@ -67,6 +70,13 @@ alpha_report.txt
 *_report.txt
 *battery_hunt*
 lv_test.txt
+
+# ---- The author's own measured results: NEVER committed ----
+# Ratios, band shares, per-channel amplitudes and contact logs computed from the author's own
+# recordings are derived biometric data, so they live here and not in the repository. The vault
+# notes and the README state the *result* qualitatively and point at this folder; the numbers
+# themselves stay on the machine that produced them.
+private/
 
 # ---- Secrets: Emotiv client id/secret, cortex tokens ----
 .env

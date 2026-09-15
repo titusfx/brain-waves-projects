@@ -4,5 +4,5 @@
   "newFileFolderPath": "00-inbox",
   "alwaysUpdateLinks": true,
   "useMarkdownLinks": false,
-  "showLineNumber": true
+  "showLineNumber": false
 }

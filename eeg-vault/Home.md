@@ -13,7 +13,7 @@ Everything about the **Emotiv EPOC+ 14-channel mobile EEG** and the open-source 
 >
 > ✅ **SOLVED AND WORKING ON REAL HARDWARE (2026-02-14).** Serial `UD20180927003B78` (a **2018** unit — the printed "Model 1.1" label was a red herring). Key and packet layout both cracked; live EEG decodes at sane amplitudes. → [[device-identifiers]] · [[ud2016-crypto-crack]]
 >
-> ⬜ **Remaining: the alpha test** — put the headset on with saline-wetted pads and confirm an 8–12 Hz eyes-closed peak in O1/O2. Data so far was captured with dry electrodes on a desk, so it is noise-floor, not brain.
+> ✅ **THE ALPHA RHYTHM IS CONFIRMED (2026-09-13).** With all 16 pads wetted, the eyes-closed 8–12 Hz peak appears over the occipital channels and drops when the eyes open — consistently, in every pair of the session. **The decoded signal is a real brain**, so the last substantive open item is closed. The measured values are deliberately withheld (they are the author's own biometric data) and live in `private/`, which is git-ignored. → [[2026-09-13-alpha-confirmed]]
 
 ## Start here
 
@@ -54,7 +54,8 @@ Everything about the **Emotiv EPOC+ 14-channel mobile EEG** and the open-source 
 ### 04 — Sessions
 | Note | Result |
 | --- | --- |
-| [[2026-02-14-first-live-session]] | ✅ acquisition works · ❌ alpha not detected (poor contact) |
+| [[2026-02-14-first-live-session]] | ✅ acquisition works · ❌ alpha not detected (poor contact — only 8 of 16 pads wetted) |
+| [[2026-09-13-alpha-confirmed]] | ⭐ **✅ alpha CONFIRMED — the signal is a real brain** (every pair; measured values withheld, see `private/`) |
 
 ### 99 — Sources
 - [[references]] — every external source, with URLs
