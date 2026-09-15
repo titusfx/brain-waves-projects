@@ -214,7 +214,8 @@ dataset: a third of a 245 s session of seven alternating pairs contains *both* s
 comparison is between two mixtures and the sign can come out either way.
 
 **Measured:** on the confirmed recording above, `alpha_test.py --file` reports
-**`NOT DETECTED (ratio 0.73x)`** — the opposite of the truth.
+**`NOT DETECTED`** — the opposite of the truth. The exact ratio it prints is itself a real-session
+measurement, so it lives in `private/` along with the rest.
 
 Use **`scripts/alpha_by_segment.py`** on datasets (label-aware, with a pairwise consistency
 check). `alpha_test.py` remains the right tool for the live prompted protocol.

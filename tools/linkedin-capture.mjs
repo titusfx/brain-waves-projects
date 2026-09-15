@@ -1130,9 +1130,13 @@ try {
 
   if (WANT_PDF) pdf = await capturePdf();
 
-  if (WANT_README) readme = await captureReadme();
-
+  // The video is encoded *before* the README assets are collected, because captureReadme copies
+  // the MP4 into docs/. With the opposite order it published the previous cut — same class of
+  // bug as the `ensureDemo` one: a step that consumes an artefact ran before the step that
+  // produces it.
   if (WANT_VIDEO) video = await captureVideo(entry);
+
+  if (WANT_README) readme = await captureReadme();
 
   const manifest = {
     base: BASE,

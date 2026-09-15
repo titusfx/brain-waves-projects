@@ -222,8 +222,8 @@ from the author's own brain activity — and the full narrative record is
 
 ⚠️ **On a labelled dataset use `scripts\alpha_by_segment.py` instead.** `alpha_test.py --file` is
 not label-aware: it cuts the file into equal thirds and assumes the first is eyes-closed, which
-on a 7-cycle dataset compares two mixtures of both states and reports a **false negative**
-(measured: `NOT DETECTED (0.73x)` on a recording that is unambiguously positive).
+on a 7-cycle dataset compares two mixtures of both states and reports a **false negative** — on a
+recording that is unambiguously positive.
 
 ## Recording and replay
 
